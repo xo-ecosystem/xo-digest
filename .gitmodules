@@ -1,0 +1,3 @@
+[submodule "xo-drops"]
+	path = xo-drops
+	url = git@github.com:xo-verses/xo-drops.git
