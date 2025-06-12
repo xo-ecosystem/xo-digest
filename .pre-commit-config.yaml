@@ -5,28 +5,28 @@ repos:
       - id: black
         args: ["--diff"]
         pass_filenames: true
-        stages: [manual]
+        stages: ["pre-commit", "pre-push", "manual"]
 
   - repo: https://github.com/PyCQA/isort
     rev: 6.0.1
     hooks:
       - id: isort
         args: ["--diff"]
-        stages: [manual]
+        stages: ["pre-commit", "pre-push", "manual"]
 
   - repo: https://github.com/pycqa/flake8
     rev: 7.2.0
     hooks:
       - id: flake8
         args: ["--exit-zero"]
-        stages: [manual]
+        stages: ["pre-commit", "pre-push", "manual"]
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.20.0
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
-        stages: [manual]
+        stages: ["pre-commit", "pre-push", "manual"]
 
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v3.17.2
