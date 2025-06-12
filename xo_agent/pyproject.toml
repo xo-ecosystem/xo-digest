@@ -1,0 +1,10 @@
+[project]
+name = "xo-agent"
+version = "0.1.0"
+description = "XO Agent runtime"
+authors = [{ name = "XO", email = "co@21xo.com" }]
+dependencies = []
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,96 @@
+.env
+.env.production
+.env.staging
+# Ignore vault ZIP bundles
+*.zip
+.arweave.key.json
+
+# local artefacts
+venv/
+.history/
+*.bak
+xo-core-reforged/patch_bundle/
+
+# Local artefacts we never commit
+**/node_modules/
+package-lock.json
+
+# Vault: ignore all vault files except signed outputs
+vault/*
+!vault/.signed/
+!vault/.signed/**
+
+# Incoming: ignore _incoming directory entirely
+_incoming/
+
+# Logs
+logs/
+*.log
+.lock
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Test and coverage
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+.cache/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDE and editor files
+.vscode/
+*.code-workspace
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Pre-commit and tool caches
+.pre-commit-cache/
+.mypy_cache/
+.tox/
+.venv/  # already ignored above, ensure consistency
+
+# Miscellaneous temporary files
+*.tmp
+*.swp
+.DS_Store
+
+# Ignore submodule working copies
+/agent0/
+/xo-dev-scaffold-latest/
+
+# Tool and editor caches
+.cache/
+coverage.xml
+htmlcov/
+reports/
+/tmp/
+/build/
+/release/
+/dist/
+
+# OS and editor backups
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*~    # backup files
+venv/
+node_modules/
+dist/
+build/
+__pycache__/
+venv/
+node_modules/
+__pycache__/
+patch_bundle/
+vault/.signed/
+
