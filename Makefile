@@ -30,3 +30,7 @@ typecheck:
 ci:
 	@echo "✅ Running full CI suite (lint + test + typecheck)..."
 	@make lint && make test && make typecheck
+
+release:
+	@tox -e cz || (echo "❌ Tests failed. Aborting release."; exit 1)
+# TODO: Add more commands
