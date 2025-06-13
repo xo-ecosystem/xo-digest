@@ -3,7 +3,6 @@ repos:
     rev: 25.1.0
     hooks:
       - id: black
-        args: ["--diff"]
         pass_filenames: true
         stages: ["pre-commit", "pre-push", "manual"]
 
@@ -11,7 +10,6 @@ repos:
     rev: 6.0.1
     hooks:
       - id: isort
-        args: ["--diff"]
         stages: ["pre-commit", "pre-push", "manual"]
 
   - repo: https://github.com/pycqa/flake8
@@ -33,3 +31,32 @@ repos:
     hooks:
       - id: commitizen
         stages: [commit-msg]
+
+  - repo: local
+    hooks:
+      - id: coverage-check
+        name: Check Coverage
+        entry: bash -c 'coverage run -m pytest && coverage report --fail-under=80'
+        language: system
+        types: [python]
+        always_run: true
+        stages: [pre-commit, pre-push, manual]
+
+      - id: pytest-check
+        name: Run tests
+        entry: pytest --tb=short --disable-warnings
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit, pre-push, manual]
+
+      - id: coverage-badge
+        name: Generate Coverage Badge
+        entry: >
+          bash -c 'coverage-badge -o coverage.svg -f &&
+          git add coverage.svg &&
+          git diff --cached --quiet || git commit -m "🔖 Update coverage badge" --no-verify'
+        language: system
+        types: [python]
+        always_run: true
+        stages: [manual]

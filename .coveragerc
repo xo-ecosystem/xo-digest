@@ -1,0 +1,8 @@
+# .coveragerc
+[run]
+branch = True
+source = vault
+
+[report]
+show_missing = True
+skip_covered = True
