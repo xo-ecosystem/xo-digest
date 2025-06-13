@@ -1,4 +1,18 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.0"
+version = "0.2.0"
 tag_format = "v$version"
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_return_any = true
+strict_optional = true
+
+[tool.pytest.ini_options]
+addopts = "--tb=short --disable-warnings"
+testpaths = [
+    "tests",
+    "fab_tasks"
+]

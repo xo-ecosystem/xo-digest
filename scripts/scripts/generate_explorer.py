@@ -10,7 +10,7 @@ def load_manifest():
     if not MANIFEST_PATH.exists():
         print("❌ preview_manifest.json not found.")
         return []
-    with open(MANIFEST_PATH, "r") as f:
+    with open(MANIFEST_PATH) as f:
         return json.load(f)
 
 

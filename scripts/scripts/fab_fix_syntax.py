@@ -9,7 +9,7 @@ def syntax(c):
 
     print("\n🔍 Checking appagent_tasks.py at line 8...")
     try:
-        with open("/home/sandbox/fab_tasks/appagent_tasks.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/appagent_tasks.py") as f:
             lines = f.readlines()
             start = max(8 - 3, 0)
             end = min(8 + 2, len(lines))
@@ -20,7 +20,7 @@ def syntax(c):
 
     print("\n🔍 Checking appagent_webhook.py at line 8...")
     try:
-        with open("/home/sandbox/fab_tasks/appagent_webhook.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/appagent_webhook.py") as f:
             lines = f.readlines()
             start = max(8 - 3, 0)
             end = min(8 + 2, len(lines))
@@ -31,7 +31,7 @@ def syntax(c):
 
     print("\n🔍 Checking appagent_workflows.py at line 5...")
     try:
-        with open("/home/sandbox/fab_tasks/appagent_workflows.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/appagent_workflows.py") as f:
             lines = f.readlines()
             start = max(5 - 3, 0)
             end = min(5 + 2, len(lines))
@@ -42,7 +42,7 @@ def syntax(c):
 
     print("\n🔍 Checking audit_tasks.py at line 9...")
     try:
-        with open("/home/sandbox/fab_tasks/audit_tasks.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/audit_tasks.py") as f:
             lines = f.readlines()
             start = max(9 - 3, 0)
             end = min(9 + 2, len(lines))
@@ -53,7 +53,7 @@ def syntax(c):
 
     print("\n🔍 Checking audit_utils.py at line 9...")
     try:
-        with open("/home/sandbox/fab_tasks/audit_utils.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/audit_utils.py") as f:
             lines = f.readlines()
             start = max(9 - 3, 0)
             end = min(9 + 2, len(lines))
@@ -64,7 +64,7 @@ def syntax(c):
 
     print("\n🔍 Checking cicd.py at line 5...")
     try:
-        with open("/home/sandbox/fab_tasks/cicd.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/cicd.py") as f:
             lines = f.readlines()
             start = max(5 - 3, 0)
             end = min(5 + 2, len(lines))
@@ -75,7 +75,7 @@ def syntax(c):
 
     print("\n🔍 Checking cicd_tasks.py at line 8...")
     try:
-        with open("/home/sandbox/fab_tasks/cicd_tasks.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/cicd_tasks.py") as f:
             lines = f.readlines()
             start = max(8 - 3, 0)
             end = min(8 + 2, len(lines))
@@ -86,7 +86,7 @@ def syntax(c):
 
     print("\n🔍 Checking dashboard.py at line 6...")
     try:
-        with open("/home/sandbox/fab_tasks/dashboard.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/dashboard.py") as f:
             lines = f.readlines()
             start = max(6 - 3, 0)
             end = min(6 + 2, len(lines))
@@ -97,7 +97,7 @@ def syntax(c):
 
     print("\n🔍 Checking deploy_dashboard.py at line 5...")
     try:
-        with open("/home/sandbox/fab_tasks/deploy_dashboard.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/deploy_dashboard.py") as f:
             lines = f.readlines()
             start = max(5 - 3, 0)
             end = min(5 + 2, len(lines))
@@ -108,7 +108,7 @@ def syntax(c):
 
     print("\n🔍 Checking deploy_tasks.py at line 32...")
     try:
-        with open("/home/sandbox/fab_tasks/deploy_tasks.py", "r") as f:
+        with open("/home/sandbox/fab_tasks/deploy_tasks.py") as f:
             lines = f.readlines()
             start = max(32 - 3, 0)
             end = min(32 + 2, len(lines))
