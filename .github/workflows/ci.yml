@@ -1,34 +1,28 @@
-name: CI
+[tox]
+envlist = py38, py39, release
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+[testenv]
+deps =
+    pytest
+commands =
+    pytest
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+[testenv:release]
+deps =
+    twine
+commands =
+    python setup.py sdist bdist_wheel
+    twine upload dist/*
 
-    steps:
-    - uses: actions/checkout@v4
+[testenv:docs]
+deps =
+    sphinx
+commands =
+    sphinx-build docs docs/_build
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install mypy pytest pre-commit
-
-    - name: Run Lint
-      run: pre-commit run --all-files --show-diff-on-failure
-
-    - name: Run Tests
-      run: pytest --tb=short --disable-warnings
-
-    - name: Run Type Check
-      run: mypy .
+[testenv:release]
+deps =
+    twine
+commands =
+    python setup.py sdist bdist_wheel
+    twine upload dist/*

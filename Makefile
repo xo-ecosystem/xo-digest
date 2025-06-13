@@ -17,3 +17,16 @@ test:
 publish:
 	@echo "🚀 Publishing or syncing..."
 	@xo-cli publish
+
+
+lint:
+	@echo "🔍 Running pre-commit hooks..."
+	@pre-commit run --all-files
+
+typecheck:
+	@echo "🧠 Running mypy type checks..."
+	@mypy .
+
+ci:
+	@echo "✅ Running full CI suite (lint + test + typecheck)..."
+	@make lint && make test && make typecheck

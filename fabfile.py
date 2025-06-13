@@ -3,6 +3,7 @@
 from pathlib import Path
 import sys
 from invoke import Collection
+import fab_tasks.drop_tasks as drop_tasks
 
 # Resolve project root safely whether __file__ is defined or not (Fabric may exec this file twice)
 if "__file__" in globals():
@@ -56,6 +57,9 @@ ns.add_collection(Collection.from_module(vault_tasks), name="vault")
 ns.add_task(pulse_tasks.sync, name="sync")
 ns.add_task(pulse_tasks.archive_all, name="archive-all")
 
+# XO-Drop tasks
+ns.add_collection(Collection.from_module(drop_tasks), name="drop")
+
 # ---------------------------------------------------------------------------
 # Optional namespaces (don’t fail build if missing)
 # ---------------------------------------------------------------------------
@@ -78,3 +82,5 @@ for module_path, alias in OPTIONAL_MODULES:
 # ------------------------------------------------------------------
 for _mod in ("pulse_tasks", "vault_tasks", "mod"):
     globals().pop(_mod, None)
+
+

@@ -196,7 +196,7 @@ def archive(c, html_preview=False, clear=False):
     if index_html.exists():
         print(f"🌍 Uploading .signed/index.html to Lighthouse...")
         try:
-            with open(index_html, "r", encoding="utf-8") as f:
+            with open(index_html, encoding="utf-8") as f:
                 index_content = f.read()
             # Modify index_content to update CID links and add Signed badge
             from jinja2 import Template
