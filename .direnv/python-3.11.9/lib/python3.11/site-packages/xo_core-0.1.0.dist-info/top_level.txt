@@ -1,0 +1,3 @@
+content
+drops
+xo_core

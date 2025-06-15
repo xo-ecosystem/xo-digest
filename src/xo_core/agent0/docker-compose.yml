@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  xo-dev:
+    image: xo-dev:latest
+    ports:
+      - "${OLLAMA_PORT}:${OLLAMA_PORT}"
+      - "${AGENT0_EXTERNAL_PORT}:${AGENT0_INTERNAL_PORT}"
+    environment:
+      - OLLAMA_PORT=${OLLAMA_PORT}
+      - AGENT0_EXTERNAL_PORT=${AGENT0_EXTERNAL_PORT}
+      - AGENT0_INTERNAL_PORT=${AGENT0_INTERNAL_PORT}
+
+  agent0:
+    image: agent0:latest
+    ports:
+      - "${AGENT0_EXTERNAL_PORT}:${AGENT0_INTERNAL_PORT}"
+    environment:
+      - AGENT0_EXTERNAL_PORT=${AGENT0_EXTERNAL_PORT}
+      - AGENT0_INTERNAL_PORT=${AGENT0_INTERNAL_PORT}
+
+  vault:
+    image: vault:latest
+    ports:
+      - "${VAULT_EXTERNAL_PORT}:${VAULT_INTERNAL_PORT}"
+    environment:
+      - VAULT_EXTERNAL_PORT=${VAULT_EXTERNAL_PORT}
+      - VAULT_INTERNAL_PORT=${VAULT_INTERNAL_PORT}

@@ -1,1 +1,0 @@
-# The file `/Users/xo/xo-core-reforged/xo-agent/__init__.py` is now located at `/Users/xo/xo-core-reforged/xo_agent/__init__.py` after renaming the folder `xo-agent` to `xo_agent`. The content of the file remains unchanged.

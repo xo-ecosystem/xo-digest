@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  agent0:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent0
+    ports:
+      - "8002:8000"  # Avoid clashing with localhost:8000
+    environment:
+      - AGENT0_API_KEY=test123
+    restart: unless-stopped
