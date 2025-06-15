@@ -1,0 +1,45 @@
+{
+  "index_html_cid": "bafkreigrepm4ozgpbpnp7lj7qw57rsqaizfilsvljntz7ccaojqfprzjxe",
+  "entries": [
+    {
+      "file": "pulse_mission_manifesto_q3.mdx",
+      "slug": "pulse_mission_manifesto_q3",
+      "cid": "bafkreiaqtuqrc3vk5v4fr7wuzkksebcns23bz2ixhuc3btf2nnddjx7ste",
+      "preview_cid": "bafkreiaar5vkjzlv34ich5awauzj7z2v5rv6jnjqca5s4f5cgiaevn7aba",
+      "title": "Pulse Mission Manifesto Q3",
+      "arweave_url": null
+    },
+    {
+      "file": "xo_mvp_manifesto.mdx",
+      "slug": "xo_mvp_manifesto",
+      "cid": "bafkreicercilnxje7eykbfbtvsq7x7vl725mf7gvk7rvsbcho5ozxvltgy",
+      "preview_cid": "bafkreicktmivd4fzvqbkka3s55p35hvvzyigrbrsf5kweu5p5vj75wfose",
+      "title": "Xo Mvp Manifesto",
+      "arweave_url": null
+    },
+    {
+      "file": "seventh_seal.mdx",
+      "slug": "seventh_seal",
+      "cid": "bafkreigcozf77bjfnmmv3e2jxluvuvxroz5j2opz2efiwbfhltwigwrfka",
+      "preview_cid": "bafkreialxhktmxmfgjai2ccolxcxnnmmdcey4dj6deh3gspizjfb73yodm",
+      "title": "Seventh Seal",
+      "arweave_url": null
+    },
+    {
+      "file": "dev_roadmap_q3.mdx",
+      "slug": "dev_roadmap_q3",
+      "cid": "bafkreig6ipncen34lo5i3qesoi7insipi5tiy24rxrxbfz45a5xob7sfoy",
+      "preview_cid": "bafkreieme4cvcxh63zwgz7l7t5p6ylfzi4dh6z6ixu7oxnqjkt6s77dzs4",
+      "title": "Dev Roadmap Q3",
+      "arweave_url": null
+    },
+    {
+      "slug": "index_html",
+      "file": "index.html",
+      "cid": "bafkreigrepm4ozgpbpnp7lj7qw57rsqaizfilsvljntz7ccaojqfprzjxe",
+      "preview_cid": null,
+      "title": "Pulse Archive Explorer",
+      "arweave_url": null
+    }
+  ]
+}

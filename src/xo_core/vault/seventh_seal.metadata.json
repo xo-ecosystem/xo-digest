@@ -1,0 +1,41 @@
+{
+  "name": "The Seventh Seal",
+  "description": "The faceless guardian born of signed pulses. This NFT represents collective voice, reflection, and protection. Signed by XO.",
+  "image": "ipfs://bafybeiexamplecid/the_seventh_seal.png",
+  "external_url": "https://xoworld.org/vault/seventh_seal",
+  "attributes": [
+    {
+      "trait_type": "Identity",
+      "value": "Shifting"
+    },
+    {
+      "trait_type": "Signature Cape",
+      "value": "Yes"
+    },
+    {
+      "trait_type": "Face",
+      "value": "Reflective Mosaic"
+    },
+    {
+      "trait_type": "Origin",
+      "value": "Pulse of the People"
+    },
+    {
+      "trait_type": "Powers",
+      "value": "Voice Echo"
+    },
+    {
+      "trait_type": "Powers",
+      "value": "Guardian Protocol"
+    },
+    {
+      "trait_type": "Powers",
+      "value": "Presence Mirror"
+    }
+  ],
+  "signature": {
+    "signed_by": "XO",
+    "slug": "seventh_seal",
+    "proof": "ipfs://bafybeiexamplecid/seventh_seal.signed.json"
+  }
+}

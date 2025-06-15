@@ -1,0 +1,58 @@
+[
+  {
+    "file": "pulse_mission_manifesto_q3.mdx",
+    "sha256": "109d21116eaaed7858fed4ca9522044d96b61ce9173d05b0ccba6b4634dff299",
+    "timestamp": "2025-06-09T15:09:41.070989Z",
+    "cid": "bafkreiaqtuqrc3vk5v4fr7wuzkksebcns23bz2ixhuc3btf2nnddjx7ste",
+    "preview_cid": "bafkreiaar5vkjzlv34ich5awauzj7z2v5rv6jnjqca5s4f5cgiaevn7aba",
+    "arweave_txid": "qH4EM1N3hQax77j8AAdRIwoFLyIPw21cBfru6xSzmSA",
+    "signature": "a380eca944ded5f9254a0e95946d5c9fe028a7e62293f907706791a319fc5149",
+    "local_path": "pulse_mission_manifesto_q3.mdx",
+    "cid_short": "bafkreia\u2026",
+    "arweave_url": null,
+    "arweave_link": "\u2014",
+    "signed_badge": "\u2714 Signed"
+  },
+  {
+    "file": "xo_mvp_manifesto.mdx",
+    "sha256": "448890b6dd24f930a09433aca1fbfeabfebac2fcd557e3590447775d9bd57336",
+    "timestamp": "2025-06-09T15:09:45.879954Z",
+    "cid": "bafkreicercilnxje7eykbfbtvsq7x7vl725mf7gvk7rvsbcho5ozxvltgy",
+    "preview_cid": "bafkreicktmivd4fzvqbkka3s55p35hvvzyigrbrsf5kweu5p5vj75wfose",
+    "arweave_txid": "8D3IA3e3lM6AO_59a3EW6_vjYZm5MQ2Bu3tD9BDsnYw",
+    "signature": "c66c3c7a3fdb76d23d5199a6a8145b84eb576d57c6c7696128f94fc56ad06ab3",
+    "local_path": "xo_mvp_manifesto.mdx",
+    "cid_short": "bafkreic\u2026",
+    "arweave_url": null,
+    "arweave_link": "\u2014",
+    "signed_badge": "\u2714 Signed"
+  },
+  {
+    "file": "seventh_seal.mdx",
+    "sha256": "c2764bff85256b195d9349bae95a56f1767a9d39f9d10a8b04a75cec835a2550",
+    "timestamp": "2025-06-09T15:09:49.193508Z",
+    "cid": "bafkreigcozf77bjfnmmv3e2jxluvuvxroz5j2opz2efiwbfhltwigwrfka",
+    "preview_cid": "bafkreialxhktmxmfgjai2ccolxcxnnmmdcey4dj6deh3gspizjfb73yodm",
+    "arweave_txid": "U7M7wcSZPKU06c_vqi87n34NMhziPIqThwyZSOqY7po",
+    "signature": "36bec6b2b9d76feceb4a36795f636acf801354b0c3f0662da8cc496b7347ff40",
+    "local_path": "seventh_seal.mdx",
+    "cid_short": "bafkreig\u2026",
+    "arweave_url": null,
+    "arweave_link": "\u2014",
+    "signed_badge": "\u2714 Signed"
+  },
+  {
+    "file": "dev_roadmap_q3.mdx",
+    "sha256": "de43da22377c5bba8dc092723e86c90f47668c6b91bc6e12e79d076ee0fe4576",
+    "timestamp": "2025-06-09T15:09:52.332734Z",
+    "cid": "bafkreig6ipncen34lo5i3qesoi7insipi5tiy24rxrxbfz45a5xob7sfoy",
+    "preview_cid": "bafkreieme4cvcxh63zwgz7l7t5p6ylfzi4dh6z6ixu7oxnqjkt6s77dzs4",
+    "arweave_txid": "Qt3qH2ZFWJzLSci7fXLxp_m1R55B1bs82jVpjURy3cQ",
+    "signature": "dd30cb711af75b69989412817d914da7345d2969d7db23f984020ce16b99806c",
+    "local_path": "dev_roadmap_q3.mdx",
+    "cid_short": "bafkreig\u2026",
+    "arweave_url": null,
+    "arweave_link": "\u2014",
+    "signed_badge": "\u2714 Signed"
+  }
+]

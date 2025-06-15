@@ -1,0 +1,36 @@
+id: xo.coin.861ff36c-7b83-4049-ba1e-898c148aecfc
+name: The Seventh Seal
+type: character
+tagline: The last unlocked guardian, born of silence and signed by the people.
+signed_by: XO
+version: "1.0"
+created: "2025-05-31T11:16:35.393082Z"
+traits:
+  identity: shifting
+  signature_cape: true
+  face: reflective mosaic
+  symbol: "\u221E (XO)"
+  origin: Pulse of the People
+  powers:
+    - "Voice Echo: emits signed messages from cloak"
+    - "Guardian Protocol: activates on injustice"
+    - "Presence Mirror: reflects the observer's potential"
+vault:
+  slug: seventh_seal
+  publish_on:
+    - arweave
+    - ipfs
+  allow_signature_chain: true
+  linked_pulse: pulse.seventh-seal-origin
+image: the_seventh_seal.png
+drops:
+  - format: print
+    items:
+      - poster
+      - nfc_card
+      - pulse_patch
+  - format: digital
+    items:
+      - ar_filter
+      - xo-agent skin
+      - XO-Chain NFT

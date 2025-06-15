@@ -33,4 +33,15 @@ ci:
 
 release:
 	@tox -e cz || (echo "❌ Tests failed. Aborting release."; exit 1)
+
+test-html:
+	@mkdir -p reports
+	@ts=$$(date +%Y%m%d_%H%M%S); \
+	pytest tests/ --html=reports/test_report_$$ts.html --self-contained-html && \
+	open reports/test_report_$$ts.html
+
+test-vault:
+	pytest tests/test_vault.py
+
+
 # TODO: Add more commands

@@ -1,0 +1,11 @@
+{
+  "slug": "seventh_seal",
+  "signed_by": "XO",
+  "timestamp": "2025-05-31T18:08:27.556162Z",
+  "hash": "",
+  "signature": "xo-signature-placeholder",
+  "signer": "XO Core Authority",
+  "file": "seventh_seal.coin.yml",
+  "version": "1.0",
+  "sealed": true
+}

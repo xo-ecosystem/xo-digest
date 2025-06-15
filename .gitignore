@@ -1,96 +1,104 @@
+# -----------------------------------------------------------
+# XO‑Core canonical .gitignore
+# One tidy list, alphabetised within sections.
+# -----------------------------------------------------------
+
+###############################
+# 1. Environment & secret files
+###############################
 .env
-.env.production
-.env.staging
-# Ignore vault ZIP bundles
-*.zip
-.arweave.key.json
+.env.*
+arweave.json
+secrets/
 
-# local artefacts
+##############################################
+# 2. Virtual environments & direnv activations
+##############################################
+******.venv/
+.direnv/
 venv/
-.history/
-*.bak
-xo-core-reforged/patch_bundle/
 
-# Local artefacts we never commit
-**/node_modules/
-package-lock.json
-
-# Vault: ignore all vault files except signed outputs
-vault/*
-!vault/.signed/
-!vault/.signed/**
-
-# Incoming: ignore _incoming directory entirely
-_incoming/
-
-# Logs
-logs/
-*.log
-.lock
-
-# Python bytecode and caches
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Test and coverage
-.pytest_cache/
-htmlcov/
-.coverage
-.coverage.*
-.cache/
-
-# Distribution / packaging
+################################
+# 3. Build / distribution output
+################################
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# IDE and editor files
-.vscode/
-*.code-workspace
-.idea/
-*.sublime-workspace
-*.sublime-project
+#############################
+# 4. Dependency artefact dirs
+#############################
+node_modules/
+package-lock.json
 
-# Pre-commit and tool caches
-.pre-commit-cache/
+########################
+# 5. Logs & lock files
+########################
+.logs/
+*.log
+*.lock
+
+#################################
+# 6. Python bytecode & py caches
+#################################
+__pycache__/
+*.py[cod]
+*$py.class
 .mypy_cache/
-.tox/
-.venv/  # already ignored above, ensure consistency
-
-# Miscellaneous temporary files
-*.tmp
-*.swp
-.DS_Store
-
-# Ignore submodule working copies
-/agent0/
-/xo-dev-scaffold-latest/
-
-# Tool and editor caches
+.pytest_cache/
 .cache/
-coverage.xml
+
+###########################
+# 7. Test / coverage output
+###########################
+.coverage*
 htmlcov/
 reports/
-/tmp/
-/build/
-/release/
-/dist/
 
-# OS and editor backups
+################
+# 8. Tool caches
+################
+.pre-commit-cache/
+.tox/
+
+##################
+# 9. IDE artefacts
+##################
+.idea/
+.vscode/
+*.code-workspace
+*.sublime-*
+
+###########################
+# 10. OS / backup artefacts
+###########################
 .DS_Store
 Thumbs.db
 ehthumbs.db
-*~    # backup files
-venv/
-node_modules/
-dist/
-build/
-__pycache__/
-venv/
-node_modules/
-__pycache__/
-patch_bundle/
-vault/.signed/
+*~
 
+##############################
+# 11. Vault content management
+##############################
+vault/*
+!vault/.signed/
+!vault/.signed/**
+
+#########################
+# 12. Incoming scratch dir
+#########################
+_incoming/
+
+##############################
+# 13. Misc workspace artefacts
+##############################
+history/
+xo-core-reforged/patch_bundle/
+tmp/
+
+#########################################
+# 14. 3rd‑party submodule working copies
+#########################################
+/agent0/
+/xo-dev-scaffold-latest/

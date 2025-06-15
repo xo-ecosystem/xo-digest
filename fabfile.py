@@ -1,9 +1,19 @@
 """Unified Fabric task collection for xo‑core‑clean."""
 
-from pathlib import Path
 import sys
+from pathlib import Path
+# src/xo_core/fabfile.py
+from xo_core.fab_tasks.pulse_namespace import pulse_ns
+# Add the src directory to the Python path
+if "__file__" in globals():
+    sys.path.insert(0, str(Path(__file__).parent / "src"))
+    sys.path.insert(0, str(Path(__file__).parent / "src" / "xo_core"))
+
 from invoke import Collection
-import fab_tasks.drop_tasks as drop_tasks
+
+from xo_core.commitizen_tasks import cz_lint
+from xo_core.fab_tasks import pulse_tasks, vault_tasks
+from xo_core.fab_tasks.validate_tasks import validate_tasks
 
 # Resolve project root safely whether __file__ is defined or not (Fabric may exec this file twice)
 if "__file__" in globals():
@@ -44,8 +54,6 @@ Root‑level convenience aliases:
 # ---------------------------------------------------------------------------
 # Core task namespaces (required)
 # ---------------------------------------------------------------------------
-import fab_tasks.pulse_tasks as pulse_tasks
-from fab_tasks import vault_tasks
 
 ns = Collection()
 
@@ -58,13 +66,24 @@ ns.add_task(pulse_tasks.sync, name="sync")
 ns.add_task(pulse_tasks.archive_all, name="archive-all")
 
 # XO-Drop tasks
-ns.add_collection(Collection.from_module(drop_tasks), name="drop")
+try:
+    import xo_core.fab_tasks.drop_tasks as drop_tasks_mod
 
+    ns.add_collection(Collection.from_module(drop_tasks_mod), name="drop")
+    del drop_tasks_mod
+except ImportError:
+    print("⚠️  Optional tasks module not found: xo_core.fab_tasks.drop_tasks (skipped)")
+
+# Register validate_tasks at root level
+ns.add_task(validate_tasks, name="validate_tasks")
+
+ns.add_task(cz_lint, name="cz-lint")
 # ---------------------------------------------------------------------------
-# Optional namespaces (don’t fail build if missing)
+# Optional namespaces (don't fail build if missing)
 # ---------------------------------------------------------------------------
 OPTIONAL_MODULES = [
-    ("xo_agent.tasks", "xo"),
+    ("xo_agent.tasks", "xo_agent"),
+    ("xo_agent.tasks", "xo"),  # Alias for xo
     ("agent0.tasks", "agent0"),
 ]
 
@@ -77,10 +96,8 @@ for module_path, alias in OPTIONAL_MODULES:
         print(f"⚠️  Optional tasks module not found: {module_path} (skipped)")
 
 # ------------------------------------------------------------------
-# Final cleanup so Invoke’s runtime config loader sees only picklable
+# Final cleanup so Invoke's runtime config loader sees only picklable
 # objects in the module namespace.
 # ------------------------------------------------------------------
 for _mod in ("pulse_tasks", "vault_tasks", "mod"):
     globals().pop(_mod, None)
-
-
