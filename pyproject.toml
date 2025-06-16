@@ -74,3 +74,14 @@ deps =
 commands = 
     invoke cz-lint
 """
+[tool.poetry.group.dev.dependencies]
+pytest-asyncio = "^1.0.0"
+httpx = "^0.28.1"
+asgi-lifespan = "^2.1.0"
+
+
+[tool.poetry.group.test.dependencies]
+asgi-lifespan = "^2.1.0"
+httpx = "^0.28.1"
+pytest-asyncio = "^1.0.0"
+
