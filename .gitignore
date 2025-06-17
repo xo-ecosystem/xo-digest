@@ -104,3 +104,4 @@ tmp/
 /xo-dev-scaffold-latest/
 # ignore direnv venv
 .direnv/
+.envrc
