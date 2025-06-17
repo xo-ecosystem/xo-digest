@@ -17,6 +17,7 @@ secrets/
 ******.venv/
 .direnv/
 venv/
+.envrc
 
 ################################
 # 3. Build / distribution output
@@ -101,7 +102,6 @@ tmp/
 # 14. 3rd‑party submodule working copies
 #########################################
 /agent0/
-/xo-dev-scaffold-latest/
-# ignore direnv venv
-.direnv/
+/xo-dev-scaffold-latest/.venv/
 .envrc
+.direnv/
