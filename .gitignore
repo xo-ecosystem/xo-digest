@@ -8,13 +8,14 @@
 ###############################
 .env
 .env.*
+.envrc
 arweave.json
 secrets/
 
 ##############################################
 # 2. Virtual environments & direnv activations
 ##############################################
-******.venv/
+.venv/
 .direnv/
 venv/
 
@@ -47,7 +48,7 @@ __pycache__/
 *$py.class
 .mypy_cache/
 .pytest_cache/
-.cache/
+.cache/ 
 
 ###########################
 # 7. Test / coverage output
@@ -102,5 +103,3 @@ tmp/
 #########################################
 /agent0/
 /xo-dev-scaffold-latest/
-# ignore direnv venv
-.direnv/
