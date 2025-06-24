@@ -103,3 +103,24 @@ tmp/
 #########################################
 /agent0/
 /xo-dev-scaffold-latest/
+.venv/
+.direnv/
+.envrc
+
+.venv/
+.direnv/
+.envrc
+
+# .gitignore
+# Python
+venv/
+.venv/
+.env/
+__pycache__/
+.env.local
+
+!vault/daily/*.md
+!vault/daily/*.slim.md
+!vault/daily/*.zip
+!vault/daily/index.html
+
