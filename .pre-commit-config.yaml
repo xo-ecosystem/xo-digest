@@ -73,6 +73,34 @@ repos:
     hooks:
       - id: auto-task-summary
         name: Auto-generate task summary
-        entry: bash -c 'for file in docs/task_summaries/*.md; do [ -f "$file" ] && git add "$file"; done; git status --short docs/task_summaries || true'
+        entry: >
+          bash -c '
+            mkdir -p docs/task_summaries &&
+            find docs/task_summaries -type f -name "*.md" -empty -delete &&
+            for file in docs/task_summaries/*.md; do
+              [ -f "$file" ] && git add "$file";
+            done &&
+            git status --short docs/task_summaries || true
+          '
         language: system
         pass_filenames: false
+
+      - id: cleanup-index-lock
+        name: 🧹 Remove stale .git/index.lock
+        entry: bash -c '[ -f .git/index.lock ] && echo "🧹 Removing .git/index.lock" && rm -f .git/index.lock || true'
+        language: system
+        always_run: true
+
+      - id: cleanup-index
+        name: 🧹 Cleanup .git/index if corrupted
+        entry: >
+          bash -c '
+            if [ -f .git/index ] && ! git ls-files > /dev/null 2>&1; then
+              echo "⚠️ Detected corrupted .git/index — backing up and rebuilding"
+              cp .git/index .git/index.bak
+              rm -f .git/index
+              git reset
+            fi
+          '
+        language: system
+        always_run: true
