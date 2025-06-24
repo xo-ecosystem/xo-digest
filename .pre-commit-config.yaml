@@ -69,6 +69,12 @@ repos:
         language: system
         always_run: true
 
+      - id: skip-vault-zips
+        name: 🔁 Skip vault zips and .vault files
+        entry: bash -c '! git diff --cached --name-only | grep -qE "(\.vault/|\.zip$)"'
+        language: system
+        always_run: true
+
   - repo: local
     hooks:
       - id: auto-task-summary

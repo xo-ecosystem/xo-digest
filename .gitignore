@@ -82,9 +82,11 @@ ehthumbs.db
 ##############################
 # 11. Vault content management
 ##############################
-vault/*
-!vault/.signed/
-!vault/.signed/**
+vault/**
+!vault/daily/
+!vault/daily/.gitkeep
+.vault/**
+*.zip
 
 #########################
 # 12. Incoming scratch dir
