@@ -110,3 +110,20 @@ tmp/
 # 15. Git internal cache cleanup targets
 #########################################
 .git/index.lock
+
+# Prevent ghost folders
+scripts/scripts/
+scripts/fab_tasks/
+fab_tasks/xo-drops-local-backup/
+xo-drops-local-backup/
+
+# Prevent nested Git repos from being accidentally tracked
+**/.git
+# Local backups and digest repos
+xo-digest/
+xo-drops-local-backup/
+
+# Ignore Python envs
+.venv/
+.direnv/
+.envrc

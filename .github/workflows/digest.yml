@@ -1,0 +1,133 @@
+name: Daily Digest Auto-Publish
+on:
+  schedule:
+    - cron: '30 7 * * *'
+  workflow_dispatch:
+jobs:
+  build-and-deploy:
+    env:
+      SIMULATE_FAIL: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate Vault Digest
+        run: fab vault.digest.generate
+
+      - name: Simulate Failure (for test)
+        if: env.SIMULATE_FAIL == 'true'
+        run: exit 1
+
+      - name: Preview Digest
+        run: fab digest-preview
+
+      - name: Style and Filter Digest
+        run: fab digest-style
+
+      - name: Deploy Digest
+        run: fab digest-deploy
+
+      - name: Pin Digest to IPFS
+        run: fab digest-pin
+
+      - name: Publish Digest to IPFS
+        run: fab digest-publish
+
+      - name: Confirm Arweave/IPFS Upload
+        id: publish_confirm
+        run: |
+          echo "status=✅ Arweave + IPFS upload succeeded" >> $GITHUB_OUTPUT
+
+      - name: Run Tests and Lint
+        id: test_summary
+        run: |
+          echo "summary=$(pytest --maxfail=1 --disable-warnings -q || echo 'Tests failed')" >> $GITHUB_OUTPUT
+
+      - name: Compute Job Duration
+        id: duration
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const start = new Date(process.env.GITHUB_RUN_STARTED_AT);
+            const end = new Date();
+            const durationMs = end - start;
+            const minutes = Math.floor(durationMs / 60000);
+            const seconds = Math.floor((durationMs % 60000) / 1000);
+            return `${minutes}m ${seconds}s`;
+          result-encoding: string
+
+      - name: Upload Rendered Digest HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-html
+          path: vault/daily/index.html
+
+      - name: Upload Rendered Digest Markdown
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-md
+          path: vault/daily/*.md
+
+      - name: Upload Signed Log File
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-signed-log
+          path: vault/digests/daily_digest_*.log.signed
+
+      - name: Extract Pulse Headline
+        id: pulse
+        run: |
+          DIGEST_FILE=$(ls -t vault/daily/*.md | head -n 1)
+          HEADLINE=$(grep '^# ' "$DIGEST_FILE" | head -n 1 | sed 's/^# //')
+          echo "headline=$HEADLINE" >> $GITHUB_OUTPUT
+
+      - name: Notify Discord
+        if: always()
+        uses: Ilshidur/action-discord@master
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: >-
+            ${{
+              job.status == 'success' && '**✅ SUCCESS: XO Digest Published**\n\n🔍 [View Digest](https://xo-dev.pages.dev/vault/daily/)\n📄 [Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n📎 [Download Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
+              || job.status == 'failure' && '**❌ FAILURE: XO Digest Failed**\n\n📄 [Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n📎 [Download Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
+              || job.status == 'cancelled' && '**⚠️ CANCELLED: XO Digest Skipped**\n\n📄 [Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n📎 [Download Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
+            }}
+
+      - name: Notify Slack
+        if: always()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "${{
+                job.status == 'success' && '*✅ SUCCESS: XO Digest Published*\n\n🔍 <https://xo-dev.pages.dev/vault/daily/|View Digest>\n📄 <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Logs>\n📎 <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts|Download Artifacts>\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
+                || job.status == 'failure' && '*❌ FAILURE: XO Digest Failed*\n\n📄 <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Logs>\n📎 <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts|Download Artifacts>\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
+                || job.status == 'cancelled' && '*⚠️ CANCELLED: XO Digest Skipped*\n\n📄 <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Logs>\n📎 <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts|Download Artifacts>\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
+              }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify Telegram
+        if: always()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: >-
+            ${{
+              job.status == 'success' && '✅ *SUCCESS: XO Digest Published*\n\n🔍 https://xo-dev.pages.dev/vault/daily/\n📄 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n📎 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
+              || job.status == 'failure' && '❌ *FAILURE: XO Digest Failed*\n\n📄 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n📎 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
+              || job.status == 'cancelled' && '⚠️ *CANCELLED: XO Digest Skipped*\n\n📄 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n📎 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
+            }}

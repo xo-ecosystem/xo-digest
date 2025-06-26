@@ -1,10 +1,8 @@
-
-
-
 # --------------------------------------------------------------------------- #
 # 🧪 Validation helper used by our pytest suite
 # --------------------------------------------------------------------------- #
-from invoke import task, Collection
+from invoke import Collection, task
+
 
 @task
 def _validate_tasks(c):
@@ -12,10 +10,11 @@ def _validate_tasks(c):
     Quick smoke‑test: ask Invoke to list available tasks.
     If any task modules fail to import, this will raise.
     """
-    # `invoke --list` will attempt to load all task namespaces.  
+    # `invoke --list` will attempt to load all task namespaces.
     # Failure to import any task will result in a non‑zero exit status,
     # which pytest will catch.
     c.run("invoke --list", pty=False)
+
 
 # Expose a Collection object so the test suite can access it.
 _validate_collection = Collection()

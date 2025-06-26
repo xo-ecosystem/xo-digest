@@ -3,6 +3,7 @@ Fabric tasks validation module.
 """
 
 from invoke import Collection, Context, task
+
 from .pulse_namespace import pulse_ns
 from .validate_tasks import validate_tasks as _validate_tasks_task
 

@@ -2,8 +2,10 @@
 
 import sys
 from pathlib import Path
+
 # src/xo_core/fabfile.py
 from xo_core.fab_tasks.pulse_namespace import pulse_ns
+
 # Add the src directory to the Python path
 if "__file__" in globals():
     sys.path.insert(0, str(Path(__file__).parent / "src"))

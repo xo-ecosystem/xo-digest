@@ -1,0 +1,7 @@
+
+
+
+# Always treat virtualenv and direnv folders as binary, never merge or diff
+.direnv/** binary
+.venv/** binary
+venv/** binary

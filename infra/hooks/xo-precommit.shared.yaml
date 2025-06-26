@@ -1,0 +1,33 @@
+# === XO Shared Pre-commit Hooks ===
+- repo: https://github.com/psf/black
+  rev: 24.3.0
+  hooks:
+    - id: black
+
+- repo: https://github.com/pre-commit/mirrors-isort
+  rev: v5.12.0
+  hooks:
+    - id: isort
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.5.0
+  hooks:
+    - id: check-yaml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+
+- repo: local
+  hooks:
+    - id: run-tests
+      name: Run tests
+      entry: pytest
+      language: python
+      args: ["--tb=short", "--disable-warnings"]
+      pass_filenames: false
+      additional_dependencies:
+        - pytest
+        - pytest-asyncio>=0.23
+      always_run: true
+      stages: [pre-commit, pre-push]
+
+# End of XO Shared Pre-commit Hooks

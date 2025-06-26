@@ -1,4 +1,5 @@
 # === XO Pre-commit Configuration ===
+exclude: ^(\.direnv|\.venv)/
 repos:
   - repo: https://github.com/psf/black
     rev: 24.4.2
@@ -65,7 +66,7 @@ repos:
 
       - id: clean-submodules
         name: 🧹 Reset dirty submodules
-        entry: bash -c 'git submodule foreach --recursive "git reset --hard && git clean -fd"'
+        entry: bash -c 'if [ -f .gitmodules ]; then git submodule foreach --recursive "git reset --hard && git clean -fd"; else echo "✅ No submodules to clean."; fi'
         language: system
         always_run: true
 
@@ -75,8 +76,6 @@ repos:
         language: system
         always_run: true
 
-  - repo: local
-    hooks:
       - id: auto-task-summary
         name: Auto-generate task summary
         entry: >
@@ -110,3 +109,10 @@ repos:
           '
         language: system
         always_run: true
+
+      - id: prevent-nested-git
+        name: Prevent Nested Git Repos
+        entry: bash -c '! find . -type d -name ".git" -not -path "./.git" | grep -q .'
+        language: system
+        always_run: true
+        pass_filenames: false

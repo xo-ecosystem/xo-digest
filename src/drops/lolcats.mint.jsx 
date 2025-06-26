@@ -1,0 +1,41 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Cat, Loader2, Sparkles } from "lucide-react";
+
+export default function LolcatsMint() {
+  const [minting, setMinting] = useState(false);
+  const [minted, setMinted] = useState(false);
+
+  const handleMint = async () => {
+    setMinting(true);
+    setTimeout(() => {
+      setMinted(true);
+      setMinting(false);
+    }, 1500); // Replace with real mint call
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <Card className="w-full max-w-md text-center shadow-xl border-2 border-dashed">
+        <CardContent className="p-6">
+          <div className="text-4xl mb-4">😹</div>
+          <h2 className="text-xl font-bold mb-2">Mint Your First $LOLCAT</h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            One click. Infinite meow.
+          </p>
+          <Button onClick={handleMint} disabled={minting || minted}>
+            {minting ? (
+              <Loader2 className="animate-spin mr-2" />
+            ) : minted ? (
+              <Sparkles className="mr-2" />
+            ) : (
+              <Cat className="mr-2" />
+            )}
+            {minting ? "Minting..." : minted ? "Meowminted!" : "Mint $LOLCAT"}
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

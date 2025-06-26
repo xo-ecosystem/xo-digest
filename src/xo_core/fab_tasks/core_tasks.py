@@ -6,6 +6,7 @@ the collection must expose a task called **validate-tasks**.
 """
 
 from pathlib import Path
+
 from invoke import Collection, task
 
 
