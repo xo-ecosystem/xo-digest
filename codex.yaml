@@ -1,0 +1,7 @@
+commands:
+  ci.drops:
+    venv: venv
+    run: |
+      git diff --quiet || { echo "❌ Uncommitted changes present. Please commit or stash."; exit 1; }
+      xo-fab ci.drops
+    description: Restore and bundle XO drops via Fabric CI task

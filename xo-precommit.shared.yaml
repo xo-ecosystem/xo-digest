@@ -1,0 +1,25 @@
+# XO-Core Pre-Commit Essentials
+
+This directory contains shared pre-commit hook configurations for use in XO projects.
+
+## Usage
+
+To include these hooks in your project:
+
+1. Add the following to your `.pre-commit-config.yaml`:
+
+   ```yaml
+   - include: infra/hooks/xo-core-precommit.yaml
+   ```
+
+2. Install the hooks:
+
+   ```bash
+   pre-commit install
+   ```
+
+## Contents
+
+- `xo-core-precommit.yaml`: Shared local hooks like `pytest-check`, `coverage-badge`, submodule cleanup, and safety guards.
+
+These are designed to help avoid common pitfalls and enforce consistent developer experience across XO repositories.

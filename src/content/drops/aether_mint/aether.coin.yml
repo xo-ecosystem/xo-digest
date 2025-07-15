@@ -1,0 +1,27 @@
+title: Aether Mint Drop
+subtitle: "Infuse your journey with Aether"
+description: |
+  The first elemental drop in the XO constellation — this token signifies
+  your connection to the pulse of transparent creation and cosmic play.
+  Mint it to unlock the scroll and claim your place in the evolving map.
+
+mint_url: https://thirdweb.com/xo/aether_mint
+gas_fee_unit: Aether
+rarity: elemental
+phase: 1
+series: constellation
+
+tags:
+  - aether
+  - drop
+  - xo
+  - elemental
+
+claim_reward:
+  type: badge
+  label: "XO Aether Collector"
+  animation: true
+
+qr:
+  text: "Scan to claim your Aether"
+  image: ./assets/qr.png

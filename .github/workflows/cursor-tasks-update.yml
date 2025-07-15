@@ -1,0 +1,32 @@
+name: 🌀 Cursor Tasks Update
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/task_summaries/cursor_tasks.json'
+
+permissions:
+  contents: write
+
+jobs:
+  update-cursor-tasks:
+    if: github.repository == 'xo-verses/xo-core'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install fabric
+      - name: Run cursor task script
+        run: python scripts/generate_cursor_tasks.py
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add docs/task_summaries/cursor_tasks.json
+          git commit -m "🔄 Auto-update cursor task summaries from CI" || echo "No changes"
+          git push

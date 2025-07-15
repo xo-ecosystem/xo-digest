@@ -1,0 +1,12 @@
+{
+  "project": "xo-core",
+  "include": ["src/xo_core/fab_tasks/**.py"],
+  "exclude": ["**/__pycache__/**", "**/.venv/**", "**/tests/**"],
+  "tags": ["fabric", "xo", "tasks", "automation"],
+  "entryPoints": ["fabfile.py", "src/xo_core/fab_tasks/__init__.py"],
+  "goals": [
+    "Auto-wire all Fabric @task modules",
+    "Generate docstrings and CLI usage hints",
+    "Link nested Collections via chain.py"
+  ]
+}

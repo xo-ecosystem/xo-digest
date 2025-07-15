@@ -1,0 +1,12 @@
+rule:
+  id: sign_pulse_function_required
+  description: Ensure `sign_pulse()` function exists in pulse/sign.py
+  applies_to: src/xo_core/vault/pulse/sign.py
+  checks:
+    - type: required_function
+      function: sign_pulse
+  codex_hint: |
+    Make sure the file `sign.py` contains a properly defined `sign_pulse()` function.
+    Example:
+        def sign_pulse(pulse_path: str) -> None:
+            ...

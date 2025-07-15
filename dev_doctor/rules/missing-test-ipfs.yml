@@ -1,0 +1,11 @@
+rules:
+  - id: ipfs-test-check
+    description: Ensure test_ipfs_utils.py exists and covers core pinning logic
+    severity: LOW
+    match:
+      - pattern: "test_ipfs_utils"
+        message: "Consider adding or updating IPFS test coverage"
+    fix:
+      suggestion: |
+        # cursor:hint Consider adding tests/test_ipfs_utils.py for this logic
+        # cursor:codex.fixme Create or improve the test file for IPFS utils

@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "path": "xo-core"
+    },
+    {
+      "path": "xo-ecosystem/sites/xoseals.com"
+    },
+    {
+      "path": "xo-sweeper"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true,
+      "**/node_modules": true
+    }
+  }
+}

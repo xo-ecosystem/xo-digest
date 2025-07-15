@@ -1,0 +1,12 @@
+rules:
+  - id: sign-usage-check
+    description: Ensure sign_pulse is imported and used
+    severity: MEDIUM
+    match:
+      - pattern: "sign_pulse"
+        message: "Expected sign_pulse usage in this module"
+    fix:
+      suggestion: |
+        from xo_core.pulse.sign import sign_pulse
+        # cursor:hint Consider calling sign_pulse(...) during pulse signing
+        # cursor:codex.fixme This function should be used to properly sign pulse data

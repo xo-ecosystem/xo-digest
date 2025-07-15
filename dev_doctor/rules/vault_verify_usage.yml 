@@ -1,0 +1,11 @@
+rules:
+  - id: vault-verify-all-check
+    description: Ensure `vault.verify-all` is used in verification pipelines
+    severity: MEDIUM
+    match:
+      - pattern: "vault.verify-all"
+        message: "Missing call to `vault.verify-all` – consider running full signature checks"
+    fix:
+      suggestion: |
+        # cursor:hint You might want to run `xo-fab vault.verify-all` after signing pulses
+        # cursor:codex.fixme Add call to `vault.verify-all` in appropriate Fabric task

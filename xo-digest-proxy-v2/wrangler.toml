@@ -1,0 +1,11 @@
+name = "xo-digest-proxy-v2"
+type = "javascript"
+
+account_id = "e9283443529958706822edfa0628a2f0"
+workers_dev = true
+main = "worker.js"
+
+# Optional: route if deploying to custom domain
+# routes = ["https://xo-digest.com/webhook/digest"]
+
+compatibility_date = "2025-07-10"

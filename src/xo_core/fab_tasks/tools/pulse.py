@@ -1,4 +1,4 @@
-from invoke import task
+from invoke import task, Collection
 
 
 @task
@@ -36,7 +36,12 @@ def describe(c, path="content/pulses"):
                 data = yaml.safe_load(f)
             print(f"\n🔎 {file.name}")
             print(f"  • title: {data.get('title')}")
-            print(f"  • author: {data.get('author')}")
             print(f"  • tags: {', '.join(data.get('tags', []))}")
         except Exception as e:
             print(f"⚠️  Failed to read {file.name}: {e}")
+
+
+# Create namespace
+ns = Collection("pulse")
+ns.add_task(validate)
+ns.add_task(describe)

@@ -1,0 +1,122 @@
+import React from 'react';
+import fs from 'fs';
+import path from 'path';
+import yaml from 'js-yaml';
+import { useContract, useMintNFT } from "@thirdweb-dev/react";
+
+type Variant = {
+  name: string;
+  image: string;
+  description: string;
+  price?: string;
+  contract?: string;
+};
+
+export async function getStaticProps() {
+  const filePath = path.join(process.cwd(), 'src/content/drops/aether_mint/.coin.yml');
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const data = yaml.load(fileContents) as Variant;
+
+  return {
+    props: {
+      variant: data,
+    },
+  };
+}
+
+export default function Drop({ variant }: { variant: Variant }) {
+  const [minted, setMinted] = React.useState(false);
+
+  const { contract } = useContract(variant.contract);
+  const { mutateAsync: mintNft, isLoading } = useMintNFT(contract);
+
+  const handleMint = async () => {
+    if (!contract || !mintNft) {
+      alert("Contract or mint function is not available.");
+      return;
+    }
+    try {
+      const toAddress = (await contract?.wallet.getAddress()) || "";
+      if (!toAddress) {
+        alert("Please connect your wallet.");
+        return;
+      }
+      const tx = await mintNft({
+        to: toAddress, // use connected wallet address
+        metadata: {
+          name: variant.name,
+          description: variant.description,
+          image: variant.image,
+        },
+      });
+      console.log("Minted NFT:", tx);
+      setMinted(true);
+    } catch (err) {
+      console.error("Mint failed", err);
+    }
+  };
+
+  if (!contract || !mintNft) {
+    return (
+      <main className="drop-container" style={{ position: 'relative' }}>
+        <h1>🌌 {variant.name}</h1>
+        <img src={variant.image} alt={variant.name} className="drop-image" />
+        <p>{variant.description}</p>
+        {variant.price && <p>Price: {variant.price}</p>}
+        <p style={{ color: 'red' }}>⚠️ Contract or mint function is not available. Please check your connection or contract address.</p>
+      </main>
+    );
+  }
+
+  return (
+    <main className="drop-container" style={{ position: 'relative' }}>
+      <h1>🌌 {variant.name}</h1>
+      <img src={variant.image} alt={variant.name} className="drop-image" />
+      <p>{variant.description}</p>
+      {variant.price && <p>Price: {variant.price}</p>}
+      {!minted ? (
+        <button className="mint-button" onClick={handleMint} disabled={isLoading}>
+          {isLoading ? "⏳ Minting..." : "🔓 Mint"}
+        </button>
+      ) : (
+        <p>✅ Successfully minted!</p>
+      )}
+      {minted && <div className="xo-lightning" />}
+      <style jsx>{`
+        .xo-lightning {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 240px;
+          height: 240px;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
+          transform: translate(-50%, -50%);
+          border-radius: 50%;
+          animation: xoFlash 3s ease-out forwards;
+          pointer-events: none;
+          z-index: 10;
+          box-shadow: 0 0 40px 10px rgba(173, 216, 230, 0.4);
+        }
+
+        @keyframes xoFlash {
+          0% {
+            opacity: 0;
+            transform: scale(0.8) translate(-50%, -50%);
+          }
+          25% {
+            opacity: 1;
+            transform: scale(1.05) translate(-50%, -50%);
+          }
+          75% {
+            opacity: 0.7;
+            transform: scale(1.1) translate(-50%, -50%);
+          }
+          100% {
+            opacity: 0;
+            transform: scale(1.2) translate(-50%, -50%);
+          }
+        }
+      `}</style>
+    </main>
+  );
+}

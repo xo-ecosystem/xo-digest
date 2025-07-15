@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pulse – prose_test</title>
+    <meta property="og:title" content="Pulse – prose_test" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://xo-pulse.netlify.app/prose_test.html" />
+    <meta property="og:description" content="XO Pulse: prose_test" />
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+      html { font-family: 'Space Grotesk', sans-serif; }
+      .prose h1, .prose h2 { color: #ff5f7e; }
+      .prose blockquote {
+        border-left: 4px solid #ff5f7e;
+        padding-left: 1rem;
+        font-style: italic;
+        color: #4b5563;
+      }
+      .prose a {
+        color: #ff5f7e;
+        text-decoration: underline;
+      }
+      .prose a:hover {
+        color: #ec4899;
+      }
+      .pulse-note {
+          background-color: #eff6ff;
+          border-left: 4px solid #60a5fa;
+          color: #1e40af;
+          padding: 1rem;
+          margin-bottom: 1rem;
+      }
+      .pulse-warning {
+          background-color: #fef9c3;
+          border-left: 4px solid #facc15;
+          color: #92400e;
+          padding: 1rem;
+          margin-bottom: 1rem;
+      }
+      .pulse-tip {
+          background-color: #dcfce7;
+          border-left: 4px solid #4ade80;
+          color: #166534;
+          padding: 1rem;
+          margin-bottom: 1rem;
+      }
+    </style>
+</head>
+<body class="prose lg:prose-xl mx-auto my-10 px-4">
+    <h1>prose_test</h1>
+<p>Welcome to your new pulse!</p>
+<div class="pulse-note">Hello World </div>
+
+<p>This is a test pulse created automatically. You can edit this file to add your content.</p>
+<h2>Features</h2>
+<ul>
+<li><strong>Shortcodes</strong>: Use <code>&lt;div class="pulse-tip"&gt;</code>, <code>&lt;/div&gt;note</code>, <code>:::warning</code> for callouts</li>
+<li><strong>Markdown</strong>: Full markdown support</li>
+<li><strong>Live Preview</strong>: Use <code>fab pulse.preview --slug prose_test --html</code> for live reload</li>
+</ul>
+<h2>Getting Started</h2>
+<ol>
+<li>Edit this file: <code>content/pulses/prose_test/index.mdx</code></li>
+<li>Preview with: <code>fab pulse.preview --slug prose_test --html</code></li>
+<li>Export with: <code>fab pulse.export-html --slug prose_test</code></li>
+</ol>
+<p>Happy writing! ✍️</p>
+</body>
+</html>

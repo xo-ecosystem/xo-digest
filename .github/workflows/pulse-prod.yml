@@ -1,0 +1,62 @@
+name: 🚀 Pulse Production Publish
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'content/pulses/**'
+      - 'scripts/pulse_publish.py'
+      - '.github/workflows/pulse-prod.yml'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: 🧪 Run pulse publish script (dry run)
+        run: |
+          source .venv/bin/activate
+          python scripts/pulse_publish.py --dry-run
+
+      - name: 🚀 Publish to Arweave/IPFS
+        run: |
+          source .venv/bin/activate
+          python scripts/pulse_publish.py --prod
+        env:
+          ARWEAVE_KEY: ${{ secrets.ARWEAVE_KEY }}
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+          XO_WEBHOOK_SECRET: ${{ secrets.XO_WEBHOOK_SECRET }}
+
+      - name: 📡 Trigger XO Digest Preview
+        run: |
+          curl -X POST https://xo-digest.pages.dev/api/trigger \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $XO_WEBHOOK_SECRET" \
+            -d '{"event": "pulse_publish", "status": "success"}'
+        env:
+          XO_WEBHOOK_SECRET: ${{ secrets.XO_WEBHOOK_SECRET }}
+
+      - name: 📬 Post Digest Preview to Telegram
+        run: |
+          curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -H "Content-Type: application/json" \
+            -d "{\"chat_id\": \"${{ secrets.TELEGRAM_CHAT_ID }}\", \"text\": \"📡 New XO Pulse published! Preview: https://xo-digest.pages.dev\"}"
+
+      - name: ♻️ Reusable Digest Pipeline
+        uses: xo-verses/xo-digest/.github/workflows/reusable-digest.yml@main
+        with:
+          pulse_slug: latest
+        secrets: inherit

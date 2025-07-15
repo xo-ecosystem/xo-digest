@@ -1,0 +1,20 @@
+"""
+Pulse signing utilities for XO Vault.
+"""
+
+from xo_core.vault.ipfs_utils import pin_to_ipfs
+
+def sign_pulse(pulse_data, private_key=None, **kwargs):
+    """
+    Sign a pulse with the provided private key or default vault key.
+    
+    Args:
+        pulse_data: The pulse data to sign
+        private_key: Optional private key for signing
+        **kwargs: Additional signing parameters
+        
+    Returns:
+        dict: Signed pulse with signature metadata
+    """
+    # TODO: Implement pulse signing logic
+    pass

@@ -1,0 +1,49 @@
+name: XO Pulse Dev CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  pulse-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Run full pulse.dev
+        run: |
+          source .venv/bin/activate
+          make pulse-dev
+
+      - name: Check for signed pulse
+        run: |
+          test -f content/pulses/test_pulse/test_pulse.signed && echo "✅ Signed pulse exists" || echo "⚠️ Signed pulse missing"
+
+      - name: Pin pulse to IPFS
+        run: |
+          echo "🔗 (Stub) Pinning to IPFS..."
+          # Placeholder: Replace with actual pinning logic or script
+
+      - name: Generate XOwlPost-style preview
+        run: |
+          echo "📢 (Stub) Generating preview for XOwlPost..."
+          # Placeholder: Replace with actual generation command or script
+
+      - name: Notify Discord/Telegram Webhook
+        run: |
+          echo "📡 (Stub) Notifying webhook..."
+          # Placeholder: Replace with actual webhook POST logic

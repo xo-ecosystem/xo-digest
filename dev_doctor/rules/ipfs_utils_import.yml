@@ -1,0 +1,108 @@
+---
+rule: Ensure Vault import is present
+target_file: src/xo_core/pulse/archive_pulse.py
+check_type: import_statement
+import_statement: from xo_core import vault
+codex_hint: |
+  # codex:hint
+  Consider adding:
+  from xo_core import vault
+auto_fix:
+  action: append_import
+  import_statement: from xo_core import vault
+---
+rule: Ensure utils import is present
+target_file: src/xo_core/pulse/archive_pulse.py
+check_type: import_statement
+import_statement: from xo_core.utils import validate_signature
+codex_hint: |
+  # codex:hint
+  Consider adding:
+  from xo_core.utils import validate_signature
+auto_fix:
+  action: append_import
+  import_statement: from xo_core.utils import validate_signature
+---
+rule: Ensure IPFS utils are imported
+target_file: src/xo_core/pulse/archive_pulse.py
+check_type: import_statement
+import_statement: from xo_core.vault.ipfs_utils import pin_to_ipfs
+codex_hint: |
+  # codex:hint
+  Consider adding:
+  from xo_core.vault.ipfs_utils import pin_to_ipfs
+auto_fix:
+  action: append_import
+  import_statement: from xo_core.vault.ipfs_utils import pin_to_ipfs
+---
+rule: Ensure Vault import is present
+target_file: src/xo_core/vault/sign_pulse.py
+check_type: import_statement
+import_statement: from xo_core import vault
+codex_hint: |
+  # codex:hint
+  Consider adding:
+  from xo_core import vault
+auto_fix:
+  action: append_import
+  import_statement: from xo_core import vault
+---
+rule: Ensure utils import is present
+target_file: src/xo_core/vault/sign_pulse.py
+check_type: import_statement
+import_statement: from xo_core.utils import validate_signature
+codex_hint: |
+  # codex:hint
+  Consider adding:
+  from xo_core.utils import validate_signature
+auto_fix:
+  action: append_import
+  import_statement: from xo_core.utils import validate_signature
+---
+rule: Ensure IPFS utils are imported
+target_file: src/xo_core/vault/sign_pulse.py
+check_type: import_statement
+import_statement: from xo_core.vault.ipfs_utils import pin_to_ipfs
+codex_hint: |
+  # codex:hint
+  Consider adding:
+  from xo_core.vault.ipfs_utils import pin_to_ipfs
+auto_fix:
+  action: append_import
+  import_statement: from xo_core.vault.ipfs_utils import pin_to_ipfs
+---
+rule: Ensure IPFS utils are imported
+target_file: src/xo_core/pulse/sync_pulse.py
+check_type: import_statement
+import_statement: from xo_core.vault.ipfs_utils import pin_to_ipfs
+codex_hint: |
+  # codex:hint
+  Consider adding:
+  from xo_core.vault.ipfs_utils import pin_to_ipfs
+auto_fix:
+  action: append_import
+  import_statement: from xo_core.vault.ipfs_utils import pin_to_ipfs
+---
+rule: Ensure Vault import is present
+target_file: src/xo_core/pulse/sync_pulse.py
+check_type: import_statement
+import_statement: from xo_core import vault
+codex_hint: |
+  # codex:hint
+  Consider adding:
+  from xo_core import vault
+auto_fix:
+  action: append_import
+  import_statement: from xo_core import vault
+---
+rule: Ensure utils import is present
+target_file: src/xo_core/pulse/sync_pulse.py
+check_type: import_statement
+import_statement: from xo_core.utils import validate_signature
+codex_hint: |
+  # codex:hint
+  Consider adding:
+  from xo_core.utils import validate_signature
+auto_fix:
+  action: append_import
+  import_statement: from xo_core.utils import validate_signature

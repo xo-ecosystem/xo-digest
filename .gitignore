@@ -1,4 +1,4 @@
-# -----------------------------------------------------------
+<file name=1 path=/Users/xo/xo-core/.gitignore># -----------------------------------------------------------
 # XO‑Core canonical .gitignore
 # One tidy list, alphabetised within sections.
 # -----------------------------------------------------------
@@ -9,7 +9,7 @@
 .env
 .env.*
 .envrc
-arweave.json
+arweave_wallet.json
 secrets/
 
 ##############################################
@@ -77,6 +77,7 @@ reports/
 .idea/
 .vscode/
 *.code-workspace
+!xo-core.code-workspace
 *.sublime-*
 
 ###########################
@@ -104,9 +105,14 @@ _incoming/
 ##############################
 # 13. Misc workspace artefacts
 ##############################
+.history/
 history/
 xo-core-reforged/patch_bundle/
 tmp/
+.cursor/
+
+# Wrangler scratch tmp folders (Cloudflare)
+**/.wrangler/tmp/
 
 #########################################
 # 14. 3rd‑party submodule working copies
@@ -176,3 +182,4 @@ agent_logs/
 scratchpad/
 gen_logs/
 codex-output/
+.logbook/</file>

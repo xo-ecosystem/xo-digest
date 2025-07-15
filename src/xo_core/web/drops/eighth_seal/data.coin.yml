@@ -1,0 +1,13 @@
+id: eighth_seal
+name: The Eighth Seal
+description: >
+  The final scroll bearer, bound in mystery and stardust. Unlocks a gateway to gratitude and unseen realms.
+mint_url: https://xodrops.com/mint/eighth_seal
+image: /drops/eighth_seal/assets/qr.png
+date: 2025-07-02
+gas_fee_unit: Aether
+attributes:
+  - trait_type: Rarity
+    value: Legendary
+  - trait_type: Element
+    value: Aether

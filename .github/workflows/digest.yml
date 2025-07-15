@@ -131,3 +131,13 @@ jobs:
               || job.status == 'failure' && '❌ *FAILURE: XO Digest Failed*\n\n📄 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n📎 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
               || job.status == 'cancelled' && '⚠️ *CANCELLED: XO Digest Skipped*\n\n📄 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n📎 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts\n📰 Latest Pulse: `${{ steps.pulse.outputs.headline }}`\n🧪 Test Summary: `${{ steps.test_summary.outputs.summary }}`\n📤 ${{ steps.publish_confirm.outputs.status }}\n🕓 Started: ${{ github.run_started_at }}\n🕓 Duration: ${{ steps.duration.outputs.result }}'
             }}
+
+      - name: Run digest.all
+        run: fab digest.all
+
+        - name: 🔁 Run Digest + Notify
+        run: |
+          pip install -e .
+          fab digest.all
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}

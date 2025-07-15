@@ -2,7 +2,7 @@ import json
 import os
 import socket
 
-from invoke import task
+from invoke import task, Collection
 
 MCP_PATH = ".cursor/mcp.json"
 
@@ -63,3 +63,8 @@ def switch(c, mode="ollama"):
         print("☁️ Switched to OpenAI (gpt-4)")
     else:
         print("❓ Invalid mode. Use: ollama or openai")
+
+
+# Create namespace
+ns = Collection("cursor")
+ns.add_task(switch)

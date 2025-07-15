@@ -1,0 +1,11 @@
+rules:
+  - id: vault-bundle-check
+    description: Ensure vault.bundle logic is called or imported
+    severity: LOW
+    match:
+      - pattern: "vault.bundle"
+        message: "Missing vault.bundle usage"
+    fix:
+      suggestion: |
+        # cursor:hint You might need to call vault.bundle(...) in this task
+        # cursor:codex.fixme Ensure the bundle logic is properly integrated

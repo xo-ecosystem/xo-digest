@@ -1,0 +1,44 @@
+name: XO CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  dev-doctor:
+    name: 🩺 Run XO Dev Doctor
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Poetry & project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Run Dev Doctor
+        run: |
+          poetry run fab dev.doctor
+
+rules:
+  - id: archive-usage-check
+    description: Ensure archive_pulse is imported and used in pulse modules
+    severity: MEDIUM
+    match:
+      - pattern: "archive_pulse"
+        message: "Expected archive_pulse usage in this module"
+    fix:
+      suggestion: |
+        from xo_core.pulse.archive import archive_pulse
+        # cursor:hint consider calling archive_pulse(...) where appropriate
+        # cursor:codex.fixme this function should be imported and used when archiving pulses

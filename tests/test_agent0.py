@@ -1,18 +1,17 @@
 import pytest
 
-from xo_core import agent0
-
-
 def test_agent0_basic_import():
     try:
-        from xo_core import agent0
-    except ImportError:
-        pytest.fail("agent0 module could not be imported.")
-
+        import agent0
+        print("✅ agent0 module imported successfully.")
+    except ImportError as e:
+        pytest.fail(f"❌ Failed to import agent0 module: {e}")
 
 def test_agent0_has_main():
-    from xo_core import agent0
-
-    assert hasattr(agent0, "main") or hasattr(
-        agent0, "__version__"
-    ), "agent0 module must have main or __version__"
+    import agent0
+    has_main = hasattr(agent0, "main")
+    has_version = hasattr(agent0, "__version__")
+    assert has_main or has_version, (
+        "❌ agent0 module should have either a 'main' or '__version__' attribute."
+    )
+    print(f"✅ agent0 attributes present: main={has_main}, __version__={has_version}")

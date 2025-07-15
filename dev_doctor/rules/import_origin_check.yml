@@ -1,0 +1,11 @@
+rules:
+  - id: origin-import-check
+    description: Prevent imports from internal paths or wrong modules
+    severity: MEDIUM
+    match:
+      - pattern: "from .*vault.* import .*"
+        message: "⚠️ Watch import origins: prefer public interfaces in xo_core.vault"
+    fix:
+      suggestion: |
+        # cursor:hint Refactor to import from xo_core.vault.public_api where possible
+        # cursor:codex.fixme Normalize import paths to use public interfaces

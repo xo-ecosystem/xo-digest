@@ -1,0 +1,23 @@
+
+
+
+# Development dependencies for xo-core
+
+# Linting and formatting
+ruff
+mypy
+black
+pre-commit
+
+# Type stubs
+types-requests
+types-PyYAML
+types-python-dateutil
+
+# Markdown parsing for preview tasks
+markdown
+
+# Optional testing tools
+pytest
+pytest-mock
+arweave-python-client

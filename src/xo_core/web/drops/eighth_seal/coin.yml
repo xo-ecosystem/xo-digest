@@ -1,0 +1,30 @@
+
+
+title: "The Eighth Seal"
+description: "The final scroll bearer of the XO Constellation. Unlock the secret with this drop."
+image: "./assets/qr.png"
+metadata:
+  edition: 1
+  supply: 100
+  creator: "XO Core"
+  tags:
+    - seal
+    - xo
+    - drop
+
+# Drop Metadata Definition (.coin.yml)
+# This file defines the core metadata for the Eighth Seal drop component.
+# Used for rendering live previews and on-chain mint configuration.
+
+title: "The Eighth Seal"
+description: "The final scroll bearer of the XO Constellation. Unlock the secret with this drop."
+image: "./assets/qr.png"
+
+metadata:
+  edition: 1
+  supply: 100
+  creator: "XO Core"
+  tags:
+    - seal
+    - xo
+    - drop

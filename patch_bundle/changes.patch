@@ -1,0 +1,633 @@
+diff --git a/Makefile b/Makefile
+index 529c108..d4b9422 100644
+--- a/Makefile
++++ b/Makefile
+@@ -28,9 +28,13 @@ typecheck:
+ 	@echo "🧠 Running mypy type checks..."
+ 	@mypy .
+ 
++validate:
++	@echo "✅ Validating all Fabric task modules..."
++	@xo-fab validate-tasks || echo '⚠️ Task validation failed.'
++
+ ci:
+-	@echo "✅ Running full CI suite (lint + test + typecheck)..."
+-	@make lint && make test && make typecheck
++	@echo "✅ Running full CI suite (lint + test + typecheck + validate)..."
++	@make lint && make test && make typecheck && make validate
+ 
+ doctor:
+ 	@echo "🩺 Running code cleanup and format checks..."
+@@ -55,4 +59,17 @@ prepare-commit:
+ 	@echo "🔄 Running formatters before staging..."
+ 	pre-commit run black --all-files
+ 	pre-commit run isort --all-files
+-	pre-commit run pyupgrade --all-files
+\ No newline at end of file
++	pre-commit run pyupgrade --all-files
++
++
++patch-bundle:
++	@echo "📦 Bundling .patch and task summary..."
++	@mkdir -p patch_bundle
++	@git diff > patch_bundle/changes.patch
++	@xo-fab summary.to-md --save-to=patch_bundle/task_summary_$(shell date +%F).md || true
++	@cp task_summary*.md patch_bundle/ 2>/dev/null || true
++
++patch-review:
++	@echo "🩹 Launching local patch review UI..."
++	@make patch-bundle
++	@python scripts/serve_patch_review.py & sleep 2 && open http://localhost:8000
+\ No newline at end of file
+diff --git a/fabfile.py b/fabfile.py
+index e679b29..91cfb2e 100644
+--- a/fabfile.py
++++ b/fabfile.py
+@@ -3,9 +3,6 @@
+ import sys
+ from pathlib import Path
+ 
+-# src/xo_core/fabfile.py
+-from xo_core.fab_tasks.pulse_namespace import pulse_ns
+-
+ # Add the src directory to the Python path
+ if "__file__" in globals():
+     sys.path.insert(0, str(Path(__file__).parent / "src"))
+@@ -13,10 +10,6 @@ if "__file__" in globals():
+ 
+ from invoke import Collection
+ 
+-from xo_core.commitizen_tasks import cz_lint
+-from xo_core.fab_tasks import pulse_tasks, vault_tasks
+-from xo_core.fab_tasks.validate_tasks import validate_tasks
+-
+ # Resolve project root safely whether __file__ is defined or not (Fabric may exec this file twice)
+ if "__file__" in globals():
+     PROJECT_ROOT = Path(__file__).resolve().parent
+@@ -25,6 +18,7 @@ else:
+ 
+ # Ensure project root is on PYTHONPATH
+ sys.path.insert(0, str(PROJECT_ROOT))
++
+ # ------------------------------------------------------------------
+ # Cleanup: remove heavy objects so Invoke won't mis-treat them
+ # as config values during its second pass.
+@@ -59,47 +53,16 @@ Root‑level convenience aliases:
+ 
+ ns = Collection()
+ 
+-# Add mandatory namespaces
+-ns.add_collection(Collection.from_module(pulse_tasks), name="pulse")
+-ns.add_collection(Collection.from_module(vault_tasks), name="vault")
+-
+-# Convenience root‑level shortcuts
+-ns.add_task(pulse_tasks.sync, name="sync")
+-ns.add_task(pulse_tasks.archive_all, name="archive-all")
+-
+-# XO-Drop tasks
++# Load all modules dynamically using the loader utility
+ try:
+-    import xo_core.fab_tasks.drop_tasks as drop_tasks_mod
+-
+-    ns.add_collection(Collection.from_module(drop_tasks_mod), name="drop")
+-    del drop_tasks_mod
+-except ImportError:
+-    print("⚠️  Optional tasks module not found: xo_core.fab_tasks.drop_tasks (skipped)")
+-
+-# Register validate_tasks at root level
+-ns.add_task(validate_tasks, name="validate_tasks")
+-
+-ns.add_task(cz_lint, name="cz-lint")
+-# ---------------------------------------------------------------------------
+-# Optional namespaces (don't fail build if missing)
+-# ---------------------------------------------------------------------------
+-OPTIONAL_MODULES = [
+-    ("xo_agent.tasks", "xo_agent"),
+-    ("xo_agent.tasks", "xo"),  # Alias for xo
+-    ("agent0.tasks", "agent0"),
+-]
+-
+-for module_path, alias in OPTIONAL_MODULES:
+-    try:
+-        mod = __import__(module_path, fromlist=["*"])
+-        ns.add_collection(Collection.from_module(mod), name=alias)
+-    except ImportError:
+-        # Gracefully skip missing optional modules
+-        print(f"⚠️  Optional tasks module not found: {module_path} (skipped)")
++    from xo_core.fab_tasks.dynamic_loader import load_all_modules, cleanup_globals
++    load_all_modules(ns)
++except ImportError as e:
++    print(f"❌ Failed to import dynamic loader: {e}")
++    raise
+ 
+ # ------------------------------------------------------------------
+ # Final cleanup so Invoke's runtime config loader sees only picklable
+ # objects in the module namespace.
+ # ------------------------------------------------------------------
+-for _mod in ("pulse_tasks", "vault_tasks", "mod"):
+-    globals().pop(_mod, None)
++cleanup_globals()
+diff --git a/src/xo_core/fab_tasks/README.md b/src/xo_core/fab_tasks/README.md
+index 5c1013a..a6bd2c7 100644
+--- a/src/xo_core/fab_tasks/README.md
++++ b/src/xo_core/fab_tasks/README.md
+@@ -13,7 +13,7 @@ This directory contains all automation tasks for the XO project, organized by na
+ # XO fab_tasks Onboarding Guide
+ 
+ Welcome to the XO automation core!
+-This folder contains all Fabric tasks for automating and orchestrating XO’s infrastructure, content, and agent flows.
++This folder contains all Fabric tasks for automating and orchestrating XO's infrastructure, content, and agent flows.
+ 
+ ## Structure
+ 
+@@ -40,7 +40,7 @@ This folder contains all Fabric tasks for automating and orchestrating XO’s in
+ 
+ ## Onboarding notes
+ 
+-- All optional imports (e.g. arweave, boto3) are wrapped so missing dependencies won’t break the CLI.
++- All optional imports (e.g. arweave, boto3) are wrapped so missing dependencies won't break the CLI.
+ - If a task fails due to a missing package, install it in your venv:
+   ```
+   pip install <package>
+@@ -94,3 +94,221 @@ Welcome to XO — contribute, fork, and automate!
+ ---
+ 
+ Happy automating! 🎛️
++
++# Fabric Tasks
++
++This directory contains all Fabric task modules for the XO Core project, organized using a dynamic loading system that prevents `UnpicklableConfigMember` errors.
++
++## 🚀 Dynamic Task Loader
++
++The `dynamic_loader.py` module provides a robust, maintainable system for loading Fabric task modules without polluting the global namespace.
++
++### Features
++
++- **Safe Dynamic Loading**: All modules are loaded dynamically using `__import__()` to prevent static imports in global scope
++- **Centralized Configuration**: Module metadata is defined in `MODULE_CONFIGS` with categories, descriptions, and requirements
++- **Robust Error Handling**: Graceful handling of missing optional modules with detailed logging
++- **Duplicate Detection**: Prevents duplicate collection names during registration
++- **Module Validation**: Validates that loaded modules contain callable tasks
++- **Comprehensive Logging**: Detailed logging with configurable verbosity
++- **Future-Proof API**: Extensible design for adding new module categories and features
++
++### Module Categories
++
++- **Core**: Essential task modules (pulse, vault, summary, validation)
++- **CI**: Continuous integration tasks (commitizen, linting)
++- **Content**: Content management tasks (drops, publishing)
++- **Runtime**: Runtime environment management
++- **Testing**: Testing and diagnostics tasks
++- **Info**: Information and documentation tasks
++- **External**: External integrations (agents, third-party tools)
++
++### Usage
++
++#### Basic Usage
++
++```python
++from invoke import Collection
++from xo_core.fab_tasks.dynamic_loader import load_all_modules
++
++ns = Collection()
++summary = load_all_modules(ns, verbose=True)
++```
++
++#### Custom Module Registration
++
++```python
++from xo_core.fab_tasks.dynamic_loader import register_modules, ModuleConfig
++
++configs = [
++    ModuleConfig(
++        path="my.custom.tasks",
++        name="custom_tasks",
++        alias="custom",
++        required=False,
++        category="custom",
++        description="Custom task module"
++    )
++]
++
++summary = register_modules(ns, configs, verbose=True)
++```
++
++#### Adding New Modules
++
++1. Create your task module in `fab_tasks/`
++2. Add configuration to `MODULE_CONFIGS` in `dynamic_loader.py`:
++
++```python
++ModuleConfig(
++    path="xo_core.fab_tasks.your_module",
++    name="your_module",
++    alias="your_alias",
++    required=False,  # Set to True if required
++    category="your_category",
++    description="Description of your module"
++)
++```
++
++### Information Tasks
++
++The `info_tasks.py` module provides utilities for exploring and documenting the task system:
++
++- `fab namespace.namespace-info`: Show detailed information about loaded namespaces
++- `fab namespace.list-categories`: List all available task categories
++- `fab namespace.generate-docs`: Generate markdown documentation
++- `fab namespace.validate-modules`: Validate all module configurations
++
++### Configuration Structure
++
++Each module configuration includes:
++
++- `path`: Full module import path
++- `name`: Internal module name
++- `alias`: Collection name in Fabric namespace (optional)
++- `required`: Whether the module is required (default: False)
++- `hidden`: Whether to skip loading (default: False)
++- `category`: Module category for organization
++- `description`: Human-readable description
++
++### Error Handling
++
++The loader handles various error scenarios:
++
++- **Missing Required Modules**: Raises error and stops loading
++- **Missing Optional Modules**: Logs warning and continues
++- **Invalid Module Structure**: Logs error and marks as failed
++- **Duplicate Collection Names**: Logs warning and skips duplicate
++- **Import Errors**: Detailed error messages with context
++
++### Logging
++
++The loader provides comprehensive logging:
++
++- **INFO**: Successful module loads and general information
++- **WARNING**: Duplicate names, missing optional modules
++- **ERROR**: Failed required modules, validation errors
++- **DEBUG**: Detailed loading process (when verbose=True)
++
++### Testing
++
++Run the unit tests:
++
++```bash
++python -m unittest tests.test_dynamic_loader -v
++```
++
++### Migration from Static Imports
++
++If you have existing static imports, replace them with dynamic loading:
++
++**Before:**
++```python
++from xo_core.fab_tasks import some_tasks
++ns.add_collection(Collection.from_module(some_tasks), name="some")
++```
++
++**After:**
++```python
++from xo_core.fab_tasks.dynamic_loader import load_required_module
++load_required_module("xo_core.fab_tasks.some_tasks", "some", ns)
++```
++
++### Best Practices
++
++1. **Always use dynamic loading** for task modules
++2. **Provide meaningful descriptions** in module configurations
++3. **Use appropriate categories** for organization
++4. **Set required=True** only for essential modules
++5. **Test module validation** before deployment
++6. **Use verbose logging** during development
++7. **Generate documentation** regularly with `fab namespace.generate-docs`
++
++### Troubleshooting
++
++#### UnpicklableConfigMember Error
++
++If you encounter this error, check for:
++- Static imports in `fabfile.py` or other config files
++- Module references in global namespace
++- Missing cleanup after dynamic imports
++
++#### Module Not Found
++
++For missing modules:
++- Verify the module path in `MODULE_CONFIGS`
++- Check if the module exists in the filesystem
++- Ensure the module is in the Python path
++
++#### Validation Errors
++
++For validation failures:
++- Ensure the module contains callable functions
++- Check for proper `@task` decorators
++- Verify module structure and imports
++
++## 📁 Module Structure
++
++```
++fab_tasks/
++├── __init__.py
++├── dynamic_loader.py      # Main dynamic loading system
++├── info_tasks.py          # Information and documentation tasks
++├── pulse_tasks.py         # Pulse-related tasks
++├── vault_tasks.py         # Vault-related tasks
++├── summary_tasks.py       # Summary generation tasks
++├── validate_tasks.py      # Validation utilities
++├── drop_tasks.py          # Drop management tasks
++├── runtime_tasks.py       # Runtime environment tasks
++├── test_tasks.py          # Testing and diagnostics
++└── ...                    # Other task modules
++```
++
++## 🔧 Development
++
++### Adding New Task Modules
++
++1. Create your task module with proper `@task` decorators
++2. Add configuration to `MODULE_CONFIGS`
++3. Test with `fab namespace.validate-modules`
++4. Update documentation with `fab namespace.generate-docs`
++
++### Extending the Loader
++
++The `DynamicTaskLoader` class is designed for extensibility:
++
++- Add new validation methods
++- Implement caching mechanisms
++- Add plugin support
++- Create custom loading strategies
++
++### Contributing
++
++When contributing new task modules:
++
++1. Follow the existing naming conventions
++2. Add comprehensive docstrings
++3. Include proper error handling
++4. Add unit tests for new functionality
++5. Update the module configuration
++6. Generate updated documentation
+diff --git a/src/xo_core/fab_tasks/__init__.py b/src/xo_core/fab_tasks/__init__.py
+index efb0dd9..2a9ede1 100644
+--- a/src/xo_core/fab_tasks/__init__.py
++++ b/src/xo_core/fab_tasks/__init__.py
+@@ -1,9 +1,13 @@
+-"""
+-Fabric tasks validation module.
+-"""
++"""Root Fabric tasks collection and validation setup."""
+ 
+-from invoke import Collection, Context, task
++from invoke import Collection
+ 
++# Import and add summary tasks to the main collection
++def add_summary_tasks():
++    from .summary_tasks import ns as summary_ns
++    tasks.add_collection(summary_ns)
++
++# Import sub-namespaces and default tasks
+ from .pulse_namespace import pulse_ns
+ from .validate_tasks import validate_tasks as _validate_tasks_task
+ 
+@@ -15,9 +19,10 @@ validate_tasks = Collection("validate_tasks")
+ # resolves to the same callable.  This matches what the unit‑tests expect.
+ validate_tasks.add_task(_validate_tasks_task, name="validate-tasks", default=True)
+ 
+-# ------------------------------------------------------------------
+-# Root collection that aggregates all fab sub‑namespaces and tasks.
+-# ------------------------------------------------------------------
++# Aggregate all task namespaces under the root `tasks` collection
+ tasks = Collection("tasks")
+ tasks.add_collection(pulse_ns)
+ tasks.add_collection(validate_tasks)
++add_summary_tasks()
++
++# This module exposes the full task tree for use in `fabfile.py`
+diff --git a/src/xo_core/fab_tasks/pulse_namespace.py b/src/xo_core/fab_tasks/pulse_namespace.py
+index d72c777..f201f25 100644
+--- a/src/xo_core/fab_tasks/pulse_namespace.py
++++ b/src/xo_core/fab_tasks/pulse_namespace.py
+@@ -3,6 +3,17 @@ from invoke import Collection
+ 
+ from . import pulse_tasks
+ 
++"""
++📦 Pulse Namespace
++
++Collection of Fabric tasks related to managing and syncing Pulse entries,
++including creation, archiving, and synchronization across environments.
++"""
+ pulse_ns = Collection("pulse")
+-pulse_ns.add_task(pulse_tasks.sync, "sync")
++pulse_ns.doc = "📦 Pulse-related tasks for managing and syncing pulse entries."
++pulse_tasks.sync.__doc__ = "🔄 Sync pulses."
++pulse_ns.add_task(
++    pulse_tasks.sync,
++    "sync"
++)
+ # ...other tasks
+diff --git a/src/xo_core/fab_tasks/summary.py b/src/xo_core/fab_tasks/summary.py
+deleted file mode 100644
+index c3ca3ad..0000000
+--- a/src/xo_core/fab_tasks/summary.py
++++ /dev/null
+@@ -1,40 +0,0 @@
+-import io
+-import sys
+-
+-from fabric import Config
+-from invoke import Collection, task
+-
+-
+-@task(optional=["to_md", "save_to", "filter"])
+-def summary(c, to_md=False, save_to=None, filter=None):
+-    """
+-    📄 Show all registered Fabric tasks grouped by namespace.
+-    Optional:
+-      --to-md: Render as Markdown
+-      --save-to=<filename>: Save output to file
+-      --filter=<namespace>: Only show matching namespaces
+-    """
+-    from xo_core.fabfile import ns as root_ns
+-
+-    buffer = io.StringIO()
+-    output = buffer if to_md or save_to else sys.stdout
+-
+-    def render(ns, prefix=""):
+-        for name, task_obj in ns.tasks.items():
+-            full_name = f"{prefix}{name}"
+-            if filter and not full_name.startswith(filter):
+-                continue
+-            doc = (task_obj.__doc__ or "").strip()
+-            if to_md or save_to:
+-                print(f"- `{full_name}`: {doc}", file=output)
+-            else:
+-                print(f"{full_name:<30}  {doc}", file=output)
+-        for subname, subns in ns.collections.items():
+-            render(subns, prefix=f"{prefix}{subname}.")
+-
+-    render(root_ns)
+-
+-    if save_to:
+-        with open(save_to, "w") as f:
+-            f.write(buffer.getvalue())
+-        print(f"✅ Task summary saved to {save_to}")
+diff --git a/src/xo_core/fab_tasks/validate_tasks.py b/src/xo_core/fab_tasks/validate_tasks.py
+index 500ee82..2f19066 100644
+--- a/src/xo_core/fab_tasks/validate_tasks.py
++++ b/src/xo_core/fab_tasks/validate_tasks.py
+@@ -1,7 +1,10 @@
+ import importlib.util
+ from pathlib import Path
++import shlex
++import sys
++import argparse
+ 
+-from invoke import task
++from invoke import task, Context
+ 
+ 
+ def validate_all_tasks(verbose=False):
+@@ -22,7 +25,6 @@ def validate_all_tasks(verbose=False):
+         except Exception as e:
+             if verbose:
+                 import traceback
+-
+                 traceback.print_exc()
+             else:
+                 print(f"❌ Failed: {module_name} — {e}")
+@@ -39,9 +41,6 @@ def validate_tasks(c, flags=None):
+         fab validate_tasks:flags=--verbose
+         fab validate_tasks:flags="--verbose --fail-on-error"
+     """
+-    import shlex
+-    import sys
+-
+     flags = flags or []
+     args = shlex.split(" ".join(flags))
+     verbose = "--verbose" in args
+@@ -56,29 +55,7 @@ def validate_tasks(c, flags=None):
+         print("✅ Task validation completed.")
+ 
+ 
+-try:
+-    from invoke import task
+-except ImportError:
+-    # Dummy decorator if invoke is not installed
+-    def task(func):
+-        return func
+-
+-
+-@task
+-def tasks(c):
+-    """
+-    🔍 Validate syntax of all Fabric task modules in fab_tasks/
+-    """
+-    print("Validation logic running...")
+-    # Placeholder logic
+-
+-
+ if __name__ == "__main__":
+-    import argparse
+-    import sys
+-
+-    from invoke import Context
+-
+     parser = argparse.ArgumentParser(description="Validate Fabric task modules.")
+     parser.add_argument(
+         "--verbose", action="store_true", help="Show full tracebacks on import errors."
+@@ -95,3 +72,17 @@ if __name__ == "__main__":
+             sys.exit(1)
+     else:
+         print("✅ Task validation completed.")
++
++
++@task
++def validate_all(c):
++    """
++    ✅ Validate all fab_tasks/* modules for import errors.
++    Alias: xo-fab pulse.validate-all
++    """
++    failures = validate_all_tasks(verbose=True)
++    if failures:
++        print(f"❌ Validation failed for: {', '.join(failures)}")
++        sys.exit(1)
++    else:
++        print("✅ All fab_tasks modules imported successfully.")
+diff --git a/src/xo_core/fabfile.py b/src/xo_core/fabfile.py
+index 9a4d9ca..2a5b86e 100644
+--- a/src/xo_core/fabfile.py
++++ b/src/xo_core/fabfile.py
+@@ -1,6 +1,5 @@
+ from invoke import Collection
+ 
+-from xo_core.fab_tasks import drop_tasks
+ from xo_core.pulse_tasks import ns as pulse_ns
+ 
+ root = Collection()
+diff --git a/task_summary_2025-06-22.md+ b/task_summary_2025-06-22.md+
+deleted file mode 100644
+index 2964428..0000000
+--- a/task_summary_2025-06-22.md+
++++ /dev/null
+@@ -1,55 +0,0 @@
+-# Fabric Task Summary
+-
+-- **`sync`**: 🔄 Sync pulses.
+-- **`archive-all`**: 🗃️ Archive all pulses.
+-- **`validate-tasks`**: 🔍 Validate import of all Fabric task modules in fab_tasks/
+-    Usage:
+-        fab validate_tasks
+-        fab validate_tasks:flags=--verbose
+-        fab validate_tasks:flags="--verbose --fail-on-error"
+-- **`summary`**: 📄 Show all registered Fabric tasks grouped by namespace.
+-    Arguments:
+-        to_md: Set to True to output in markdown format.
+-        filter_ns: Prefix filter for namespace, e.g., "vault." or "pulse."
+-        save_to: Optional file path to save markdown output.
+-- **`cz-lint`**: Run commitizen check, coverage badge, and static type checking.
+-- **`generate-completion`**: 🐚 Generate a bash-compatible tab-completion script for Fabric tasks.
+-- **`pulse.new`**: 📦 Create a new pulse entry.
+-- **`pulse.sync`**: 🔄 Sync pulses.
+-- **`pulse.archive-all`**: 🗃️ Archive all pulses.
+-- **`vault.sign`**: 
+-- **`vault.sign-all`**: 
+-- **`vault.verify-all`**: 
+-- **`vault.explorer-deploy`**: 
+-- **`vault.digest-generate`**: 
+-- **`vault.render-daily`**: 
+-- **`vault.publish-digest`**: 
+-- **`vault.unlock-memethic-path`**: 
+-- **`vault.archive-all`**: 
+-- **`collections.default`**: Default no-op task to satisfy Fabric validation.
+-- **`collections.summary`**: 📄 Show all registered Fabric tasks grouped by namespace.
+-- **`collections.ci.publish`**: 🚀 CI: Publish artifacts and log summary to Vault
+-- **`collections.vault.sign-all`**: 
+-- **`collections.vault.verify-all`**: 
+-- **`collections.pulse.sync`**: 🔄 Sync pulses.
+-- **`collections.core.core.validate-tasks`**: 🔍 Validate syntax of all Fabric task modules under fab_tasks/
+-- **`collections.validate.validate`**: 🔍 Validate import of all Fabric task modules in fab_tasks/
+-    Usage:
+-        fab validate_tasks
+-        fab validate_tasks:flags=--verbose
+-        fab validate_tasks:flags="--verbose --fail-on-error"
+-- **`drop.generate`**: Scaffold a new drop variant inside xo-drops.
+-- **`xo-agent.deploy-persona`**: Deploy a persona.
+-- **`xo-agent.reload-all`**: Reload all personas.
+-- **`xo-agent.list-personas`**: 
+-- **`xo-agent.test-dialog`**: 
+-- **`xo-agent.seed-personas-from-vault`**: 
+-- **`xo-agent.generate-mdx`**: 
+-- **`xo.deploy-persona`**: Deploy a persona.
+-- **`xo.reload-all`**: Reload all personas.
+-- **`xo.list-personas`**: 
+-- **`xo.test-dialog`**: 
+-- **`xo.seed-personas-from-vault`**: 
+-- **`xo.generate-mdx`**: 
+-- **`agent0.start`**: 🧠 Start Agent0 runtime
+-- **`agent0.generate-mdx`**: 
+\ No newline at end of file

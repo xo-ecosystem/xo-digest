@@ -1,0 +1,20 @@
+
+
+name: "Eighth Seal"
+id: "xo-008"
+drop_type: "collectible"
+mint_price_eth: 0.01
+gas_fee_unit: "Aether"
+accepted_tokens:
+  - ETH
+  - Aether
+mint_rules:
+  max_per_wallet: 1
+  allowlist_only: false
+  claim_window:
+    start: "2025-07-01T00:00:00Z"
+    end: "2025-12-31T23:59:59Z"
+thankyou_route: "/claim"
+assets:
+  qr: "/drops/eighth_seal/assets/qr.png"
+  image: "/drops/eighth_seal/assets/cover.png"

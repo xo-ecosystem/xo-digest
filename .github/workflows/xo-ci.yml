@@ -1,0 +1,46 @@
+name: XO CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  dev-doctor:
+    name: 🩺 Run XO Dev Doctor
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Poetry & project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Run Dev Doctor
+        run: |
+          poetry run fab dev.doctor
+
+      - name: Agent0 Rule Hints
+        run: |
+          echo "🧠 Agent0 hint: Check for usage of pin_to_ipfs and archive_pulse in all Vault modules"
+          echo "📍 If missing, consider using: from xo_core.vault.ipfs_utils import pin_to_ipfs"
+          echo "🔧 Suggest rule fix in Cursor with # cursor:hint and prompt links"
+
+      - name: Archive Usage Rule
+        run: |
+          echo "🧠 Agent0 hint: Ensure archive_pulse is used correctly in pulse workflows."
+          echo "📍 Missing usage? Consider importing from xo_core.pulse.archive"
+          echo "🛠️  Add a rule file under dev_doctor/rules/archive_usage.yml for automated checks"
+
+      - name: Cleanup Dev Cache
+        run: bash scripts/dev_cleanup.sh

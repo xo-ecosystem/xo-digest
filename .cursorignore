@@ -1,0 +1,19 @@
+# Ignore legacy or intermediate script files
+test_simple_import.py
+test_refactored_loader.py
+test_pulse_direct.py
+test_pulse_workflow.py
+test_dynamic_loader.py
+test_dynamic_loader_pytest.py
+test_dynamic_loader_refactored.py
+tests/test_fab_tasks.pytest
+.cursor/
+.history/
+dev_doctor/
+scripts/
+docs/
+webapp/
+public/
+ui/
+xo-digest-cms/
+xo-digest-proxy-v2/

@@ -1,4 +1,4 @@
-.PHONY: help dev test publish
+.PHONY: help dev test publish flush fab
 
 help:
 	@echo "Available commands:"
@@ -7,9 +7,9 @@ help:
 	@echo "  make publish   - Sync or deploy project"
 	@echo "  make prepare-commit - Run black, isort, pyupgrade before committing"
 
-dev:
+dev: flush
 	@echo "🔧 Starting dev mode..."
-	@xo-cli dev
+	@npm run dev
 
 test:
 	@echo "🧪 Running tests..."
@@ -18,7 +18,6 @@ test:
 publish:
 	@echo "🚀 Publishing or syncing..."
 	@xo-cli publish
-
 
 lint:
 	@echo "🔍 Running pre-commit hooks..."
@@ -30,7 +29,7 @@ typecheck:
 
 validate:
 	@echo "✅ Validating all Fabric task modules..."
-	@xo-fab validate-tasks || echo '⚠️ Task validation failed.'
+	@xo-fab doctor --verbose || echo '⚠️ Task validation failed.'
 
 ci:
 	@echo "✅ Running full CI suite (lint + test + typecheck + validate)..."
@@ -52,7 +51,6 @@ test-html:
 test-vault:
 	pytest tests/test_vault.py
 
-
 # TODO: Add more commands
 # Run formatters before committing
 prepare-commit:
@@ -60,7 +58,6 @@ prepare-commit:
 	pre-commit run black --all-files
 	pre-commit run isort --all-files
 	pre-commit run pyupgrade --all-files
-
 
 patch-bundle:
 	@echo "📦 Bundling .patch and task summary..."
@@ -90,3 +87,36 @@ pulse-dev:
 test-loader:
 	@echo "🔍 Testing dynamic task loader..."
 	@python scripts/test_loader.py
+
+# Pulse tasks
+pulse-new:
+	@echo "🆕 Creating a new pulse..."
+	@xo-fab pulse.new --slug=test_pulse
+
+pulse-sign:
+	@echo "✍️ Signing pulse..."
+	@xo-fab pulse.sign --slug=test_pulse
+
+pulse-sync:
+	@echo "🔄 Syncing pulse..."
+	@xo-fab pulse.sync --slug=test_pulse
+
+pulse-publish:
+	@echo "📢 Publishing pulse..."
+	@xo-fab pulse.publish --slug=test_pulse
+
+pulse-review:
+	@echo "🧪 Reviewing pulse output..."
+	@xo-fab pulse.review --slug=test_pulse --dry-run
+
+# Flush caches: Python __pycache__, .pyc, mypy and pytest caches
+flush:
+	@echo "🧼 Flushing Python caches..."
+	find . -type d -name '__pycache__' -exec rm -rf {} +
+	find . -name "*.pyc" -delete
+	rm -rf .mypy_cache .pytest_cache
+	@echo "✅ Cache flush complete."
+
+# Run xo-fab after flushing caches
+fab: flush
+	@xo-fab

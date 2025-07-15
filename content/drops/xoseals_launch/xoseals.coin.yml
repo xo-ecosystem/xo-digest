@@ -1,0 +1,27 @@
+title: "ENS Registration – xoseals.eth"
+type: "ens_registration"
+from: "21xo.eth"
+to: "0xeBaB00bbd2ef8D5E01621572fC82E14a4dCA4e42"  # new cold wallet
+ens: "xoseals.eth"
+tx_hash: "0x2d3940c37fd0922389acb1736cf15533a671b6f471ac2afc85cd8489ed555155"
+date: "2025-07-04"
+registration_years: 7
+tags: [ens, xoseals, identity, vault, ownership, 7seals, 7years]
+
+profile:
+  nickname: "XO Seals"
+  bio: "Sealing stories across time – guardians of the Seven."
+  website: "https://xoseals.eth.limo"
+  location: "SEA (Shared Earth Agreement)"
+  image: "/assets/profiles/xoseals_avatar.png"
+
+  links:
+    github: "https://github.com/xo-seals"
+    discord: "https://xo.community"
+    telegram: "https://t.me/xoseals"
+    email: "contact@xoseals.eth"
+
+notes: |
+  Registered 'xoseals.eth' for 7 years — aligned with the Seven Seals concept.
+  Ownership transferred from 21xo.eth to the new cold wallet prior to registration.
+  This ENS will anchor all on-chain XO Seal Drops and minting infrastructure.

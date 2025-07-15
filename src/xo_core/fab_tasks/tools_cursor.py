@@ -63,3 +63,10 @@ def switch(c, mode="ollama"):
         print("☁️ Switched to OpenAI (gpt-4)")
     else:
         print("❓ Invalid mode. Use: ollama or openai")
+
+from invoke import Collection
+
+ns = Collection("cursor")
+ns.add_task(switch, name="switch")
+
+__all__ = ["ns"]

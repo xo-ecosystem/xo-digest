@@ -1,0 +1,17 @@
+{
+  "theme": "xo-default",
+  "network": "mainnet",
+  "relayers": [
+    "https://xo-relayer.thirdweb.com",
+    "https://backup.xo-relayer.thirdweb.com"
+  ],
+  "redirects": {
+    "/claim": "/wallet/claim-drop.html",
+    "/drop": "/wallet/bundle-drop.html"
+  },
+  "features": {
+    "branding": true,
+    "analytics": false,
+    "secureMode": true
+  }
+}

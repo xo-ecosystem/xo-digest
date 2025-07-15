@@ -1,10 +1,10 @@
+import argparse
 import importlib.util
-from pathlib import Path
 import shlex
 import sys
-import argparse
+from pathlib import Path
 
-from invoke import task, Context
+from invoke import Context, task
 
 
 def validate_all_tasks(verbose=False):
@@ -25,6 +25,7 @@ def validate_all_tasks(verbose=False):
         except Exception as e:
             if verbose:
                 import traceback
+
                 traceback.print_exc()
             else:
                 print(f"❌ Failed: {module_name} — {e}")
@@ -86,3 +87,11 @@ def validate_all(c):
         sys.exit(1)
     else:
         print("✅ All fab_tasks modules imported successfully.")
+
+from invoke import Collection
+
+ns = Collection("validate")
+ns.add_task(validate_tasks, name="tasks")
+ns.add_task(validate_all, name="all")
+
+__all__ = ["ns"]

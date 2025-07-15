@@ -1,13 +1,7 @@
-# vault/__init__.py
-import requests
-
-
-def sign_all(url: str = "http://localhost:8000/sign-all") -> str:
-    """Ping the local signer service and return a status message."""
-    try:
-        r = requests.post(url, timeout=5)
-        if r.status_code == 200:
-            return "✅ signed all vault entries"
-        return f"❌ error {r.status_code}"
-    except requests.exceptions.Timeout:
-        return "❌ timeout contacting signer"
+try:
+    from . import preview as preview_ns
+    __all__ = ["preview_ns"]
+except ImportError:
+    import logging
+    logging.warning("⚠️ Preview module not available - skipping import")
+    __all__ = []

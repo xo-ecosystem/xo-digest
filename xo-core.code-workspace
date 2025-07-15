@@ -1,0 +1,44 @@
+  # Add XO Dev Cleanup as a pre-commit hook
+  # (inserted after lint/cleanup tools)
+  - repo: local
+    hooks:
+      - id: dev-cleanup
+        name: XO Dev Cleanup
+        entry: ./scripts/dev_cleanup.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "../xo-drops"
+    },
+    {
+      "path": "../xo-arweave-upload"
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": ".direnv/python-3.10.13/bin/python",
+    "python.terminal.activateEnvironment": false,
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.useLibraryCodeForTypes": true,
+    "python.linting.enabled": true,
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true
+  },
+  "launch": {
+    "configurations": [
+      {
+        "name": "Python: XO Core Main",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/xo_core/main.py",
+        "console": "integratedTerminal",
+        "envFile": "${workspaceFolder}/.envrc"
+      }
+    ]
+  }
+}

@@ -1,0 +1,76 @@
+import React, { useEffect, useState } from 'react';
+import './Claim.css';
+import yaml from 'js-yaml';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+
+export const Claim = () => {
+  const [dropData, setDropData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [minted, setMinted] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch('/drops/eighth_seal/data.coin.yml')
+      .then((res) => res.text())
+      .then((text) => {
+        const data = yaml.load(text);
+        setDropData(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setDropData({
+          title: 'Eighth Seal',
+          subtitle: 'A token of gratitude sealed in Aether',
+          mint_url: 'https://thirdweb.com/xo/eighth_seal_mint',
+        });
+        setLoading(false);
+      });
+  }, []);
+
+  const handleMint = () => {
+    if (dropData?.mint_url) {
+      window.open(dropData.mint_url, '_blank');
+      setMinted(true);
+      setTimeout(() => {
+        navigate('/claim');
+      }, 2000); // simulate delay then navigate
+    }
+  };
+
+  return (
+    <div className="claim-container">
+      {loading ? (
+        <p>Loading drop...</p>
+      ) : (
+        <>
+          <motion.h1
+            className="claim-heading"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            {dropData.title || 'XO Drop'}
+          </motion.h1>
+          <p className="claim-subtext">{dropData.subtitle}</p>
+          <motion.div
+            className="claim-badge"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            🎉 You've unlocked a drop from the XO constellation.
+          </motion.div>
+          {!minted ? (
+            <button className="claim-button" onClick={handleMint}>
+              Claim Your NFT
+            </button>
+          ) : (
+            <div className="claim-subtext">✅ Mint initiated in new tab.</div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Claim;

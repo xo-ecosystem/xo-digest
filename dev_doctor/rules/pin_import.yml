@@ -1,0 +1,83 @@
+id: pin_import
+description: Ensure pin_to_ipfs is used in any Fabric task or Vault script that handles IPFS pinning
+codex_auto_fix: true
+severity: medium
+
+triggers:
+  - when: file_modified
+    pattern: src/xo_core/fab_tasks/**/*.py
+  - when: file_modified
+    pattern: src/xo_core/vault/**/*.py
+
+rules:
+  - name: Enforce import usage of pin_to_ipfs
+    match: "from xo_core.vault.ipfs_utils import pin_to_ipfs"
+    message: "Missing required import of pin_to_ipfs for consistent IPFS pinning logic."
+  - name: Detect usage of pin_to_ipfs
+    match: "pin_to_ipfs("
+    message: "Ensure pin_to_ipfs is being actively used in the task, not just imported."
+
+  - name: Enforce import usage of sign_pulse
+    match: "from xo_core.vault.sign_utils import sign_pulse"
+    message: "Missing required import of sign_pulse for Vault signing consistency."
+
+  - name: Detect usage of sign_pulse
+    match: "sign_pulse("
+    message: "Ensure sign_pulse is being actively used in the task or module."
+
+  - name: Enforce import usage of archive_pulse
+    match: "from xo_core.vault.sign_utils import archive_pulse"
+    message: "Missing required import of archive_pulse for Vault archival consistency."
+
+  - name: Detect usage of archive_pulse
+    match: "archive_pulse("
+    message: "Ensure archive_pulse is being actively used in the task or module."
+
+
+
+
+ci:
+  enabled: true
+  on: [push, pull_request]
+  notify: true
+
+
+tests:
+  - name: test_pin_import_present
+    path: tests/test_ipfs_utils.py
+    must_include:
+      - "from xo_core.vault.ipfs_utils import pin_to_ipfs"
+      - "pin_to_ipfs("
+
+  - name: test_sign_pulse_import_present
+    path: tests/test_sign_utils.py
+    must_include:
+      - "from xo_core.vault.sign_utils import sign_pulse"
+      - "sign_pulse("
+
+  - name: test_archive_pulse_import_present
+    path: tests/test_sign_utils.py
+    must_include:
+      - "from xo_core.vault.sign_utils import archive_pulse"
+      - "archive_pulse("
+
+fixers:
+  - name: auto_add_pin_import
+    apply_if_missing: "from xo_core.vault.ipfs_utils import pin_to_ipfs"
+    insert_at_top: "from xo_core.vault.ipfs_utils import pin_to_ipfs"
+
+  - name: auto_add_sign_pulse_import
+    apply_if_missing: "from xo_core.vault.sign_utils import sign_pulse"
+    insert_at_top: "from xo_core.vault.sign_utils import sign_pulse"
+
+  - name: auto_add_archive_pulse_import
+    apply_if_missing: "from xo_core.vault.sign_utils import archive_pulse"
+    insert_at_top: "from xo_core.vault.sign_utils import archive_pulse"
+
+agent0:
+  enabled: true
+  prompt:
+    - "If this file handles IPFS uploads or pins content, please ensure `pin_to_ipfs()` is imported and used. If unsure, ask the user to confirm."
+    - "If this file handles Vault signing logic, ensure `sign_pulse()` is imported and used correctly. If unclear, confirm the function’s presence with the user."
+    - "If this file handles Vault archival logic, ensure `archive_pulse()` is imported and used correctly. Confirm with the user if unsure."
+    - "Cursor Codex Hint: If you're editing a Vault task related to pinning, signing, or archiving, Codex can help auto-insert the necessary imports. Use '# cursor: codex.fixme' above missing lines for inline suggestions."

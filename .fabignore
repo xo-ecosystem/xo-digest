@@ -1,0 +1,51 @@
+# .fabignore - Modules to exclude from Fabric task discovery
+# These modules are not meant to be CLI tasks or have circular import issues
+
+# Shared data and utilities (not tasks)
+_shared_data
+utils
+test_data
+
+# Test files (not tasks)
+test
+tests
+test_*
+
+# Internal modules (not tasks)
+__init__
+fabfile
+
+# Optional modules that may not be available
+publish
+preview
+export-html
+
+# Development helpers (not tasks)
+meta-generate
+describe
+
+# Ignore legacy or experimental task files
+fix_fabric_tasks
+fix_fabric_tasks_simple
+test_loader
+test_fab_tasks
+
+# Project folders or tooling not intended for direct task loading
+scripts
+docs
+xo-digest-cms
+xo-digest-proxy-v2
+.github
+
+# Tooling and local dev noise
+.vscode
+scripts/fix_fabric_tasks
+scripts/fix_fabric_tasks_simple
+
+# External scratch/CI/tmp
+xo-digest-cms
+xo-digest-proxy-v2
+xo-digest
+
+.history
+.cursor

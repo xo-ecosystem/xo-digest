@@ -1,0 +1,11 @@
+rules:
+  - id: verify-signature-check
+    description: Enforce use of `verify_signature` function in signing flows
+    severity: HIGH
+    match:
+      - pattern: "verify_signature"
+        message: "Missing signature verification using `verify_signature()`"
+    fix:
+      suggestion: |
+        # cursor:hint Use `from xo_core.vault.sign import verify_signature`
+        # cursor:codex.fixme Insert signature verification logic

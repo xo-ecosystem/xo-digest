@@ -78,18 +78,20 @@ def purge_cache(c, domain):
         )
 
 
-from invoke import Collection
+# Module-level namespace declaration for dynamic loader
+namespace = Collection("cloudflare")
+namespace.add_task(zone_export, name="zone_export")
+namespace.add_task(zone_export, name="zone-export")
+namespace.add_task(zone_import, name="zone_import")
+namespace.add_task(zone_import, name="zone-import")
+namespace.add_task(zone_import_all, name="zone_import_all")
+namespace.add_task(zone_import_all, name="zone-import-all")
+namespace.add_task(purge_cache, name="purge_cache")
+namespace.add_task(purge_cache, name="purge-cache")
 
-ns = Collection()
-# zone_export
-ns.add_task(zone_export, name="zone_export")
-ns.add_task(zone_export, name="zone-export")
-# zone_import
+
+from invoke import Collection
+ns = Collection("cloudflare")
 ns.add_task(zone_import, name="zone_import")
-ns.add_task(zone_import, name="zone-import")
-# zone_import_all
 ns.add_task(zone_import_all, name="zone_import_all")
-ns.add_task(zone_import_all, name="zone-import-all")
-# purge_cache
 ns.add_task(purge_cache, name="purge_cache")
-ns.add_task(purge_cache, name="purge-cache")

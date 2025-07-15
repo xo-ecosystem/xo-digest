@@ -1,22 +1,19 @@
-HEADERS = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer YOUR_CLOUDFLARE_API_TOKEN",
-}
+from invoke import task, Collection
 
-API_BASE = "https://api.cloudflare.com/client/v4"
+@task
+def clear_cache(ctx):
+    """
+    Clear Cloudflare cache via API (placeholder).
+    """
+    print("🧹 Clearing Cloudflare cache...")
 
+@task
+def purge_dns(ctx):
+    """
+    Purge Cloudflare DNS records (placeholder).
+    """
+    print("🧼 Purging Cloudflare DNS records...")
 
-def api_status():
-    return "✅ Cloudflare API stub ready"
-
-
-def export_zone():
-    return "📤 Cloudflare export_zone stub"
-
-
-def get_zone_id():
-    return "🆔 Cloudflare get_zone_id stub"
-
-
-def import_zone():
-    return "📥 Cloudflare import_zone stub"
+ns = Collection("cloudflare-utils.api-utils")
+ns.add_task(clear_cache)
+ns.add_task(purge_dns)

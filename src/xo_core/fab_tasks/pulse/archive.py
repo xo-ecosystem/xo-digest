@@ -12,16 +12,27 @@ from invoke import Collection, task
 
 # Import delete_pulse task
 from .delete import delete_pulse
-# Import test pulse generator
-from .test import generate_test_pulse
 
+def _lazy_generate_test_pulse(c, slug):
+    """Lazy import and call generate_test_pulse to avoid circular imports."""
+    try:
+        from ._shared_data import generate_test_pulse as _generate
+    except ImportError:
+        # Fallback for script execution
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent))
+        from _shared_data import generate_test_pulse as _generate
+    
+    result = _generate(c, slug)
+    print(f"🧪 Generated test pulse: {result.get('slug', slug)}")
+    return result
 
 @task(
     help={
         "slug": "Slug name of a specific pulse to archive (optional)",
         "html_preview": "Generate HTML previews before uploading",
         "clear": "Force reupload of already archived pulses",
-        "dry_run": "Don't upload or delete anything, just simulate"
+        "dry_run": "Don't upload or delete anything, just simulate",
     }
 )
 def archive(c, slug=None, html_preview=False, clear=False, dry_run=False):
@@ -34,7 +45,7 @@ def archive(c, slug=None, html_preview=False, clear=False, dry_run=False):
     LIGHTHOUSE_API_KEY = os.getenv("LIGHTHOUSE_API_KEY")
     arweave_keyfile = os.getenv("ARWEAVE_KEYFILE")
     if dry_run and slug == "test_pulse":
-        generate_test_pulse(c, slug)
+        _lazy_generate_test_pulse(c, slug)
     if not arweave_keyfile or not Path(arweave_keyfile).expanduser().is_file():
         if not dry_run:
             raise FileNotFoundError(
@@ -49,7 +60,8 @@ def archive(c, slug=None, html_preview=False, clear=False, dry_run=False):
     if slug:
         pulses = [Path(f"content/pulses/{slug}/{slug}.mdx")]
     else:
-        pulses = list(Path("content/pulses").glob("*.mdx"))
+        # Filter out empty or dotfiles
+        pulses = [p for p in Path("content/pulses").glob("*.mdx") if not p.name.startswith(".") and p.stem.strip()]
     if not pulses:
         print("⚠️ No pulse files found.")
         return
@@ -172,37 +184,42 @@ def archive(c, slug=None, html_preview=False, clear=False, dry_run=False):
             metadata["arweave_url"] = None
 
         # --- Thirdweb NFT minting logic ---
-        try:
-            from thirdweb import ThirdwebSDK
-            from thirdweb.types.nft import NFTMetadataInput
+        if os.getenv("DISABLE_THIRDWEB_MINT") != "1":
+            try:
+                from thirdweb import ThirdwebSDK
+                from thirdweb.types.nft import NFTMetadataInput
 
-            thirdweb_key = os.getenv("THIRDWEB_SECRET_KEY")
-            contract_address = os.getenv("THIRDWEB_CONTRACT_ADDRESS")
-            if not thirdweb_key or not contract_address:
-                print("⚠️ Missing Thirdweb API key or contract address.")
-            elif not dry_run:
-                sdk = ThirdwebSDK.from_private_key(thirdweb_key, "polygon")
-                contract = sdk.get_nft_collection(contract_address)
+                thirdweb_key = os.getenv("THIRDWEB_SECRET_KEY")
+                contract_address = os.getenv("THIRDWEB_CONTRACT_ADDRESS")
+                if not thirdweb_key or not contract_address:
+                    print("⚠️ Missing Thirdweb API key or contract address.")
+                elif not dry_run:
+                    sdk = ThirdwebSDK.from_private_key(thirdweb_key, "polygon")
+                    contract = sdk.get_nft_collection(contract_address)
 
-                nft_metadata = NFTMetadataInput(
-                    name=p.stem.replace("_", " ").title(),
-                    description=f"Pulse Archive: {p.stem}",
-                    image=(
-                        f"https://gateway.lighthouse.storage/ipfs/{cid}" if cid else ""
-                    ),
-                    external_url=metadata.get("arweave_url", ""),
-                )
-                minted = contract.mint(nft_metadata)
-                metadata["thirdweb_token_id"] = minted.get("id")
-                metadata["thirdweb_url"] = (
-                    f"https://thirdweb.com/polygon/{contract_address}/{minted.get('id')}"
-                )
-                print(f"🪙 Minted NFT: Token ID {minted.get('id')}")
-            else:
-                metadata["thirdweb_token_id"] = None
-                metadata["thirdweb_url"] = None
-        except Exception as e:
-            print(f"⚠️ Failed to mint NFT via Thirdweb: {e}")
+                    nft_metadata = NFTMetadataInput(
+                        name=p.stem.replace("_", " ").title(),
+                        description=f"Pulse Archive: {p.stem}",
+                        image=(
+                            f"https://gateway.lighthouse.storage/ipfs/{cid}" if cid else ""
+                        ),
+                        external_url=metadata.get("arweave_url", ""),
+                    )
+                    minted = contract.mint(nft_metadata)
+                    metadata["thirdweb_token_id"] = minted.get("id")
+                    metadata["thirdweb_url"] = (
+                        f"https://thirdweb.com/polygon/{contract_address}/{minted.get('id')}"
+                    )
+                    print(f"🪙 Minted NFT: Token ID {minted.get('id')}")
+                else:
+                    metadata["thirdweb_token_id"] = None
+                    metadata["thirdweb_url"] = None
+            except Exception as e:
+                print(f"⚠️ Failed to mint NFT via Thirdweb: {e}")
+        else:
+            print("⚠️ Thirdweb minting disabled via DISABLE_THIRDWEB_MINT.")
+            metadata["thirdweb_token_id"] = None
+            metadata["thirdweb_url"] = None
 
         secret_key = os.getenv("VAULT_SECRET_KEY", "changeme").encode()
         signature = hmac.new(
@@ -306,6 +323,24 @@ def archive(c, slug=None, html_preview=False, clear=False, dry_run=False):
     (signed_dir / "preview_manifest.json").write_text(
         json.dumps(preview_manifest_data, indent=2)
     )
+    # Save a .ipfs.mdx index for preview_manifest
+    try:
+        preview_index_path = signed_dir / "preview_manifest.ipfs.mdx"
+        preview_lines = [
+            f"# IPFS Preview Manifest – {datetime.datetime.utcnow().isoformat()}",
+            "",
+        ]
+        for entry in preview_manifest_data.get("entries", []):
+            if entry.get("cid"):
+                preview_lines.append(f"## {entry.get('title')}")
+                preview_lines.append(f"- Slug: `{entry.get('slug')}`")
+                preview_lines.append(f"- CID: `{entry.get('cid')}`")
+                preview_lines.append(f"- [Link](https://ipfs.io/ipfs/{entry.get('cid')})")
+                preview_lines.append("")
+        preview_index_path.write_text("\n".join(preview_lines))
+        print(f"🧾 Created IPFS preview manifest stub: {preview_index_path}")
+    except Exception as e:
+        print(f"⚠️ Failed to generate IPFS preview manifest stub: {e}")
     manifest_path.write_text(json.dumps(archive_manifest, indent=2))
 
     # Cleanup preview HTML files after upload
@@ -319,6 +354,68 @@ def archive(c, slug=None, html_preview=False, clear=False, dry_run=False):
     print(f"✅ Archive complete: {len(archive_manifest)} files processed.")
     print(f"📄 Manifest saved: {manifest_path}")
 
+    # --- Optional: Render /vault/daily/index.html ---
+    try:
+        from jinja2 import Template
+        index_template_path = Path("vault/daily/template.html")
+        output_index_path = Path("vault/daily/index.html")
+        if index_template_path.exists():
+            tmpl = Template(index_template_path.read_text())
+            synced = json.loads(Path("vault/.signed/ipfs_synced.json").read_text())
+            entries = []
+            for name in synced:
+                entry = {}
+                if name.endswith(".ipfs.mdx"):
+                    entry["type"] = "ipfs"
+                    entry["slug"] = name.replace(".ipfs.mdx", "")
+                elif name.endswith(".archive.json"):
+                    entry["type"] = "archive"
+                    entry["slug"] = name.replace(".archive.json", "")
+                else:
+                    continue
+                entries.append(entry)
+            rendered = tmpl.render(entries=entries)
+            output_index_path.write_text(rendered)
+            print(f"📄 Rendered /vault/daily/index.html with {len(entries)} entries")
+        else:
+            print("⚠️ No template found at /vault/daily/template.html")
+    except Exception as e:
+        print(f"⚠️ Failed to render /vault/daily/index.html: {e}")
+
+
+
+# --- Add stub task for .ipfs.mdx generation ---
+@task(help={"slug": "Slug of the pulse to generate .ipfs.mdx for"})
+def stub(c, slug):
+    from pathlib import Path
+    import json
+
+    manifest_path = Path("vault/.signed/pulse_archive_manifest.json")
+    if not manifest_path.exists():
+        print("❌ No manifest found.")
+        return
+
+    archive_manifest = json.loads(manifest_path.read_text())
+    found = False
+    for entry in archive_manifest:
+        if entry["slug"] == slug:
+            cid = entry.get("cid")
+            if not cid:
+                print(f"❌ No CID found for {slug}")
+                return
+            ipfs_stub_path = Path(f"vault/.signed/{slug}.ipfs.mdx")
+            ipfs_stub_path.write_text(
+                f"# IPFS Entry for {slug}\n\n"
+                f"CID: `{cid}`\n\n"
+                f"Link: https://ipfs.io/ipfs/{cid}\n"
+            )
+            print(f"🧾 Created IPFS stub: {ipfs_stub_path}")
+            found = True
+            break
+    if not found:
+        print(f"❌ Slug {slug} not found in manifest.")
+
 
 ns = Collection("archive")
 ns.add_task(archive, name="archive")  # ← This name defines the command suffix
+ns.add_task(stub, name="stub")

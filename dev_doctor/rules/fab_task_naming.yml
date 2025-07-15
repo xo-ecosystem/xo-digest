@@ -1,0 +1,11 @@
+rules:
+  - id: fab-task-naming
+    description: Enforce naming convention for Fabric tasks
+    severity: LOW
+    match:
+      - pattern: "def [a-z]+[a-z0-9_]*\\("
+        message: "Fabric task name should start with a lowercase verb and follow snake_case."
+    fix:
+      suggestion: |
+        # cursor:hint Rename task to use snake_case and start with a verb like run_, sync_, build_
+        # cursor:codex.fixme Fix task naming for consistency

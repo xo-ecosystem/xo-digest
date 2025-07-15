@@ -1,3 +1,5 @@
+from invoke import task, Collection
+
 @task
 def validate(c, path="content/pulses"):
     """
@@ -15,3 +17,8 @@ def validate(c, path="content/pulses"):
             print(f"✅ {file} is valid.")
         except Exception as e:
             print(f"❌ {file} failed: {e}")
+
+
+# Create namespace
+ns = Collection("lint")
+ns.add_task(validate)

@@ -1,0 +1,10 @@
+
+
+rule_id: vault_bundle_check
+description: Ensure vault_bundle() is invoked in relevant Vault task files.
+target:
+  - src/xo_core/fab_tasks/vault/
+pattern: 'vault_bundle\('
+message: "Missing call to vault_bundle(). Make sure to invoke it in Vault task logic."
+level: warning
+codex_hint: "You can fix this by importing and calling `vault_bundle()` inside your Fabric Vault task functions. Place it where you're preparing or bundling sealed content."

@@ -1,0 +1,40 @@
+.claim-container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  color: #111827;
+}
+
+.claim-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.claim-subtitle {
+  font-size: 1.125rem;
+  color: #4B5563;
+  margin-bottom: 2rem;
+}
+
+.claim-badge {
+  border: 2px dashed #9CA3AF;
+  padding: 2rem;
+  border-radius: 1rem;
+  background-color: #F9FAFB;
+  margin-bottom: 2rem;
+}
+
+.claim-footer {
+  font-size: 0.875rem;
+  color: #6B7280;
+  margin-top: 2rem;
+}
+
+.claim-link {
+  color: #2563EB;
+  text-decoration: underline;
+  font-weight: 500;
+}
