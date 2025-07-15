@@ -10,14 +10,21 @@ from arweave import Transaction, Wallet
 from dotenv import load_dotenv
 from invoke import Collection, task
 
+# Import delete_pulse task
+from .delete import delete_pulse
+# Import test pulse generator
+from .test import generate_test_pulse
+
 
 @task(
     help={
+        "slug": "Slug name of a specific pulse to archive (optional)",
         "html_preview": "Generate HTML previews before uploading",
         "clear": "Force reupload of already archived pulses",
+        "dry_run": "Don't upload or delete anything, just simulate"
     }
 )
-def archive(c, html_preview=False, clear=False):
+def archive(c, slug=None, html_preview=False, clear=False, dry_run=False):
     """
     📦 Archive pulse to Arweave/IPFS with CID + SHA256 + Signature
     """
@@ -26,13 +33,23 @@ def archive(c, html_preview=False, clear=False):
     load_dotenv()
     LIGHTHOUSE_API_KEY = os.getenv("LIGHTHOUSE_API_KEY")
     arweave_keyfile = os.getenv("ARWEAVE_KEYFILE")
+    if dry_run and slug == "test_pulse":
+        generate_test_pulse(c, slug)
     if not arweave_keyfile or not Path(arweave_keyfile).expanduser().is_file():
-        raise FileNotFoundError(
-            f"❌ ARWEAVE_KEYFILE not found or not set: {arweave_keyfile}"
-        )
-    arweave_wallet = Wallet(str(Path(arweave_keyfile).expanduser().resolve()))
+        if not dry_run:
+            raise FileNotFoundError(
+                f"❌ ARWEAVE_KEYFILE not found or not set: {arweave_keyfile}"
+            )
+        else:
+            print("⚠️ Skipping Arweave upload: ARWEAVE_KEYFILE not set in dry-run mode.")
+            arweave_wallet = None
+    else:
+        arweave_wallet = Wallet(str(Path(arweave_keyfile).expanduser().resolve()))
 
-    pulses = list(Path("content/pulses").glob("*.mdx"))
+    if slug:
+        pulses = [Path(f"content/pulses/{slug}/{slug}.mdx")]
+    else:
+        pulses = list(Path("content/pulses").glob("*.mdx"))
     if not pulses:
         print("⚠️ No pulse files found.")
         return
@@ -97,18 +114,21 @@ def archive(c, html_preview=False, clear=False):
         }
         metadata["local_path"] = slug_name
 
-        try:
-            with open(p, "rb") as f:
-                response = requests.post(
-                    "https://node.lighthouse.storage/api/v0/add",
-                    headers={"Authorization": f"Bearer {LIGHTHOUSE_API_KEY}"},
-                    files={"file": f},
-                )
-            cid = response.json()["Hash"] if response.ok else None
-            if not cid:
-                print(f"⚠️ Lighthouse upload failed: {response.text}")
-        except Exception as e:
-            print(f"⚠️ Exception during Lighthouse upload: {e}")
+        if not dry_run:
+            try:
+                with open(p, "rb") as f:
+                    response = requests.post(
+                        "https://node.lighthouse.storage/api/v0/add",
+                        headers={"Authorization": f"Bearer {LIGHTHOUSE_API_KEY}"},
+                        files={"file": f},
+                    )
+                cid = response.json()["Hash"] if response.ok else None
+                if not cid:
+                    print(f"⚠️ Lighthouse upload failed: {response.text}")
+            except Exception as e:
+                print(f"⚠️ Exception during Lighthouse upload: {e}")
+                cid = None
+        else:
             cid = None
         metadata["cid"] = cid
 
@@ -119,28 +139,35 @@ def archive(c, html_preview=False, clear=False):
                 preview_html = markdown.markdown(content)
                 preview_path = preview_dir / f"{p.stem}.html"
                 preview_path.write_text(preview_html)
-                with open(preview_path, "rb") as f:
-                    res = requests.post(
-                        "https://node.lighthouse.storage/api/v0/add",
-                        headers={"Authorization": f"Bearer {LIGHTHOUSE_API_KEY}"},
-                        files={"file": f},
-                    )
-                preview_cid = res.json()["Hash"] if res.ok else None
+                if not dry_run:
+                    with open(preview_path, "rb") as f:
+                        res = requests.post(
+                            "https://node.lighthouse.storage/api/v0/add",
+                            headers={"Authorization": f"Bearer {LIGHTHOUSE_API_KEY}"},
+                            files={"file": f},
+                        )
+                    preview_cid = res.json()["Hash"] if res.ok else None
+                else:
+                    preview_cid = None
                 metadata["preview_cid"] = preview_cid
             except Exception as e:
                 print(f"⚠️ Failed to generate/upload HTML preview: {e}")
                 metadata["preview_cid"] = None
 
-        try:
-            tx = Transaction(arweave_wallet, data=content.encode())
-            tx.sign()
-            tx.send()
-            metadata["arweave_txid"] = tx.id
-            metadata["arweave_url"] = (
-                f"https://viewblock.io/arweave/tx/{tx.id}" if tx.id else None
-            )
-        except Exception as e:
-            print(f"⚠️ Failed to upload to Arweave for {p.name}: {e}")
+        if not dry_run and arweave_wallet is not None:
+            try:
+                tx = Transaction(arweave_wallet, data=content.encode())
+                tx.sign()
+                tx.send()
+                metadata["arweave_txid"] = tx.id
+                metadata["arweave_url"] = (
+                    f"https://viewblock.io/arweave/tx/{tx.id}" if tx.id else None
+                )
+            except Exception as e:
+                print(f"⚠️ Failed to upload to Arweave for {p.name}: {e}")
+                metadata["arweave_txid"] = None
+                metadata["arweave_url"] = None
+        else:
             metadata["arweave_txid"] = None
             metadata["arweave_url"] = None
 
@@ -153,7 +180,7 @@ def archive(c, html_preview=False, clear=False):
             contract_address = os.getenv("THIRDWEB_CONTRACT_ADDRESS")
             if not thirdweb_key or not contract_address:
                 print("⚠️ Missing Thirdweb API key or contract address.")
-            else:
+            elif not dry_run:
                 sdk = ThirdwebSDK.from_private_key(thirdweb_key, "polygon")
                 contract = sdk.get_nft_collection(contract_address)
 
@@ -171,6 +198,9 @@ def archive(c, html_preview=False, clear=False):
                     f"https://thirdweb.com/polygon/{contract_address}/{minted.get('id')}"
                 )
                 print(f"🪙 Minted NFT: Token ID {minted.get('id')}")
+            else:
+                metadata["thirdweb_token_id"] = None
+                metadata["thirdweb_url"] = None
         except Exception as e:
             print(f"⚠️ Failed to mint NFT via Thirdweb: {e}")
 
@@ -187,6 +217,9 @@ def archive(c, html_preview=False, clear=False):
         (signed_dir / f"{p.stem}.archive.json").write_text(
             json.dumps(metadata, indent=2)
         )
+        # Trigger deletion of the original files after archiving
+        if not dry_run:
+            delete_pulse(c, p.stem)
 
         archive_manifest.append(metadata)
 
@@ -226,18 +259,22 @@ def archive(c, html_preview=False, clear=False):
             # Write back the modified index.html
             index_html.write_text(rendered_html, encoding="utf-8")
 
-            with open(index_html, "rb") as f:
-                res = requests.post(
-                    "https://node.lighthouse.storage/api/v0/add",
-                    headers={"Authorization": f"Bearer {LIGHTHOUSE_API_KEY}"},
-                    files={"file": f},
-                )
-            index_cid = res.json()["Hash"] if res.ok else None
+            if not dry_run:
+                with open(index_html, "rb") as f:
+                    res = requests.post(
+                        "https://node.lighthouse.storage/api/v0/add",
+                        headers={"Authorization": f"Bearer {LIGHTHOUSE_API_KEY}"},
+                        files={"file": f},
+                    )
+                index_cid = res.json()["Hash"] if res.ok else None
+            else:
+                index_cid = None
             if index_cid:
                 print(f"✅ index.html CID: {index_cid}")
                 (signed_dir / "index_html.cid").write_text(index_cid)
             else:
-                print(f"⚠️ index.html upload failed: {res.text}")
+                if not dry_run:
+                    print(f"⚠️ index.html upload failed: {res.text}")
         except Exception as e:
             print(f"⚠️ Exception uploading index.html: {e}")
 
@@ -283,5 +320,5 @@ def archive(c, html_preview=False, clear=False):
     print(f"📄 Manifest saved: {manifest_path}")
 
 
-ns = Collection()
-ns.add_task(archive, name="run")  # ← This name defines the command suffix
+ns = Collection("archive")
+ns.add_task(archive, name="archive")  # ← This name defines the command suffix

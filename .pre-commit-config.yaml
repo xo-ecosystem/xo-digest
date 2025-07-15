@@ -1,118 +1,13 @@
-# === XO Pre-commit Configuration ===
-exclude: ^(\.direnv|\.venv)/
 repos:
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
-    hooks:
-      - id: black
-
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.10.1
-    hooks:
-      - id: isort
-
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.10.1
-    hooks:
-      - id: pyupgrade
-
   - repo: local
     hooks:
-      - id: pytest-check
-        name: Run tests
-        entry: pytest
-        language: python
-        args: ["--tb=short", "--disable-warnings"]
-        pass_filenames: false
-        additional_dependencies:
-          - invoke==2.2.0
-          - requests>=2.31
-          - asgi-lifespan==2.1.0
-          - strawberry-graphql[fastapi]==0.273.2
-          - httpx==0.27.0
-          - pytest-asyncio>=0.23
-        always_run: true
-        stages: [pre-commit, pre-push, manual]
-
-      - id: coverage-badge
-        name: Generate Coverage Badge
-        entry: bash
-        args:
-          - -c
-          - >
-            coverage-badge -o coverage.svg -f &&
-            git add coverage.svg &&
-            git diff --cached --quiet ||
-            git commit -m "ci: update coverage badge" --no-verify
+      - id: dev-doctor
+        name: Run XO Dev Doctor
+        entry: poetry run fab dev.doctor
         language: system
         types: [python]
-        always_run: true
-        stages: [manual]
-
-      - id: no-env-commits
-        name: 🚫 Prevent committing virtualenv/config noise
-        entry: bash
-        args:
-          - -c
-          - "! git diff --cached --name-only | grep -qE '(\\.venv|\\.direnv|\\.envrc)'"
+      - id: dev-cleanup
+        name: Dev Cleanup (tmp, .cursor, .history, etc)
+        entry: bash scripts/dev_cleanup.sh
         language: system
         always_run: true
-
-      - id: cleanup-vim-swaps
-        name: 🔒 Remove editor artefacts
-        entry: bash -c 'find . -type f \( -name "*.swp" -o -name "*~" -o -name ".COMMIT_EDITMSG.swp" \) -delete'
-        language: system
-        always_run: true
-
-      - id: clean-submodules
-        name: 🧹 Reset dirty submodules
-        entry: bash -c 'if [ -f .gitmodules ]; then git submodule foreach --recursive "git reset --hard && git clean -fd"; else echo "✅ No submodules to clean."; fi'
-        language: system
-        always_run: true
-
-      - id: skip-vault-zips
-        name: 🔁 Skip vault zips and .vault files
-        entry: bash -c '! git diff --cached --name-only | grep -qE "(\.vault/|\.zip$)"'
-        language: system
-        always_run: true
-
-      - id: auto-task-summary
-        name: Auto-generate task summary
-        entry: >
-          bash -c '
-            mkdir -p docs/task_summaries &&
-            find docs/task_summaries -type f -name "*.md" -empty -delete &&
-            for file in docs/task_summaries/*.md; do
-              [ -f "$file" ] && git add "$file";
-            done &&
-            git status --short docs/task_summaries || true
-          '
-        language: system
-        pass_filenames: false
-
-      - id: cleanup-index-lock
-        name: 🧹 Remove stale .git/index.lock
-        entry: bash -c '[ -f .git/index.lock ] && echo "🧹 Removing .git/index.lock" && rm -f .git/index.lock || true'
-        language: system
-        always_run: true
-
-      - id: cleanup-index
-        name: 🧹 Cleanup .git/index if corrupted
-        entry: >
-          bash -c '
-            if [ -f .git/index ] && ! git ls-files > /dev/null 2>&1; then
-              echo "⚠️ Detected corrupted .git/index — backing up and rebuilding"
-              cp .git/index .git/index.bak
-              rm -f .git/index
-              git reset
-            fi
-          '
-        language: system
-        always_run: true
-
-      - id: prevent-nested-git
-        name: Prevent Nested Git Repos
-        entry: bash -c '! find . -type d -name ".git" -not -path "./.git" | grep -q .'
-        language: system
-        always_run: true
-        pass_filenames: false

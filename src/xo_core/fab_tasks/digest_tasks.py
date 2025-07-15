@@ -1,28 +1,16 @@
-import os
-import subprocess
-from datetime import date as dt_date
+from invoke import task
 from pathlib import Path
-
-from invoke import Collection, task
-
+from datetime import date as dt_date
+import subprocess
+import os
+from invoke import Collection
 from xo_core.utils.digest import create_digest_zip
 
-
 @task
-def digest_notify(
-    c,
-    date=None,
-    zip=False,
-    push=False,
-    commit=False,
-    duration=None,
-    no_arweave=False,
-    no_ipfs=False,
-):
+def digest_notify(c, date=None, zip=False, push=False, commit=False, duration=None, no_arweave=False, no_ipfs=False):
     """📬 Notify Telegram & Discord of the latest digest (optionally zipped). Use --no-arweave and --no-ipfs to skip uploads."""
-    import json
     from datetime import datetime
-
+    import json
     if not date:
         files = sorted(Path("vault/daily").glob("*.slim.md"), reverse=True)
         if not files:
@@ -48,11 +36,7 @@ def digest_notify(
         if not no_arweave:
             if Path("scripts/upload_to_arweave.sh").exists():
                 print("📡 Uploading .zip to Arweave...")
-                result = c.run(
-                    f"bash scripts/upload_to_arweave.sh {zip_path}",
-                    warn=True,
-                    hide=True,
-                )
+                result = c.run(f"bash scripts/upload_to_arweave.sh {zip_path}", warn=True, hide=True)
                 if result.failed:
                     print(f"❌ Arweave upload failed:\n{result.stderr}")
             else:
@@ -60,9 +44,7 @@ def digest_notify(
         if not no_ipfs:
             if Path("scripts/pin_to_ipfs.sh").exists():
                 print("📡 Pinning to IPFS...")
-                result = c.run(
-                    f"bash scripts/pin_to_ipfs.sh {zip_path}", warn=True, hide=True
-                )
+                result = c.run(f"bash scripts/pin_to_ipfs.sh {zip_path}", warn=True, hide=True)
                 if result.failed:
                     print(f"❌ IPFS pinning failed:\n{result.stderr}")
 
@@ -116,28 +98,21 @@ def digest_notify(
         payload_json = json.dumps(payload)
 
         if telegram_url:
-            c.run(
-                f"curl -s -X POST -H 'Content-Type: application/json' -d '{payload_json}' {telegram_url}"
-            )
+            c.run(f"curl -s -X POST -H 'Content-Type: application/json' -d '{payload_json}' {telegram_url}")
         if discord_url:
-            c.run(
-                f"curl -s -X POST -H 'Content-Type: application/json' -d '{payload_json}' {discord_url}"
-            )
+            c.run(f"curl -s -X POST -H 'Content-Type: application/json' -d '{payload_json}' {discord_url}")
 
     print("✅ Digest notification ready.")
-
 
 @task
 def digest_generate(c, date=None):
     from datetime import date as dt_date
-
     """📄 Generate today's digest Markdown file."""
     today = date or dt_date.today().isoformat()
     out_path = Path(f"vault/daily/{today}.md")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     print(f"📝 Writing digest to {out_path}...")
     out_path.write_text(f"# Daily Digest — {today}\n\n- Placeholder content.\n")
-
 
 @task
 def digest_push(c, commit=False, upload=True):
@@ -174,11 +149,8 @@ def digest_push(c, commit=False, upload=True):
         c.run(f"git commit -m '📄 Auto-digest for {today}' || echo 'No changes'")
         c.run("git push || echo 'No push needed'")
 
-
 @task
-def digest_render(
-    c, theme="light", tag=None, slim=False, html=False, preview=False, date=None
-):
+def digest_render(c, theme="light", tag=None, slim=False, html=False, preview=False, date=None):
     """🎨 Render digest with optional theme, tag filter, and slim mode."""
     today = date or dt_date.today().isoformat()
     source = Path(f"vault/daily/{today}.md")
@@ -216,20 +188,15 @@ def digest_render(
     if html:
         try:
             from markdown2 import markdown
-
             html_path = Path(f"vault/daily/{today}.html")
             html_content = markdown("\n".join(filtered))
             html_path.write_text(html_content)
             print(f"🌐 HTML version saved to {html_path}")
             if preview:
                 import webbrowser
-
                 webbrowser.open(f"file://{html_path.resolve()}")
         except ImportError:
-            print(
-                "⚠️ markdown2 module not found. Run `pip install markdown2` to enable HTML rendering."
-            )
-
+            print("⚠️ markdown2 module not found. Run `pip install markdown2` to enable HTML rendering.")
 
 @task
 def digest_preview(c):
@@ -246,16 +213,12 @@ def digest_preview(c):
 
     try:
         from markdown2 import markdown
-
         html_content = markdown("\n".join(filtered))
         output = Path("vault/daily/index.html")
         output.write_text(html_content)
         print(f"✅ Digest HTML preview saved to {output}")
     except ImportError:
-        print(
-            "⚠️ markdown2 module not found. Run `pip install markdown2` to enable HTML preview."
-        )
-
+        print("⚠️ markdown2 module not found. Run `pip install markdown2` to enable HTML preview.")
 
 ns = Collection()
 ns.add_task(digest_generate, name="generate")

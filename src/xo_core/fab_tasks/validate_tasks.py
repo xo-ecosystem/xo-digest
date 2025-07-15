@@ -1,7 +1,10 @@
 import importlib.util
 from pathlib import Path
+import shlex
+import sys
+import argparse
 
-from invoke import task
+from invoke import task, Context
 
 
 def validate_all_tasks(verbose=False):
@@ -22,7 +25,6 @@ def validate_all_tasks(verbose=False):
         except Exception as e:
             if verbose:
                 import traceback
-
                 traceback.print_exc()
             else:
                 print(f"❌ Failed: {module_name} — {e}")
@@ -39,9 +41,6 @@ def validate_tasks(c, flags=None):
         fab validate_tasks:flags=--verbose
         fab validate_tasks:flags="--verbose --fail-on-error"
     """
-    import shlex
-    import sys
-
     flags = flags or []
     args = shlex.split(" ".join(flags))
     verbose = "--verbose" in args
@@ -56,29 +55,7 @@ def validate_tasks(c, flags=None):
         print("✅ Task validation completed.")
 
 
-try:
-    from invoke import task
-except ImportError:
-    # Dummy decorator if invoke is not installed
-    def task(func):
-        return func
-
-
-@task
-def tasks(c):
-    """
-    🔍 Validate syntax of all Fabric task modules in fab_tasks/
-    """
-    print("Validation logic running...")
-    # Placeholder logic
-
-
 if __name__ == "__main__":
-    import argparse
-    import sys
-
-    from invoke import Context
-
     parser = argparse.ArgumentParser(description="Validate Fabric task modules.")
     parser.add_argument(
         "--verbose", action="store_true", help="Show full tracebacks on import errors."
@@ -95,3 +72,17 @@ if __name__ == "__main__":
             sys.exit(1)
     else:
         print("✅ Task validation completed.")
+
+
+@task
+def validate_all(c):
+    """
+    ✅ Validate all fab_tasks/* modules for import errors.
+    Alias: xo-fab pulse.validate-all
+    """
+    failures = validate_all_tasks(verbose=True)
+    if failures:
+        print(f"❌ Validation failed for: {', '.join(failures)}")
+        sys.exit(1)
+    else:
+        print("✅ All fab_tasks modules imported successfully.")

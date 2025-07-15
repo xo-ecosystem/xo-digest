@@ -1,8 +1,10 @@
 from .core_tasks import validate_tasks as validate_core_tasks
-from .pulse_namespace import pulse_ns
+from .pulse_namespace import pulse_ns as pulse_namespace
 from .validate_tasks import validate_tasks as validate_task_fn
+from .pulse import ns as pulse
 
-tasks = Collection("tasks")
-tasks.add_task(validate_task_fn)
-tasks.add_task(validate_core_tasks)
-tasks.add_collection(pulse_ns)
+ns = Collection()
+ns.add_task(validate_task_fn)
+ns.add_task(validate_core_tasks)
+ns.add_collection(pulse_namespace)
+ns.add_collection(pulse)

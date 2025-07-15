@@ -1,6 +1,6 @@
 from invoke import Collection, task
 
-from xo_core.fab_tasks import ci, core_tasks, digest_tasks, pulse_namespace
+from xo_core.fab_tasks import ci, core_tasks, digest_tasks, pulse_namespace, summary
 from xo_core.fab_tasks import validate_tasks as validate_module
 from xo_core.fab_tasks import vault
 
@@ -40,24 +40,6 @@ def default(ctx):
 
 ns.add_task(default, name="default")
 
-
-@task
-def summary(c):
-    """
-    📄 Show all registered Fabric tasks grouped by namespace.
-    """
-
-    def print_tasks(ns, prefix=""):
-        for name, obj in ns.tasks.items():
-            doc = obj.__doc__ or ""
-            print(f"{prefix}{name:<20}  {doc.strip()}")
-        for subname, subns in ns.collections.items():
-            print_tasks(subns, prefix=f"{prefix}{subname}.")
-
-    print("📋 Fabric Task Summary:")
-    print_tasks(ns)
-
-
-ns.add_task(summary, name="summary")
+ns.add_collection(summary.summary_ns, name="summary")
 
 namespace = ns
