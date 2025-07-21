@@ -1,15 +1,47 @@
 {
   "drop": "eighth",
   "title": "Eighth Seal Drop",
+  "description": "The mystical Eighth Seal reveals ancient wisdom and hidden knowledge",
   "image": "webp/drop-symbol.webp",
   "variants": [
-    "scroll-teaser.webp",
-    "seal-flame.webp",
-    "darkmode-symbol.png"
+    "burning_seal.webp",
+    "flame_essence.webp",
+    "scroll_01.webp",
+    "scroll_02.webp",
+    "scroll_03.webp",
+    "scroll_main.webp",
+    "seal_flame_core.webp"
   ],
-  "created_at": "2025-07-21T00:00:00Z",
-  "status": "active",
-  "description": "The mystical Eighth Seal reveals ancient wisdom and hidden knowledge",
+  "bundles": [
+    "drop.assets",
+    "pulse",
+    "bundle",
+    "metadata",
+    "seal_flame"
+  ],
+  "assets": [
+    {
+      "id": "eighth_0_0",
+      "label": "Seal Flame Core",
+      "file": "seal_flame_core.webp",
+      "bundle": "seal_flame",
+      "exists": true
+    },
+    {
+      "id": "eighth_0_1",
+      "label": "Flame Essence",
+      "file": "flame_essence.webp",
+      "bundle": "seal_flame",
+      "exists": true
+    },
+    {
+      "id": "eighth_0_2",
+      "label": "Burning Seal",
+      "file": "burning_seal.webp",
+      "bundle": "seal_flame",
+      "exists": true
+    }
+  ],
   "tags": [
     "seal",
     "mystical",
@@ -21,8 +53,11 @@
   "mint_price": "0.08 ETH",
   "max_supply": 1000,
   "launch_date": "2025-07-21T00:00:00Z",
+  "status": "active",
   "social_links": {
-    "twitter": "https://twitter.com/xoseals",
-    "discord": "https://discord.gg/xoseals"
-  }
+    "twitter": "https://twitter.com/21xoseals",
+    "discord": "https://xo.community"
+  },
+  "created_at": "2025-07-21T00:00:00Z",
+  "updated_at": "2025-07-21T00:00:00Z"
 }

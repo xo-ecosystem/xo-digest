@@ -1,0 +1,20 @@
+
+
+id: eighth_seal
+title: The Eighth Seal
+type: scroll
+status: draft
+owner: xo-vault
+tags:
+  - seal
+  - drop
+  - scrollbearer
+created: 2025-07-20
+updated: 2025-07-20
+manifest:
+  - drop.preview.yml
+  - drop.status.json
+  - scroll.webp
+  - drop.shared_meta.json
+notes: |
+  This coin represents the Eighth Seal in the XO Vault. Used in bundled drops and may include signature content.

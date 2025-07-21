@@ -1,0 +1,52 @@
+from invoke import task, Collection
+from pathlib import Path
+import json
+import yaml
+
+@task(help={"drop": "Drop name under src/xo_core/vault/seals/"})
+def patch(c, drop):
+    base_path = Path(f"src/xo_core/vault/seals/{drop}")
+    webp_dir = base_path / "drop.assets" / "webp"
+    if not webp_dir.exists():
+        print(f"❌ No webp folder found at: {webp_dir}")
+        return
+
+    files = sorted([f.name for f in webp_dir.glob("*.webp")])
+    if not files:
+        print("⚠️ No .webp images found.")
+        return
+
+    # Load metadata from drop.meta.json if it exists
+    meta_path = base_path / "drop.meta.json"
+    if meta_path.exists():
+        with meta_path.open("r") as f:
+            meta = json.load(f)
+    else:
+        meta = {
+            "title": "The Eighth Seal",
+            "description": "A mysterious scroll sealed in silence. Only the chosen may unlock its message.",
+            "tags": ["eighth", "seal", "scroll", "xo", "drop"]
+        }
+
+    # Patch drop.status.json
+    status_path = base_path / "drop.status.json"
+    variants = [{"name": f.rsplit(".", 1)[0], "file": f, "default": i == 0} for i, f in enumerate(files)]
+    status = {
+        **meta,
+        "drop": drop,
+        "variants": variants
+    }
+    status_path.write_text(json.dumps(status, indent=2))
+    print(f"✅ Patched {status_path}")
+
+    # Patch drop.preview.yml
+    preview_path = base_path / "drop.preview.yml"
+    preview = {
+        **meta,
+        "variants": [{"image": f"drop.assets/webp/{f}", "default": i == 0} for i, f in enumerate(files)]
+    }
+    preview_path.write_text(yaml.dump(preview, sort_keys=False))
+    print(f"✅ Patched {preview_path}")
+
+ns = Collection("drop_patch")
+ns.add_task(patch, "patch")

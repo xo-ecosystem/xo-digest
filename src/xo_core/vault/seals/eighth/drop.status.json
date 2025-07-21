@@ -1,0 +1,23 @@
+
+
+{
+  "drop": "eighth",
+  "variants": [
+    {
+      "id": "v1",
+      "label": "The Seal Awaits",
+      "image": "drop.assets/webp/seal_awaits.webp"
+    },
+    {
+      "id": "v2",
+      "label": "You've Been Scrolled",
+      "image": "drop.assets/webp/youve_been_scrolled.webp"
+    },
+    {
+      "id": "v3",
+      "label": "The Scroll Has Found You",
+      "image": "drop.assets/webp/scroll_has_found_you.webp"
+    }
+  ],
+  "default": "v1"
+}

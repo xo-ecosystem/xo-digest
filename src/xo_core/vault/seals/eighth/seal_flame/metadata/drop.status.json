@@ -1,0 +1,37 @@
+{
+  "bundle": "seal_flame",
+  "drop": "eighth",
+  "status": "active",
+  "created_at": "2025-07-21T00:00:00Z",
+  "assets": [
+    {
+      "id": "eighth_0_0",
+      "label": "Seal Flame Core",
+      "file": "seal_flame_core.webp",
+      "description": "The central flame of the eighth seal",
+      "rarity": "common"
+    },
+    {
+      "id": "eighth_0_1", 
+      "label": "Flame Essence",
+      "file": "flame_essence.webp",
+      "description": "Pure flame energy manifestation",
+      "rarity": "rare"
+    },
+    {
+      "id": "eighth_0_2",
+      "label": "Burning Seal",
+      "file": "burning_seal.webp", 
+      "description": "The seal consumed by mystical fire",
+      "rarity": "legendary"
+    }
+  ],
+  "metadata": {
+    "total_assets": 3,
+    "rarity_distribution": {
+      "common": 1,
+      "rare": 1,
+      "legendary": 1
+    }
+  }
+} 

@@ -65,6 +65,14 @@ except ImportError as e:
     import logging
     logging.warning(f"⚠️ Drop patch namespace not loaded: {e}")
 
+# Add drop_meta_sync tasks
+try:
+    from xo_core.fab_tasks.drop_meta_sync import ns as drop_meta_sync_ns
+    ns.add_collection(drop_meta_sync_ns, name="meta")
+except ImportError as e:
+    import logging
+    logging.warning(f"⚠️ Drop meta sync namespace not loaded: {e}")
+
 # Add sign_pulse tasks, if available
 try:
     from xo_core.fab_tasks.vault.sign_pulse import ns as sign_pulse_ns

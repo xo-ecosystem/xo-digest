@@ -1,0 +1,28 @@
+
+
+id: eighth_seal
+title: The Eighth Seal
+description: >
+  The Eighth Seal holds the final scroll in the XO prophecy. 
+  A whisper from the future wrapped in unicorn code and sealed in myth.
+tags:
+  - drop
+  - xo
+  - seal
+  - scroll
+  - nft
+variants:
+  - id: scroll_variant_01
+    name: "You've Been Scrolled"
+    image: scroll_variant_01.webp
+  - id: scroll_variant_02
+    name: "The Scroll Has Found You"
+    image: scroll_variant_02.webp
+  - id: scroll_variant_03
+    name: "The Seal Awaits"
+    image: scroll_variant_03.webp
+  - id: scroll_variant_04
+    name: "[REDACTED]"
+    image: scroll_variant_04.webp
+created_by: xo-fab
+updated: 2025-07-20

@@ -1,11 +1,9 @@
-
-
 from fabric import task
 from pathlib import Path
 import json
 import shutil
 
-@task
+@task(name="webp")
 def drop_webp(c, drop="eighth"):
     """
     Sync and archive .webp assets for a given drop.
@@ -44,3 +42,15 @@ def drop_webp(c, drop="eighth"):
         print("📄 Patched 000.status.json with image list.")
 
     # (Optional) Add YAML patching later if needed
+
+
+# Namespace and alias tasks for both formats (drop.webp and drop.eighth)
+from invoke import Collection, task
+
+@task
+def eighth(c):
+    drop_webp(c, drop="eighth")
+
+ns = Collection()
+ns.add_task(drop_webp, name="webp")
+ns.add_task(eighth, name="eighth")

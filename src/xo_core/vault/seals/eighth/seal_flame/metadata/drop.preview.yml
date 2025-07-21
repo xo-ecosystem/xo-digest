@@ -1,0 +1,24 @@
+bundle: seal_flame
+drop: eighth
+preview:
+  title: "Seal Flame Bundle"
+  description: "Mystical flames that consume and purify the eighth seal"
+  image: "seal_flame_core.webp"
+  animation: "flame_essence.webp"
+  background: "burning_seal.webp"
+  
+display:
+  theme: "fire"
+  colors:
+    primary: "#ff4400"
+    secondary: "#ff8800"
+    accent: "#ffcc00"
+  
+effects:
+  - type: "particle"
+    source: "flame_essence.webp"
+    intensity: 0.8
+  - type: "glow"
+    source: "seal_flame_core.webp"
+    color: "#ff4400"
+    radius: 20 
