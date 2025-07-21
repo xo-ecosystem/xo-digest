@@ -1,0 +1,44 @@
+{
+  "eighth": {
+    "title": "Eighth Seal Drop",
+    "description": "The mystical Eighth Seal reveals ancient wisdom and hidden knowledge",
+    "tags": ["seal", "mystical", "wisdom", "ancient"],
+    "category": "seals",
+    "rarity": "legendary",
+    "mint_price": "0.08 ETH",
+    "max_supply": 1000,
+    "launch_date": "2025-07-21T00:00:00Z",
+    "social_links": {
+      "twitter": "https://twitter.com/xoseals",
+      "discord": "https://discord.gg/xoseals"
+    }
+  },
+  "first": {
+    "title": "First Seal Drop",
+    "description": "The beginning of all things - the First Seal opens the path",
+    "tags": ["seal", "first", "beginning", "foundation"],
+    "category": "seals",
+    "rarity": "mythic",
+    "mint_price": "0.01 ETH",
+    "max_supply": 100,
+    "launch_date": "2025-06-15T00:00:00Z",
+    "social_links": {
+      "twitter": "https://twitter.com/xoseals",
+      "discord": "https://discord.gg/xoseals"
+    }
+  },
+  "lolcats": {
+    "title": "LOLCats Drop",
+    "description": "I can haz blockchain? The internet's favorite cats on-chain",
+    "tags": ["meme", "cats", "funny", "internet"],
+    "category": "memes",
+    "rarity": "common",
+    "mint_price": "0.001 ETH",
+    "max_supply": 10000,
+    "launch_date": "2025-07-01T00:00:00Z",
+    "social_links": {
+      "twitter": "https://twitter.com/lolcats",
+      "reddit": "https://reddit.com/r/lolcats"
+    }
+  }
+}

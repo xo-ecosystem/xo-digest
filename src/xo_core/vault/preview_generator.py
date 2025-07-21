@@ -43,6 +43,6 @@ def render_signed_preview(pulse, output_path):
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(html)
-        log_status(f"🧾 Preview rendered: {output_path}", level="success")
+        log_status(f"📄 [bold green]Preview saved:[/bold green] {output_path}", level="success")
     except Exception as e:
-        log_status(f"❌ Failed to render preview for {pulse.get('slug')}: {str(e)}", level="error")
+        log_status(f"🚫 [red]Render error for {pulse.get('slug')}[/red]: {str(e)}", level="error")

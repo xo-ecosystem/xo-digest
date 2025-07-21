@@ -57,6 +57,14 @@ except Exception as e:
     import logging
     logging.warning(f"⚠️ Pulse namespace not loaded: {e}")
 
+# Add drop_patch tasks
+try:
+    from xo_core.fab_tasks.drop_patch import ns as drop_patch_ns
+    ns.add_collection(drop_patch_ns, name="drop")
+except ImportError as e:
+    import logging
+    logging.warning(f"⚠️ Drop patch namespace not loaded: {e}")
+
 # Add sign_pulse tasks, if available
 try:
     from xo_core.fab_tasks.vault.sign_pulse import ns as sign_pulse_ns

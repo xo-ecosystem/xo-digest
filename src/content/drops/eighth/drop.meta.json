@@ -1,0 +1,28 @@
+{
+  "drop": "eighth",
+  "title": "Eighth Seal Drop",
+  "image": "webp/drop-symbol.webp",
+  "variants": [
+    "scroll-teaser.webp",
+    "seal-flame.webp",
+    "darkmode-symbol.png"
+  ],
+  "created_at": "2025-07-21T00:00:00Z",
+  "status": "active",
+  "description": "The mystical Eighth Seal reveals ancient wisdom and hidden knowledge",
+  "tags": [
+    "seal",
+    "mystical",
+    "wisdom",
+    "ancient"
+  ],
+  "category": "seals",
+  "rarity": "legendary",
+  "mint_price": "0.08 ETH",
+  "max_supply": 1000,
+  "launch_date": "2025-07-21T00:00:00Z",
+  "social_links": {
+    "twitter": "https://twitter.com/xoseals",
+    "discord": "https://discord.gg/xoseals"
+  }
+}

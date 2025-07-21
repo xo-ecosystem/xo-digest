@@ -1,0 +1,16 @@
+{
+  "item_id": "000",
+  "collection": "Eighth Seal",
+  "status": "sealed",
+  "origin": "xo-vault",
+  "owner": "xoseals.eth",
+  "ipfs_cid": "QmdtJfjQHsNVk8gvxtj8YyfcLxMxTRnKWQPpPt6nrWCf5o",
+  "arweave_id": null,
+  "signed_by": "xo-agent",
+  "traits": {
+    "role": "Scroll Bearer",
+    "element": "Memory",
+    "type": "Vault NFT"
+  },
+  "meta_uri": "ipfs://QmdtJfjQHsNVk8gvxtj8YyfcLxMxTRnKWQPpPt6nrWCf5o/000.json"
+}

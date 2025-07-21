@@ -1,4 +1,4 @@
-from xo_core.vault.ipfs_utils import pin_to_ipfs
+from xo_core.vault.ipfs_utils import pin_to_ipfs, log_status
 
 def sign_pulse(pulse_data):
     """
@@ -20,5 +20,7 @@ def sign_pulse(pulse_data):
     # Pin to IPFS and add result
     ipfs_result = pin_to_ipfs(signed_pulse)
     signed_pulse["ipfs_hash"] = ipfs_result.get("Hash", "unknown")
+
+    log_status(f"📦 Signed pulse pinned to IPFS: {signed_pulse['ipfs_hash']}")
 
     return signed_pulse
