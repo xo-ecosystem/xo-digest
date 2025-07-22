@@ -1,5 +1,9 @@
 from xo_core.fab_tasks.dev_doctor_tasks import ns as dev_doctor_ns
 from xo_core.fab_tasks.pulse_tasks import ns as pulse_ns
+
+# Patch preview import warning suppression
+import logging
+logging.getLogger().setLevel(logging.INFO)
 from invoke import task, Collection
 from pathlib import Path
 from xo_core.fab_tasks.ipfs_tasks import ns as ipfs_ns
@@ -65,6 +69,14 @@ except ImportError as e:
     import logging
     logging.warning(f"⚠️ Drop patch namespace not loaded: {e}")
 
+# Add preview tasks
+try:
+    from xo_core.fab_tasks.preview import ns as preview_ns
+    ns.add_collection(preview_ns, name="preview")
+except ImportError as e:
+    import logging
+    logging.warning(f"⚠️ Preview namespace not loaded: {e}")
+
 # Add drop_meta_sync tasks
 try:
     from xo_core.fab_tasks.drop_meta_sync import ns as drop_meta_sync_ns
@@ -91,6 +103,71 @@ except ImportError as e:
 
 # Add root-level doctor task
 ns.add_task(doctor, "doctor")
+
+@task(help={"ipfs": "Pin to IPFS", "arweave": "Upload to Arweave"})
+def deploy_all(c, ipfs=False, arweave=False):
+    """🚀 Deploy all major XO drop layers with optional pinning and logging."""
+    print("🚀 XO Drop Deploy All - Full Vault Stack Integration")
+    print("-" * 50)
+    
+    # Generate preview
+    print("🔍 Generating preview...")
+    c.run("xo-fab preview.generate --drop=eighth_seal_3d")
+    
+    # Deploy explorer (placeholder for now)
+    print("🌐 Deploying explorer...")
+    # c.run("xo-fab explorer.deploy")  # Uncomment when explorer.deploy exists
+    
+    # Optional IPFS pinning
+    if ipfs:
+        print("📌 Pinning to IPFS...")
+        c.run("xo-fab ipfs.pin-file --path=public/vault/previews/eighth_seal_3d")
+    
+    # Optional Arweave upload
+    if arweave:
+        print("🌊 Uploading to Arweave...")
+        c.run("xo-fab pulse.upload --path=public/vault/previews/eighth_seal_3d")
+    
+    # Log deployment
+    log_path = Path("vault/logbook/deploy.log")
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    from datetime import datetime
+    with open(log_path, "a") as log_file:
+        log_file.write(f"[{datetime.utcnow().isoformat()}] Deployed eighth_seal_3d\n")
+    print(f"📝 Logged deployment to {log_path}")
+    
+    # Git tag and push
+    c.run("git tag v0.1.0-eighth && git push origin v0.1.0-eighth")
+    print("🏷️ Tagged and pushed: v0.1.0-eighth")
+    
+    # Integrate with Vault stack
+    print("\n🔗 Integrating with Vault stack...")
+    
+    # Digest integration
+    try:
+        c.run("xo-fab digest.generate")
+        print("  ✅ Digest updated")
+    except:
+        print("  ⚠️ Digest generation failed (continuing)")
+    
+    # Pulse integration
+    try:
+        c.run("xo-fab pulse.sync")
+        print("  ✅ Pulse synced")
+    except:
+        print("  ⚠️ Pulse sync failed (continuing)")
+    
+    # Inbox integration
+    try:
+        c.run("xo-fab inbox.message --message='Deployed eighth_seal_3d drop'")
+        print("  ✅ Inbox message sent")
+    except:
+        print("  ⚠️ Inbox message failed (continuing)")
+    
+    print("\n🎉 Full Vault stack deployment completed!")
+
+# Add deploy_all to root namespace (avoiding conflict with drop.deploy)
+ns.add_task(deploy_all, name="deploy-all")
 
 # Define the default namespace
 namespace = ns

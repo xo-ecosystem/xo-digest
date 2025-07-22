@@ -1,0 +1,20 @@
+{
+  "title": "Flame Scroll Drop",
+  "bundle": "seal_flame",
+  "date": "2025-07-21",
+  "lore": "From the ashes of forgotten scrolls, the Flame Seal burns with a timeless vow — to ignite wisdom wherever shadows fall. Each bearer is entrusted with fire not merely to warm, but to awaken.",
+  "assets": [
+    {
+      "id": "drop_r1_c0",
+      "label": "XO Flame Seal",
+      "file": "drop_r1_c0.webp",
+      "description": "An enduring ember of the XO legacy, sealed in golden light and sacred fire."
+    },
+    {
+      "id": "drop_r1_c1",
+      "label": "Scrollbearer Flame",
+      "file": "drop_r1_c1.webp",
+      "description": "The chosen silhouette, keeper of the message, protector of the seal’s flame."
+    }
+  ]
+}

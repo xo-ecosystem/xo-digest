@@ -24,8 +24,24 @@ def generate(c, slug):
     """Scaffold a new drop variant inside xo-drops."""
     c.run(f"python xo-drops/scripts/drop_generate.py {slug}")
 
+
+# New sync task
+@task
+def sync(c, folder):
+    """Sync a drop folder from drop.assets to vault/drops."""
+    src = Path(f"drop.assets/{folder}")
+    dst = Path(f"vault/drops/{folder}")
+    if not src.exists():
+        print(f"❌ Source folder {src} does not exist.")
+        return
+    if dst.exists():
+        shutil.rmtree(dst)
+    shutil.copytree(src, dst)
+    print(f"✅ Synced {src} -> {dst}")
+
 ns = Collection("drop")
 ns.add_task(bundle, name="bundle")
 ns.add_task(generate, name="generate")
+ns.add_task(sync, name="sync")
 
 __all__ = ["ns"]

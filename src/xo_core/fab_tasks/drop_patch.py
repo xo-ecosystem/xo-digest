@@ -248,10 +248,39 @@ def validate_drops(c):
     else:
         print(f"\n⚠️ Some drops have issues")
 
+@task
+def deploy(c):
+    """📦 Deploy the eighth_seal_3d preview and trigger explorer deploy. Optional IPFS/Arweave pinning + logbook + git tag."""
+    from datetime import datetime
+    log_entry = f"[{datetime.utcnow().isoformat()}] Deployed: eighth_seal_3d\n"
+
+    # Run core tasks
+    c.run("xo-fab pulse.preview --drop=eighth_seal_3d")
+    c.run("xo-fab explorer.deploy")
+
+    # Optional uploads
+    if c.config.get("ipfs", False):
+        c.run("xo-fab ipfs.pin-file --path=public/vault/previews/eighth_seal_3d")
+    if c.config.get("arweave", False):
+        c.run("xo-fab pulse.upload --path=public/vault/previews/eighth_seal_3d")
+
+    # Write to deploy log
+    log_path = Path("vault/logbook/deploy.log")
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(log_path, "a") as log_file:
+        log_file.write(log_entry)
+    print(f"📝 Logged deployment to {log_path}")
+
+    # Create git tag
+    tag = "v0.1.0-eighth"
+    c.run(f"git tag {tag} && git push origin {tag}")
+    print(f"🏷️ Git tag created and pushed: {tag}")
+
 # Create namespace
 ns = Collection("drop_patch")
 ns.add_task(patch_drop_yml, name="patch")
 ns.add_task(patch_all, name="patch-all")
 ns.add_task(validate_drops, name="validate")
+ns.add_task(deploy, name="deploy")
 
 __all__ = ["ns"]

@@ -1,0 +1,27 @@
+bundle: eighth_seal_3d
+drop: eighth
+preview:
+  title: "Eighth Seal – Scrollbearer 3D"
+  description: "Mystical unicorn scrollbearers in stunning 3D, carrying ancient wisdom and eternal flames"
+  image: "drop_main.webp"
+  animation: "unicorn_scroll_01.webp"
+  background: "unicorn_scroll_02.webp"
+  
+display:
+  theme: "3d_mystical"
+  colors:
+    primary: "#8B4513"
+    secondary: "#DAA520"
+    accent: "#FFD700"
+  
+effects:
+  - type: "particle"
+    source: "drop_main.webp"
+    intensity: 0.9
+  - type: "glow"
+    source: "unicorn_scroll_01.webp"
+    color: "#FFD700"
+    radius: 25
+  - type: "shimmer"
+    source: "unicorn_scroll_02.webp"
+    frequency: 0.5 
