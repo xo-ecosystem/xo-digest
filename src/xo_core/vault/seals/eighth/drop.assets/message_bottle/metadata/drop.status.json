@@ -1,0 +1,40 @@
+{
+  "bundle": "message_bottle",
+  "drop": "eighth",
+  "status": "active",
+  "created_at": "2025-07-22T00:00:00Z",
+  "assets": [
+    {
+      "id": "message_bottle_0",
+      "label": "Message in a Bottle - Main",
+      "file": "drop_main.webp",
+      "description": "A mystical bottle containing a sealed scroll, floating through the digital ocean",
+      "rarity": "epic"
+    },
+    {
+      "id": "message_bottle_1",
+      "label": "Bottle Scroll - Unopened",
+      "file": "bottle_scroll_01.webp",
+      "description": "The sealed scroll within the bottle, waiting to reveal its secrets",
+      "rarity": "rare"
+    },
+    {
+      "id": "message_bottle_2",
+      "label": "Bottle Scroll - Revealed",
+      "file": "bottle_scroll_02.webp",
+      "description": "The scroll partially unrolled, showing ancient symbols and text",
+      "rarity": "legendary"
+    }
+  ],
+  "metadata": {
+    "total_assets": 3,
+    "rarity_distribution": {
+      "rare": 1,
+      "epic": 1,
+      "legendary": 1
+    },
+    "theme": "mystical_bottle",
+    "dimensions": "1024x1024",
+    "unlock_logic": "silence_attunement"
+  }
+}

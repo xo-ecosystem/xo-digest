@@ -100,6 +100,27 @@ def generate_drop_meta(drop_id: str, drop_data: Dict[str, Any]) -> Dict[str, Any
     
     return meta
 
+from invoke import task
+
+@task(help={"bundle": "Name of the bundle inside drop.assets/", "seal": "Optional seal name"})
+def move_assets(c, bundle, seal="eighth"):
+    """
+    📂 Move preview-relevant assets from drop.assets/<bundle>/metadata into public/vault/previews/<bundle>
+    """
+    from pathlib import Path
+    import shutil
+
+    src = Path(f"src/xo_core/vault/seals/{seal}/drop.assets/{bundle}/metadata")
+    dst = Path(f"public/vault/previews/{bundle}")
+    dst.mkdir(parents=True, exist_ok=True)
+
+    for ext in ("*.webp", "*.yml", "*.json"):
+        for f in src.glob(ext):
+            shutil.copy(f, dst / f.name)
+            print(f"✅ Copied {f.name}")
+
+    print(f"🎉 Assets moved to: {dst}")
+
 @task(help={
     "drop": "Drop ID to patch (e.g., eighth, first, lolcats)",
     "force": "Force overwrite existing files",
@@ -282,5 +303,6 @@ ns.add_task(patch_drop_yml, name="patch")
 ns.add_task(patch_all, name="patch-all")
 ns.add_task(validate_drops, name="validate")
 ns.add_task(deploy, name="deploy")
+ns.add_task(move_assets, name="move-assets")
 
 __all__ = ["ns"]

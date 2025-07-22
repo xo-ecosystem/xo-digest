@@ -1,0 +1,27 @@
+bundle: message_bottle
+drop: eighth
+preview:
+  title: "Message in a Bottle"
+  description: "A sealed scroll drifts across realms, calling out to those attuned to the silence"
+  image: "drop_main.webp"
+  animation: "bottle_scroll_01.webp"
+  background: "bottle_scroll_02.webp"
+  
+display:
+  theme: "mystical_ocean"
+  colors:
+    primary: "#1E3A8A"
+    secondary: "#3B82F6"
+    accent: "#60A5FA"
+  
+effects:
+  - type: "wave"
+    source: "drop_main.webp"
+    intensity: 0.7
+  - type: "glow"
+    source: "bottle_scroll_01.webp"
+    color: "#60A5FA"
+    radius: 30
+  - type: "float"
+    source: "bottle_scroll_02.webp"
+    frequency: 0.3

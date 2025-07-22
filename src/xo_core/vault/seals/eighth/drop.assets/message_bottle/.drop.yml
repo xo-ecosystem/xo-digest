@@ -1,0 +1,16 @@
+drop: message_bottle
+title: Message in a Bottle
+category: seals
+rarity: epic
+status: active
+description: |
+  A sealed scroll drifts across realms, calling out to those attuned to the silence.
+  This bottle contains the eighth message, awaiting its finder.
+tags:
+  - scroll
+  - bottle
+  - mystery
+  - ocean
+mint_price: "0.05 ETH"
+max_supply: 888
+launch_date: 2025-08-01
