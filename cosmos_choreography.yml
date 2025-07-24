@@ -1,0 +1,43 @@
+agents:
+  agent0:
+    role: creator
+    tasks:
+    - generate_content
+    - create_pulse
+    - draft_drop
+    triggers:
+    - content_request
+    - pulse_creation
+  agentx:
+    role: refiner
+    tasks:
+    - review_content
+    - refine_pulse
+    - optimize_drop
+    triggers:
+    - content_ready
+    - pulse_draft
+  agentz:
+    role: approver
+    tasks:
+    - approve_content
+    - finalize_pulse
+    - publish_drop
+    triggers:
+    - content_refined
+    - pulse_ready
+name: XO Agent Choreography
+sequence:
+- action: create
+  agent: agent0
+  trigger: start
+- action: refine
+  agent: agentx
+  trigger: creation_complete
+- action: approve
+  agent: agentz
+  trigger: refinement_complete
+version: 1.0.0
+webhooks:
+  on_complete: null
+  on_error: null

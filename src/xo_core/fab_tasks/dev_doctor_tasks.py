@@ -8,7 +8,7 @@ import ast
 
 
 @task(help={"fix": "Install missing packages and update requirements.txt"})
-def doctor(c, fix=False):
+def check_packages(c, fix=False):
     """🩺 Check required Python packages for XO FAB tasks."""
     import importlib
     missing = []
@@ -397,6 +397,7 @@ def create_rule(c, name, type="file_exists", target_file=None, required_function
 
 ns = Collection("dev")
 ns.add_task(fix_preview_import, name="fix-preview-import")
+ns.add_task(check_packages, "check-packages")
 ns.add_task(doctor, "doctor")
 ns.add_task(list_rules, "list-rules")
 
