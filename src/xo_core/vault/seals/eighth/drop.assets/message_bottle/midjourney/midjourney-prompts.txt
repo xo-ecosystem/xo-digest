@@ -1,11 +1,11 @@
 bottle_scroll_01 Prompt
 
-A stylized magical message scroll inside a translucent glass bottle, floating in ocean waves, with glowing runes and a faded label — studio light, cinematic shot, dreamy vibe, soft reflections –v 6 –style raw
+A stylized magical message scroll inside a translucent glass bottle, floating in ocean waves, glowing runes and a faded label — surreal light, soft reflections, enchanting tone --v 6 --style raw
 
 bottle_scroll_02 Prompt
 
-Ancient cylindrical glass bottle sealed with wax, containing a scroll wrapped in twine, resting on sand with moonlight hitting it, mystical atmosphere –ar 3:4 –v 6 –style scenic
+Ancient cylindrical glass bottle sealed with wax, scroll wrapped in twine inside, resting on sand with moonlight glowing through the glass — mystical atmosphere, dreamy shadows --ar 3:4 --v 6 --style raw
 
 drop_main Prompt
 
-Promotional poster-style image for a mysterious collectible called “Message in a Bottle”, featuring a glowing bottle with an XO Seal scroll inside, surreal lighting and ethereal background fog — wide format, realistic, dramatic tone –v 6 –style cinematic
+Promotional poster-style image for a mysterious collectible “Message in a Bottle” with glowing XO Seal scroll inside, magical aura, subtle fog, cinematic lighting — wide shot --v 6 --style raw

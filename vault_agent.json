@@ -1,0 +1,21 @@
+{
+  "name": "XO Vault Agent",
+  "version": "1.0.0",
+  "trust_mode": "programmatic",
+  "unseal_keys": [
+    "934fcbc9396030b574478ab3dc80b3b865cb228a1fc419d320817ea97d3c127f",
+    "b45758a8ed77327d5a92b160f67cc73a7bf9a53e805a711c6c96e13db7398185",
+    "7541f679c6b87ceb5acc41d22c619b191c9ed458f289fa52d7d728bb8cd74f34"
+  ],
+  "orchestration": {
+    "method": "programmatic_routing",
+    "quorum": 2,
+    "social_recovery": true
+  },
+  "trusted_execution": {
+    "enabled": true,
+    "isolation": "container",
+    "verification": "hash_chain"
+  },
+  "created_at": "2025-07-23T22:26:01.804556"
+}

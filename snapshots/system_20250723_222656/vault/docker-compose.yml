@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: xo-vault
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./vault-data:/vault/file
+    command: server
+    environment:
+      VAULT_LOCAL_CONFIG: |
+        {
+          "listener": [{
+            "tcp": {
+              "address": "0.0.0.0:8200",
+              "tls_disable": true
+            }
+          }],
+          "storage": {
+            "file": {
+              "path": "/vault/file"
+            }
+          },
+          "default_lease_ttl": "168h",
+          "max_lease_ttl": "720h",
+          "ui": true
+        }

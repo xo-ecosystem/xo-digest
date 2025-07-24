@@ -1,0 +1,39 @@
+{
+  "patterns": {
+    "modern": [
+      "main",
+      "master", 
+      "xo",
+      "dev/xo",
+      "feature/xo",
+      "hotfix/xo",
+      "release/xo"
+    ],
+    "legacy": [
+      "legacy",
+      "fab2", 
+      "stable",
+      "v1",
+      "v2",
+      "legacy/*",
+      "fab2/*"
+    ],
+    "experimental": [
+      "experimental",
+      "exp/*",
+      "test/*"
+    ]
+  },
+  "targets": {
+    "modern": ".envrc",
+    "legacy": ".envrc.fab2",
+    "experimental": ".envrc.experimental",
+    "fallback": ".envrc.link.default"
+  },
+  "auto_apply": true,
+  "watch_mode": false,
+  "hooks": {
+    "pre_switch": null,
+    "post_switch": "direnv allow"
+  }
+} 

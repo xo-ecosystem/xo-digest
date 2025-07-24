@@ -1,0 +1,190 @@
+---
+title: "XO Fabric Task Spec – Vault Bootstrap + Infrastructure"
+created: 2025-07-23
+category: "fab_tasks"
+tags: ["vault", "infra", "automation", "spec"]
+last_synced: "2025-07-24T02:21:01Z"
+---
+
+# 🧩 XO Fabric Task Spec Manifest
+
+This manifest describes the intended and existing Fabric CLI task structure for Vault automation, storage, infrastructure deployment, and development utilities within the XO ecosystem.
+
+---
+
+## ✅ Working Tasks
+
+| Namespace | Task                 | Description                                               |
+| --------- | -------------------- | --------------------------------------------------------- |
+| `vault`   | `pull_secrets`       | Pulls encrypted unseal keys from GitHub/S3/local fallback |
+| `vault`   | `unseal`             | Uses unseal keys to unseal Vault via CLI                  |
+| `vault`   | `status`             | Gets Vault service status                                 |
+| `vault`   | `encrypt_keys`       | Re-encrypts root/unseal keys                              |
+| `vault`   | `refresh_daily`      | Refreshes Vault-derived secrets into `.envrc`             |
+| `vault`   | `finalize_bootstrap` | Finalizes setup and logs a bundle manifest                |
+| `vault`   | `log_manifest`       | Writes `.mdx` logbook entry to `vault/logbook/`           |
+
+---
+
+## 🔧 Planned Task Specs
+
+### 🛠️ `storage` Namespace ✅ IMPLEMENTED
+
+| Task | Description | Status |
+| ---- | ----------- | ------ |
+| `storage.upload_storj` | Upload a file to Storj | ✅ |
+| `storage.backup_all` | Zips Vault secrets, pulses, and manifests into versioned archive | ✅ |
+| `storage.storj_push` | Uploads archive to Storj bucket | ✅ |
+| `storage.verify_pin` | Checks that signed files are pinned on IPFS or Arweave | ✅ |
+| `storage.cleanup_old` | Deletes backups older than N days | ✅ |
+| `storage.route_smart` | Smart routing of files to appropriate Storj buckets based on .storj.yml config | ✅ |
+| `storage.versioning_setup` | Setup versioning for Storj buckets | ✅ |
+| `storage.status` | Get storage status and health | ✅ |
+| `storage.prune` | Prune old objects from cache buckets | ✅ |
+| `storage.list_storj` | List objects in Storj bucket | ✅ |
+| `storage.copy_storj` | Copy object between Storj buckets | ✅ |
+
+
+### 🛠️ `sign` Namespace ✅ IMPLEMENTED
+
+| Task | Description | Status |
+| ---- | ----------- | ------ |
+| `sign.pulse_bundle` | Signs a full drop or pulse bundle with Vault key and logs result | ✅ |
+| `sign.inbox_all` | Signs all .comments.mdx inbox files before pinning | ✅ |
+| `sign.verify_all` | Verifies existing signatures against hash chain or known Vault pubkey | ✅ |
+
+
+### 🛠️ `cosmos` Namespace ✅ IMPLEMENTED
+
+| Task | Description | Status |
+| ---- | ----------- | ------ |
+| `cosmos.initiate_loop` | Triggers a multi-agent loop where Agent0 (creation), AgentX (review), and AgentZ (approval) co-generate, iterate, and finalize a Pulse or Drop collaboratively | ✅ |
+| `cosmos.vault_agent_setup` | Sets up the XO Vault Agent with programmable key orchestration, trusted execution, and quorum fallback via social recovery | ✅ |
+| `cosmos.vault_agent_status` | Displays current Vault Agent configuration, health, and trust mode | ✅ |
+| `cosmos.vault_agent_rotate` | Rotates and securely distributes unseal keys using programmable routing, making traditional secret managers obsolete | ✅ |
+| `cosmos.epic_keyshift` | Executes full replacement of traditional secrets with the XO Vault Agent trust system, chaining setup, policy binding, and final verification | ✅ |
+| `cosmos.agent_choreography` | Orchestrates a full AI-agent sequence with custom roles and triggers: Agent0 (creator), AgentX (refiner), AgentZ (approver), allowing dynamic logic branching and optional webhook callbacks | ✅ |
+
+
+### 🛠️ `seal` Namespace ✅ IMPLEMENTED
+
+| Task | Description | Status |
+| ---- | ----------- | ------ |
+| `seal.drop_bundle` | Seals a drop by finalizing metadata, signing variants, and archiving the bundle | ✅ |
+| `seal.pulse_freeze` | Freezes a Pulse and its comments into a read-only snapshot, signs, and archives it | ✅ |
+| `seal.inbox_lock` | Disables further writes to a .comments.mdx file and pins final version to IPFS | ✅ |
+| `seal.system_snapshot` | Creates a full system snapshot (Vault, Drops, Inbox, Digest) into a sealed .zip with signed manifest | ✅ |
+| `seal.now` | Generates a sealed snapshot of current infra status and app state | ✅ |
+| `seal.with_message` | Same as seal.now, but includes a user-provided commit-style message | ✅ |
+| `seal.verify_snapshot` | Validates current state against last sealed hash/log | ✅ |
+| `seal.log_entry` | Appends a manual seal event to the vault logbook | ✅ |
+| `seal.compare_history` | Diff and compare two seals for drift or mutation | ✅ |
+| `seal.bundle_all` | Chains snapshot, verification, log, and Git tag/ZIP bundle into one | ✅ |
+
+
+### 🛠️ `backend` Namespace ✅ IMPLEMENTED
+
+| Task | Description | Status |
+| ---- | ----------- | ------ |
+| `backend.image_build` | Builds backend container image or snapshot | ✅ |
+| `backend.image_push_storj` | Pushes image to Storj with object lock support | ✅ |
+| `backend.image_pin` | Pins metadata to IPFS/Arweave | ✅ |
+| `backend.agent_mesh_map` | Maps agent mesh connections | ✅ |
+| `backend.agent_relay_up` | Launches relay hub for internal AI agents | ✅ |
+| `backend.agent_bind_ports` | Binds agents to UNIX socket or port | ✅ |
+| `backend.check_health` | Runs backend diagnostics | ✅ |
+| `backend.hard_reset` | Wipes backend and reloads clean snapshot | ✅ |
+| `backend.snapshot_save` | Saves full backend state to Vault/IPFS | ✅ |
+| `backend.snapshot_restore` | Restores from snapshot to live system | ✅ |
+
+
+### 🛠️ `digest` Namespace ✅ IMPLEMENTED
+
+| Task | Description | Status |
+| ---- | ----------- | ------ |
+| `digest.write_mock_log` | Write a mock digest log entry to .logbook/. | ✅ |
+| `digest.sign_all` | Dummy sign_all task for digest namespace. | ✅ |
+| `digest.all` | Run the full digest generation pipeline:
+- Inbox HTML rendering
+- Digest .md and .html generation
+- Optional webhook notify | ✅ |
+| `digest.push_logbook` | No description available | ✅ |
+| `digest.all` | No description available | ✅ |
+| `digest.pin_digest_to_ipfs` | Simulate pinning digest content to IPFS/Arweave. | ✅ |
+| `digest.trigger_digest_webhook` | Simulate sending digest webhook notifications. | ✅ |
+| `digest.publish_all_digest` | Run the full digest publish pipeline with optional flags. | ✅ |
+| `digest.push_digest` | Simulate pushing a digest to external services. | ✅ |
+
+
+### 🛠️ `pulse` Namespace ✅ IMPLEMENTED
+
+| Task | Description | Status |
+| ---- | ----------- | ------ |
+| `pulse.sync` | 🔄 Simulate syncing a pulse by copying .mdx content and .signed file to a .synced directory | ✅ |
+| `pulse.sync_all` | 🔁 Sync all .mdx pulses in content/pulses/ that have not yet been synced | ✅ |
+| `pulse.dev` | 🧪 Run full test/dev flow for test_pulse (new, sign, sync, archive) | ✅ |
+| `pulse.delete_pulse` | Delete a pulse and its associated files (.mdx, .coin.yml, .comments.mdx). | ✅ |
+| `pulse.sync` | No description available | ✅ |
+| `pulse.sign` | No description available | ✅ |
+| `pulse.publish` | 📤 Publish a pulse by syncing it and optionally signing it.
+Usage: xo-fab pulse.publish:slug | ✅ |
+| `pulse.new` | 🆕 Create a new pulse with default template | ✅ |
+| `pulse.preview` | 👁️ Preview a pulse in terminal or browser | ✅ |
+| `pulse.clean` | 🧹 Clean .txid and .preview files | ✅ |
+| `pulse.doctor` | 🩺 Check pulse setup status (paths, CLI, dependencies) | ✅ |
+| `pulse.preview_pulse` | 👀 Preview a pulse as raw Markdown or HTML render with live reload.
+
+Examples:
+    fab pulse.preview --slug prose_test
+    fab pulse.preview --slug prose_test --html | ✅ |
+| `pulse.export_html` | 💾 Export pulse as standalone HTML into public/pulses/<slug>.html
+
+Examples:
+    fab pulse.export-html --slug prose_test | ✅ |
+| `pulse.edit_pulse` | ✍️ Open the pulse .mdx in VSCode.
+
+Examples:
+    fab pulse.edit --slug prose_test | ✅ |
+| `pulse.thirdweb_mint` | 🪙 Mint a Pulse NFT on Thirdweb | ✅ |
+| `pulse.post_sign_mint` | 🪙 Run the post-sign mint hook manually or auto-detect the latest signed file | ✅ |
+| `pulse.pin_to_arweave` | 📤 Pin a pulse's signed .mdx to Arweave and log the TXID.
+
+Usage:
+    xo-fab pin-to-arweave --pulse-slug=test_pulse | ✅ |
+| `pulse.test_pulse` | 🧪 Test a pulse by running basic validation checks. | ✅ |
+| `pulse.test_all` | 🧪 Test all pulses in the content/pulses directory. | ✅ |
+| `pulse.review_pulse` | Review a signed pulse before publishing.
+Checks for .mdx and .coin.yml presence and shows a summary preview. | ✅ |
+| `pulse.archive` | 📦 Archive pulse to Arweave/IPFS with CID + SHA256 + Signature | ✅ |
+| `pulse.stub` | No description available | ✅ |
+| `pulse.new` | No description available | ✅ |
+| `pulse.new_pulse` | Create a new pulse .mdx file. | ✅ |
+| `pulse.dev` | Run full pulse dry-run development flow. | ✅ |
+| `pulse.export_html_pulse` | Export a static HTML preview of a Pulse from .mdx to public/{slug}.html | ✅ |
+| `pulse.watch_mdx_reload` | Watch .mdx file and auto-export HTML on changes. | ✅ |
+| `pulse.sign` | No description available | ✅ |
+| `pulse.sign_batch` | 🔏 Batch sign multiple pulses by slug with optional post-signing hooks. | ✅ |
+| `pulse.publish` | 📤 Finalize a signed pulse for public use and optionally pin to IPFS/Arweave.
+Usage: xo-fab pulse.publish --slug <slug> [--dry-run] [--pin-ipfs] [--webhook]
+       xo-fab pulse.publish:<slug> [--dry-run] [--pin-ipfs] [--webhook] | ✅ |
+| `pulse.auto` | 🤖 Automated pulse workflow: generate → sign → sync → archive → bundle | ✅ |
+
+
+### 🛠️ `vault` Namespace ✅ IMPLEMENTED
+
+| Task | Description | Status |
+| ---- | ----------- | ------ |
+| `vault.update_digest` | Mock digest update function for testing.
+
+Args:
+    c: Fabric context
+    slug: Pulse slug
+    **kwargs: Additional arguments | ✅ |
+| `vault.preview_all` | No description available | ✅ |
+| `vault.bundle_all` | No description available | ✅ |
+| `vault.auto` | Automate the full XO Vault chain: sign-all, pin-all, verify-all. | ✅ |
+| `vault.sign_all` | No description available | ✅ |
+| `vault.sync` | No description available | ✅ |
+| `vault.test_sign` | 🧪 Test signing functionality. | ✅ |
+| `vault.verify_all` | No description available | ✅ |
+| `vault.sign_all` | No description available | ✅ |

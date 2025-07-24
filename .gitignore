@@ -11,6 +11,8 @@
 .envrc
 arweave_wallet.json
 secrets/
+unseal_keys.json
+vault/private.key
 
 ##############################################
 # 2. Virtual environments & direnv activations

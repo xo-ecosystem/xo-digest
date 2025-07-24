@@ -5,3 +5,5 @@
 .direnv/** binary
 .venv/** binary
 venv/** binary
+vault/.keys.enc binary
+vault/.keys 

@@ -1,12 +1,64 @@
-
 import os
 import yaml
 import re
 from invoke import task, Collection
 from pathlib import Path
 import pathlib
+import ast
 
 
+@task(help={"fix": "Install missing packages and update requirements.txt"})
+def doctor(c, fix=False):
+    """🩺 Check required Python packages for XO FAB tasks."""
+    import importlib
+    missing = []
+    required = [
+        "PIL",
+        "shutil",
+        "pathlib",
+        "zipfile",
+        "arweave",
+        "web3",
+        "requests",
+        "boto3",
+        "tqdm",
+        "python-dotenv",
+        "aiohttp",
+        "pillow",
+        "pystorj",
+    ]
+    for pkg in required:
+        try:
+            importlib.import_module(pkg.lower())
+            print(f"✅ {pkg} available")
+        except ImportError:
+            missing.append(pkg)
+            print(
+                f"❌ Missing: {pkg} — install with: pip install {pkg}  # vault-dep"
+                if pkg in ["arweave", "web3"]
+                else f"❌ Missing: {pkg} — install with: pip install {pkg}"
+            )
+    if missing:
+        pip_line = "pip install " + " ".join(missing)
+        print(f"\n📦 To install all missing packages:\n➡️  {pip_line}")
+
+        if fix:
+            import subprocess
+            print("🛠️ Installing missing packages...")
+            subprocess.run(["pip", "install", *missing])
+
+            # Append missing packages to requirements.txt if not present
+            req_path = Path("requirements.txt")
+            existing = []
+            if req_path.exists():
+                with open(req_path, "r") as f:
+                    existing = f.read().splitlines()
+
+            with open(req_path, "a") as f:
+                for pkg in missing:
+                    if pkg not in existing:
+                        f.write(pkg + "\n")
+                        print(f"➕ Added to requirements.txt: {pkg}")
 
 
 @task
@@ -347,6 +399,40 @@ ns = Collection("dev")
 ns.add_task(fix_preview_import, name="fix-preview-import")
 ns.add_task(doctor, "doctor")
 ns.add_task(list_rules, "list-rules")
+
+# --- Guardrails task ---
+@task
+def guardrails(c):
+    """Scan for task issues: missing docstrings, missing Collection declarations."""
+    print("🧠 Dev Doctor Guardrails:")
+    root = Path("src/xo_core/fab_tasks")
+    task_count = 0
+    issues = 0
+
+    for py_file in root.rglob("*.py"):
+        if "spec_sync" in py_file.name:
+            continue
+        content = py_file.read_text()
+        try:
+            tree = ast.parse(content)
+            for node in tree.body:
+                if isinstance(node, ast.FunctionDef):
+                    if not any(isinstance(dec, ast.Name) and dec.id == "task" for dec in node.decorator_list):
+                        continue
+                    task_count += 1
+                    if not ast.get_docstring(node):
+                        print(f"⚠️ Missing docstring in: {py_file} > {node.name}")
+                        issues += 1
+            if "ns = Collection(" not in content:
+                print(f"⚠️ Missing Collection declaration in: {py_file}")
+                issues += 1
+        except Exception as e:
+            print(f"❌ Failed to parse: {py_file} – {e}")
+            issues += 1
+
+    print(f"✅ Checked {task_count} @task definitions – {issues} issue(s) found.")
+
+ns.add_task(guardrails, "guardrails")
 ns.add_task(create_rule, "create-rule")
 
 # Export the Fabric namespace

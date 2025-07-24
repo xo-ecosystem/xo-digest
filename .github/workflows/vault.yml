@@ -1,0 +1,73 @@
+name: Vault
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: "0 */6 * * *" # Every 6 hours
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Write encrypted Vault keys to file from GitHub Secrets
+        run: |
+          echo "${{ secrets.VAULT_KEYS_ENC }}" | base64 --decode > vault/.keys.enc
+
+      - name: Verify encrypted Vault keys exist
+        run: |
+          if [ ! -f vault/.keys.enc ]; then
+            echo "❌ Encrypted keys file not found!"
+            exit 1
+          fi
+          echo "✅ Encrypted keys file found."
+
+      - name: Install Fabric
+        run: |
+          pip install fabric
+
+      - name: Decrypt Vault Keys
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private.key
+          gpg --import private.key
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" \
+            --output vault/unseal_keys.json vault/.keys.enc
+
+          # Export keys from decrypted JSON
+          export VAULT_UNSEAL_KEY_1=$(jq -r '.unseal_keys[0]' vault/unseal_keys.json)
+          export VAULT_UNSEAL_KEY_2=$(jq -r '.unseal_keys[1]' vault/unseal_keys.json)
+          export VAULT_UNSEAL_KEY_3=$(jq -r '.unseal_keys[2]' vault/unseal_keys.json)
+
+          # Run unseal task with exported keys
+          fab vault.unseal
+
+      - name: Send Discord Notification
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{"content":"✅ Vault unsealed successfully!"}' ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Send Telegram Success Notification
+        if: success()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="✅ Vault unsealed successfully!"
+
+      - name: Send Discord Failure Notification
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{"content":"❌ Vault unseal failed!"}' ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Send Telegram Failure Notification
+        if: failure()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="❌ Vault unseal failed!"
+    env:
+      VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+      VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}

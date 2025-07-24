@@ -1,0 +1,85 @@
+export PYTHONPATH=src
+layout python3
+if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+
+if ! command -v direnv &>/dev/null; then
+  echo "⚠️ direnv not found. Please install it via: brew install direnv"
+fi
+
+if ! command -v python3 &>/dev/null; then
+  echo "⚠️ python3 not found. Please install it via: brew install python"
+fi
+
+alias run-sweeper='python scripts/main.py'
+export LIGHTHOUSE_API_KEY="<YOUR_KEY_HERE>"
+# export NFT_STORAGE_TOKEN="<YOUR_KEY_HERE>"
+# 🔐 Pinata JWT – for direct Bearer uploads (used in ipfs_pin.py)
+export PINATA_JWT="<YOUR_KEY_HERE>"
+# 🔑 Pinata API Credentials – for SDKs or future HMAC-based uploads
+export PINATA_API_KEY="<YOUR_KEY_HERE>"
+export PINATA_API_SECRET="<YOUR_KEY_HERE>"
+
+export INFURA_PROJECT_ID="<YOUR_KEY_HERE>"
+export INFURA_PROJECT_SECRET="<YOUR_KEY_HERE>"
+
+export IPFS_UPLOAD_URL="${IPFS_UPLOAD_URL:-https://xo-digest.com/webhook/ipfs-upload}"
+export THIRDWEB_API_TOKEN="<YOUR_KEY_HERE>"
+export MIDJOURNEY_PROMPT_URL_TEMPLATE="https://www.midjourney.com/imagine/{}"
+export XO_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1352817570910175273/6_vMSQtwyqY2Mc4bS5jtI6iXPC1FEeUsQ-PHjjtDr35hSvIpssXV5iRTPIlUm4owR7Ub"
+export XO_TELEGRAM_TOKEN="<YOUR_KEY_HERE>"
+export XO_TELEGRAM_CHAT_ID="-1002807758014"
+export DISCORD_TITLE="🧭 XO Update"
+
+export XO_LINK_URL="https://xodrops.com"
+# Dynamic .mdx source for digest/inbox builds
+# Sanity CMS Configuration
+export SANITY_PROJECT_ID="goi08auw"
+export SANITY_DATASET="production"
+export SANITY_API_TOKEN="<YOUR_KEY_HERE>"
+export MDX_SOURCE_PATH="content/pulses/{{DROP_NAME}}.mdx"  # Overridable at runtime
+
+# Mirror preview destination (used in Discord embeds or fallback HTML)
+export DISCORD_EMBED_MIRROR_URL="${DISCORD_EMBED_MIRROR_URL:-https://xo-digest.pages.dev/vault/daily/latest.html}"
+
+# Optional fallback values for Discord/Telegram embed previews
+export DISCORD_IMAGE_URL="${DISCORD_IMAGE_URL:-https://21xo.to/default-preview.png}"
+export DISCORD_TITLE="${DISCORD_TITLE:-🧭 XO Update}"
+export XO_LINK_URL="${XO_LINK_URL:-https://21xo.to/claim}"
+
+export IPFS_UPLOAD_ENDPOINT="https://api.web3.storage/upload"
+export PINATA_API_KEY_2="<YOUR_KEY_HERE>"
+export PINATA_API_SECRET_2="<YOUR_KEY_HERE>"
+
+# Canonical Arweave wallet key path
+export ARWEAVE_KEYFILE="$HOME/.config/arweave/keyfile.json"
+
+# Compatibility with older scripts
+export ARWEAVE_WALLET_JSON="${ARWEAVE_WALLET_JSON:-$ARWEAVE_KEYFILE}"
+
+export PYTHONPATH="${PWD}/src"
+layout python3
+
+if ! command -v direnv &>/dev/null; then
+  echo "⚠️ direnv not found. Please install it via: brew install direnv"
+fi
+
+if ! command -v python3 &>/dev/null; then
+  echo "⚠️ python3 not found. Please install it via: brew install python"
+fi
+
+# aliases and tokens follow...
+# Final cleanup (optional once confirmed safe):
+# unset ARWEAVE_WALLET_JSON
+export PYENV_VERSION=3.10.13
+export PRIVATE_KEY="<YOUR_KEY_HERE>"
+export NEXT_PUBLIC_RPC_BASE="https://base-mainnet.infura.io/v3/$INFURA_PROJECT_ID"
+export NEXT_PUBLIC_RPC_POLYGON="https://polygon-mainnet.infura.io/v3/$INFURA_PROJECT_ID"
+export NEXT_PUBLIC_THIRDWEB_CLIENT_ID="<YOUR_KEY_HERE>"
+export NEXT_PUBLIC_THIRDWEB_CLIENT_SECRET="<YOUR_KEY_HERE>"
+export NEXT_PUBLIC_DROP_CONTRACT="<YOUR_KEY_HERE>"
+
+export VAULT_UNSEAL_KEY_1="<UNSEAL_KEY_1>"
+export VAULT_UNSEAL_KEY_2="<UNSEAL_KEY_2>"
+export VAULT_UNSEAL_KEY_3="<UNSEAL_KEY_3>"
+export VAULT_ADDR="http://127.0.0.1:8200"

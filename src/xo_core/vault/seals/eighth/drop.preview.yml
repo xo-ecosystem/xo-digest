@@ -50,3 +50,26 @@ def patch(c, drop):
 
 ns = Collection("drop_patch")
 ns.add_task(patch, "patch")
+
+title: "Flame Scroll Drop"
+description: >
+  From the ashes of forgotten scrolls, the Flame Seal burns with a timeless vow —
+  to ignite wisdom wherever shadows fall. This drop invites seekers to bear fire
+  not merely to warm, but to awaken.
+
+theme: "emberlight"
+category: "seals"
+drop: "seal_flame"
+
+variants:
+  - image: drop.assets/seal_flame/drop_r1_c0.webp
+    label: "XO Flame Seal"
+    description: >
+      An enduring ember of the XO legacy, sealed in golden light and sacred fire.
+    default: true
+
+  - image: drop.assets/seal_flame/drop_r1_c1.webp
+    label: "Scrollbearer Flame"
+    description: >
+      The chosen silhouette, keeper of the message, protector of the seal’s flame.
+    default: false

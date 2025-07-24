@@ -3,9 +3,7 @@ certifi==2025.7.9
 cffi==1.17.1
 charset-normalizer==3.4.2
 cryptography==45.0.5
-fabric==2.7.1
 idna==3.10
-invoke==1.7.3
 paramiko==3.5.1
 pathlib2==2.3.7.post1
 pycparser==2.22
@@ -19,3 +17,11 @@ markdown2
 python-dotenv
 rich
 requests
+Pillow
+boto3
+ # fabric requires invoke < 2.0; using invoke>=2.2.0 breaks fabric 2.x
+invoke>=2.2.0
+# If you still need legacy Fabric 2.x, install 'fabric2' in a separate virtualenv,
+# or install it as 'fab2' to avoid version conflicts.
+pytest>=8.2.2
+typer>=0.9.0

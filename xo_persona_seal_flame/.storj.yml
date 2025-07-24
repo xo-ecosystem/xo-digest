@@ -1,0 +1,11 @@
+
+
+eighth_seal_3d:
+  bucket: xo-vault-sealed
+  files:
+    - drop_main.webp
+
+message_bottle:
+  bucket: xo-vault-sealed
+  files:
+    - drop_main.webp

@@ -3,7 +3,7 @@ repos:
     hooks:
       - id: dev-doctor
         name: Run XO Dev Doctor
-        entry: poetry run fab dev.doctor
+        entry: xo-fab dev.doctor
         language: system
         types: [python]
       - id: dev-cleanup

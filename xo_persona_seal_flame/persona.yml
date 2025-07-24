@@ -1,0 +1,31 @@
+id: "seal_flame"
+name: "Seal Flame"
+role: "Lorekeeper"
+drop: "message_bottle"
+traits:
+  wisdom: 87
+  element: flame
+  rare: true
+  genderless: true
+socials:
+  twitter: "@SealOfWisdom"
+  website: "https://xo.community/drops/message_bottle"
+assets:
+  avatar: "avatar.webp"
+  scroll: "scroll.md"
+  scroll_image: "drop_scroll_xo.webp"
+  avatar_print: "avatar_print_transparent.png"
+  scroll_variants:
+    - "transparent_scroll_1.webp"
+    - "transparent_scroll_2.webp"
+    - "transparent_scroll_3.webp"
+    - "transparent_scroll_4.webp"
+    - "transparent_scroll_5.webp"
+    - "transparent_scroll_6.webp"
+    - "transparent_scroll_7.webp"
+    - "transparent_scroll_8.webp"
+    - "transparent_scroll_9.webp"
+    - "transparent_scroll_10.webp"
+vault:
+  signed_at: "2025-07-22T20:22:00Z"
+  fingerprint: "QmExampleSealFlame123"

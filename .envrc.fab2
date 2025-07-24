@@ -1,0 +1,11 @@
+# Legacy Fabric 2 Environment Configuration
+export FABRIC_LEGACY_MODE=true
+export FABRIC_VERSION=2.7.1
+export LEGACY_ENV=true
+
+# Legacy-specific variables
+export LEGACY_DATABASE_URL="postgresql://legacy:legacy@localhost:5432/legacy_db"
+export LEGACY_API_KEY="legacy_api_key_123"
+export LEGACY_ENVIRONMENT="legacy"
+
+echo "🔧 Loaded Legacy Fabric 2 Environment"

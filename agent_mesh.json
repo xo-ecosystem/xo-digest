@@ -1,0 +1,83 @@
+{
+  "agents": {
+    "agent0": {
+      "id": "agent0",
+      "role": "creator",
+      "port": 8081,
+      "socket": "/tmp/agent0.sock",
+      "status": "active",
+      "capabilities": [
+        "content_generation",
+        "pulse_creation",
+        "drop_drafting"
+      ]
+    },
+    "agentx": {
+      "id": "agentx",
+      "role": "refiner",
+      "port": 8082,
+      "socket": "/tmp/agentx.sock",
+      "status": "active",
+      "capabilities": [
+        "content_review",
+        "pulse_refinement",
+        "drop_optimization"
+      ]
+    },
+    "agentz": {
+      "id": "agentz",
+      "role": "approver",
+      "port": 8083,
+      "socket": "/tmp/agentz.sock",
+      "status": "active",
+      "capabilities": [
+        "content_approval",
+        "pulse_finalization",
+        "drop_publishing"
+      ]
+    },
+    "agenta": {
+      "id": "agenta",
+      "role": "autonomy_orchestrator",
+      "port": 8084,
+      "socket": "/tmp/agenta.sock",
+      "status": "active",
+      "capabilities": [
+        "workflow_orchestration",
+        "agent_coordination",
+        "loop_management"
+      ]
+    }
+  },
+  "relay": {
+    "port": 8080,
+    "socket": "/tmp/xo_agent_relay.sock",
+    "queue_size": 100,
+    "timeout": 30
+  },
+  "mesh": {
+    "topology": "ring",
+    "connections": [
+      {
+        "from": "agent0",
+        "to": "agentx",
+        "type": "async"
+      },
+      {
+        "from": "agentx",
+        "to": "agentz",
+        "type": "async"
+      },
+      {
+        "from": "agentz",
+        "to": "agenta",
+        "type": "async"
+      },
+      {
+        "from": "agenta",
+        "to": "agent0",
+        "type": "async"
+      }
+    ]
+  }
+}
