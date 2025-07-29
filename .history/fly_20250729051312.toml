@@ -73,7 +73,7 @@ primary_region = "iad"
   timeout = "10s"
   grace_period = "30s"
   method = "GET"
-  path = "/agent/webhook"
+  path = "/agent/test"
 
 # 🔐 Vault Keeper: Scaling configuration for digital essence preservation
 [scaling]

@@ -1,11 +1,6 @@
 repos:
   - repo: local
     hooks:
-      - id: dev-doctor
-        name: Run XO Dev Doctor
-        entry: xo-fab dev.doctor
-        language: system
-        types: [python]
       - id: dev-cleanup
         name: Dev Cleanup (tmp, .cursor, .history, etc)
         entry: bash scripts/dev_cleanup.sh
