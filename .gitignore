@@ -6,7 +6,7 @@
 ###############################
 # 1. Environment & secret files
 ###############################
-.emv
+.Environment
 .env*
 .env.*
 .envrc
@@ -185,4 +185,102 @@ agent_logs/
 scratchpad/
 gen_logs/
 codex-output/
-.logbook/</file>
+.logbook/
+
+# 🌍 XO Vault / Agent / Inbox / Drop / Dashboard
+.env
+.env.*
+!.env.example
+.envrc
+*.secrets.json
+auth.json
+vault/unseal_keys.json
+token.key
+gpg.key
+
+# 🗃️ Logs & runtime dumps
+logs/
+*.log
+nohup.out
+debug.log
+coverage.xml
+*.pid
+
+# 🔁 History / backups / auto-tasks
+.history/
+*.bak
+*.swp
+*.swo
+*.tmp
+*.patch
+
+# 💻 Python build / venv
+__pycache__/
+*.py[cod]
+*.pyo
+.mypy_cache/
+.pytest_cache/
+.tox/
+.venv/
+venv/
+ENV/
+env/
+
+# 🧪 Test and dev scratch
+tests/output/
+dev/
+scratch/
+tmp/
+temp/
+
+# 📦 Node / frontend builds
+node_modules/
+dist/
+build/
+.next/
+out/
+public/previews/
+public/vault/previews/
+public/xo-exchange/
+public/dashboard/
+
+# 🛠️ Static bundles
+drop.assets/original/
+drop.assets/midjourney/
+drop.assets/working/
+drop.assets/raw/
+drop.assets/**/*.psd
+drop.assets/**/*.zip
+
+# 📤 Deployment artifacts
+fly.toml
+fly.*
+.docker/
+.dockerignore
+Dockerfile
+
+# 🧠 Cursor AI tooling
+.cursor/
+
+# 🧹 macOS & system
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# ⚠️ Git patch/rebase/lock files
+*.orig
+*.rej
+*.lock
+*.patch
+*.rej
+*.un~
+
+# 💡 Misc
+*.sqlite3
+*.db
+*.tar.gz
+*.zip
+*.rar
+*.7z
