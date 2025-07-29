@@ -6,7 +6,8 @@
 ###############################
 # 1. Environment & secret files
 ###############################
-.env
+.emv
+.env*
 .env.*
 .envrc
 arweave_wallet.json
