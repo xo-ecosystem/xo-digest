@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from xo_agents.agent_webhook import router as webhook_router
+from xo_agents.api import app as webhook_router
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 # Only register agent webhook for now
-app.include_router(webhook_router)
+app.mount("/agent", webhook_router)
 
 
 @app.get("/")

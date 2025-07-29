@@ -18,6 +18,8 @@ on:
           - patch.apply
           - dns.check
           - deploy.test
+          - dashboard.sync
+          - cosmic.align
       args:
         description: "Task arguments (JSON array)"
         required: false
@@ -70,7 +72,7 @@ jobs:
           echo "Webhook URL: $WEBHOOK_URL"
 
           # Validate task is supported
-          SUPPORTED_TASKS=("pulse.sync" "vault.sign-all" "vault.bundle" "agent.dispatch" "patch.apply" "dns.check" "deploy.test")
+          SUPPORTED_TASKS=("pulse.sync" "vault.sign-all" "vault.bundle" "agent.dispatch" "patch.apply" "dns.check" "deploy.test" "cosmic.align" "dashboard.sync")
           if [[ ! " ${SUPPORTED_TASKS[@]} " =~ " ${TASK} " ]]; then
             echo "❌ Unsupported task: $TASK"
             echo "Supported tasks: ${SUPPORTED_TASKS[*]}"

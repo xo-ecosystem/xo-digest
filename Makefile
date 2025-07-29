@@ -63,8 +63,39 @@ patch-bundle:
 	@echo "📦 Bundling .patch and task summary..."
 	@mkdir -p patch_bundle
 	@git diff > patch_bundle/changes.patch
-	@xo-fab summary.to-md --save-to=patch_bundle/task_summary_$(shell date +%F).md || true
-	@cp task_summary*.md patch_bundle/ 2>/dev/null || true
+	@fab patch.bundle --output-dir=patch_bundle --include-logs
+	@echo "✅ Patch bundle created in patch_bundle/"
+
+cosmic-align:
+	@echo "🌌 Running XO Core Cosmic Alignment..."
+	@fab cosmic-align
+
+cosmic-align-dry:
+	@echo "🌌 Running XO Core Cosmic Alignment (Dry Run)..."
+	@fab cosmic-align --dry-run
+
+dns-check:
+	@echo "🌐 Checking DNS configuration..."
+	@fab dns.check --validate-resolution
+
+dns-check-dry:
+	@echo "🌐 Checking DNS configuration (Dry Run)..."
+	@fab dns.check --dry-run --validate-resolution
+
+deploy-test:
+	@echo "🧪 Testing all service deployments..."
+	@fab deploy.all
+
+deploy-test-dry:
+	@echo "🧪 Testing all service deployments (Dry Run)..."
+	@fab deploy.all --dry-run
+
+health-check:
+	@echo "🏥 Running health checks for all services..."
+	@fab deploy.health --service=vault
+	@fab deploy.health --service=inbox
+	@fab deploy.health --service=preview
+	@fab deploy.health --service=agent0
 
 patch-review:
 	@echo "🩹 Launching local patch review UI..."

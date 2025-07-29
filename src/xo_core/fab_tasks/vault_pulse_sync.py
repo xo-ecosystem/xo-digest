@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from rich import print
 
+
 @task
 def sync(c, bundle):
     """
@@ -34,7 +35,7 @@ def sync(c, bundle):
     print(f"[cyan]📁 Synced bundle:[/cyan] {bundle}")
     preview_dir = Path(f"public/vault/previews/{bundle}")
     bundle_dir = Path(f"public/vault/bundles/{bundle}")
-        if not preview_dir.exists():
+    if not preview_dir.exists():
         c.run(f"xo-fab pulse.preview:{bundle}", warn=True)
     else:
         print(f"[grey]ℹ️ Skipping pulse.preview — already exists for {bundle}[/grey]")
@@ -45,8 +46,6 @@ def sync(c, bundle):
         print(f"[grey]ℹ️ Skipping vault.bundle — already exists for {bundle}[/grey]")
 
 
-
-
 # Placeholder task to demonstrate secondary functionality or test loading.
 @task
 def placeholder(c):
@@ -54,6 +53,7 @@ def placeholder(c):
     Placeholder task to demonstrate secondary functionality or test loading.
     """
     print("[grey]ℹ️ Placeholder task executed (vault_pulse_sync)[/grey]")
+
 
 from invoke import Collection
 

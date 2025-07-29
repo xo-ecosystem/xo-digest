@@ -1,0 +1,5 @@
+# Ignore deployment artifacts
+dist/
+node_modules/
+.env
+.env.*

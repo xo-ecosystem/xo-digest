@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: XO Core Main",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/xo_core/main.py",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.envrc"
+    }
+  ]
+}

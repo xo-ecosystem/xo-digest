@@ -1,0 +1,4 @@
+{"timestamp": "2025-07-28T02:14:08.990575", "service": "vault", "basic_ok": false, "api_ok": false, "overall": false}
+{"timestamp": "2025-07-28T02:14:08.996314", "service": "inbox", "basic_ok": true, "api_ok": true, "overall": true}
+{"timestamp": "2025-07-28T02:14:09.237188", "service": "preview", "basic_ok": true, "api_ok": true, "overall": true}
+{"timestamp": "2025-07-28T02:14:09.478580", "service": "agent0", "basic_ok": true, "api_ok": true, "overall": true}

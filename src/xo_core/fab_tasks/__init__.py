@@ -1,3 +1,18 @@
+import sys
+import importlib.util
+import types
+
+# Patch legacy import alias for fab_tasks.vault → xo_core.fab_tasks.vault
+import importlib
+
+try:
+    import xo_core.fab_tasks.vault as vault
+
+    sys.modules["fab_tasks.vault"] = vault
+except ImportError as e:
+    import logging
+
+    logging.warning(f"⚠️ Could not alias fab_tasks.vault: {e}")
 """Root Fabric tasks collection and validation setup."""
 
 from invoke import Collection
@@ -39,9 +54,11 @@ add_summary_tasks()
 
 try:
     from .vault import ns as vault_ns
+
     tasks.add_collection(vault_ns, name="vault")
 except Exception as e:
     import logging
+
     logging.warning(f"⚠️ Vault namespace not loaded: {e}")
 
 from .help_card import ns as help_card_ns
@@ -51,6 +68,7 @@ from .full_publish import ns as full_ns
 
 # Optional inbox import (safer with dynamic fallback)
 import logging
+
 try:
     from .inbox import ns as inbox_ns
 except Exception as e:
@@ -59,7 +77,9 @@ else:
     try:
         tasks.add_collection(inbox_ns, name="inbox")
     except Exception as inner_e:
-        logging.warning(f"⚠️ Failed to register inbox namespace: {type(inner_e).__name__}: {inner_e}")
+        logging.warning(
+            f"⚠️ Failed to register inbox namespace: {type(inner_e).__name__}: {inner_e}"
+        )
 
 __all__ = ["help_card_ns", "bundle_ns", "test_all_ns"]
 
@@ -82,21 +102,25 @@ try:
     tasks.add_collection(drop_ns, name="drop")
 except Exception as e:
     import logging
+
     logging.warning(f"⚠️ Drop namespace not loaded: {e}")
 try:
     tasks.add_collection(pulse_tasks_ns, name="pulse_tasks")
 except Exception as e:
     import logging
+
     logging.warning(f"⚠️ Pulse tasks namespace not loaded: {e}")
 try:
     tasks.add_collection(pulse_ns, name="pulse")
 except Exception as e:
     import logging
+
     logging.warning(f"⚠️ Pulse namespace not loaded: {e}")
 try:
     tasks.add_collection(vault_tasks_ns, name="vault_tasks")
 except Exception as e:
     import logging
+
     logging.warning(f"⚠️ Vault tasks namespace not loaded: {e}")
 
 # Doctor report task
@@ -106,11 +130,13 @@ _loaded = []
 _skipped = []
 _failed = []
 
+
 def _collect_status():
     global _loaded, _skipped, _failed
     _loaded = [k for k in tasks.collections.keys()]
     # For demo, skipped/failed are empty unless you want to track more
     # You could enhance this by tracking in the try/excepts above
+
 
 @task
 def doctor_report(c):
@@ -128,5 +154,6 @@ def doctor_report(c):
         for ns, err in _failed:
             print(f"  - {ns}: {err}")
     print("\n🩺 Doctor report complete.\n")
+
 
 tasks.add_task(doctor_report, name="doctor.report")

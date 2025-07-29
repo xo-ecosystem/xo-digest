@@ -1,0 +1,16 @@
+
+vault_sealed:
+  bucket: xo-vault-sealed
+  immutable: true
+  use: [seal.system_snapshot, pulse.archive]
+
+dev_cache:
+  bucket: xo-dev-cache
+  versioning: true
+  use: [preview.sync, pulse.preview]
+
+vault_builds:
+  bucket: xo-vault-builds
+  governance_lock: true
+  versioning: true
+  use: [backend.image_push_storj, model.publish]

@@ -1,0 +1,16 @@
+name = "xo-digest-sanity-webhook"
+type = "javascript"
+main = "../relay/worker.js"
+compatibility_date = "2025-07-09"
+account_id = "e9283443529958706822edfa0628a2f0"
+workers_dev = true
+
+routes = [
+  "https://xo-digest.com/webhook/sanity"
+]
+
+[vars]
+SANITY_WEBHOOK_SECRET = "xo-digest-verify-secret"
+XO_DIGEST_RELAY_URL = "https://xo-digest.pages.dev/api/relay"
+XO_DIGEST_LOG_HOOK = "https://discord.com/api/webhooks/1352817570910175273/6_vMSQtwyqY2Mc4bS5jtI6iXPC1FEeUsQ-PHjjtDr35hSvIpssXV5iRTPIlUm4owR7Ub"
+XO_DIGEST_RELAY_FALLBACK_URL = "https://xo-digest.com/webhook/fallback"

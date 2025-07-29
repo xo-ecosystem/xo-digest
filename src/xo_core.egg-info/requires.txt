@@ -1,0 +1,17 @@
+invoke>=2.2.0
+requests>=2.31.0
+pytest>=8.2.2
+typer>=0.9.0
+rich>=13.7.0
+fabric>=2.2.0
+
+[dev]
+pytest>=8.2.2
+pytest-cov>=4.1.0
+pytest-html>=4.1.1
+mypy>=1.10.0
+pre-commit>=3.7.0
+commitizen>=3.17.0
+black>=24.1.0
+isort>=5.13.0
+flake8>=7.0.0

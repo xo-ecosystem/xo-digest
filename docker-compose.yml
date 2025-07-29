@@ -5,7 +5,70 @@ services:
       context: .
       dockerfile: Dockerfile.agent0
     ports:
-      - "8002:8000"  # Avoid clashing with localhost:8000
+      - "8002:8000" # Avoid clashing with localhost:8000
     environment:
       - AGENT0_API_KEY=test123
+      - XO_AGENT0_URL=https://agent0.21xo.com
+      - XO_VAULT_URL=https://vault.21xo.com
+      - XO_INBOX_URL=https://inbox.21xo.com
+      - XO_PREVIEW_URL=https://preview.21xo.com
     restart: unless-stopped
+    networks:
+      - xo-network
+
+  vault:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000" # Expose FastAPI on different port
+    env_file:
+      - .env.production
+    environment:
+      - XO_VAULT_URL=https://vault.21xo.com
+      - XO_INBOX_URL=https://inbox.21xo.com
+      - XO_PREVIEW_URL=https://preview.21xo.com
+      - XO_AGENT0_URL=https://agent0.21xo.com
+    restart: unless-stopped
+    networks:
+      - xo-network
+
+  inbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8000"
+    command: python inbox/server.py
+    env_file:
+      - .env.production
+    environment:
+      - XO_INBOX_URL=https://inbox.21xo.com
+      - XO_VAULT_URL=https://vault.21xo.com
+      - XO_PREVIEW_URL=https://preview.21xo.com
+      - XO_AGENT0_URL=https://agent0.21xo.com
+    restart: unless-stopped
+    networks:
+      - xo-network
+
+  preview:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8004:8000"
+    command: python inbox/preview.py
+    env_file:
+      - .env.production
+    environment:
+      - XO_PREVIEW_URL=https://preview.21xo.com
+      - XO_VAULT_URL=https://vault.21xo.com
+      - XO_INBOX_URL=https://inbox.21xo.com
+      - XO_AGENT0_URL=https://agent0.21xo.com
+    restart: unless-stopped
+    networks:
+      - xo-network
+
+networks:
+  xo-network:
+    driver: bridge

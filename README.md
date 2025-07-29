@@ -1,65 +1,32 @@
-# XO Core
+# 🔐 XO Agent – Vault Keeper
 
-A modular foundation for XO projects, providing core functionality and utilities.
+> Modular webhook + CLI agent system for the XO ecosystem, built to execute secure, lore-infused tasks across Pulse, Vault, DNS, Drops, and more.
 
-## Project Structure
+---
 
-```
-xo-core/
-├── src/
-│   └── xo_core/
-│       ├── core/       # Core functionality
-│       ├── cli/        # Command-line interface
-│       ├── utils/      # Utility functions
-│       ├── models/     # Data models
-│       └── services/   # Service integrations
-├── tests/             # Test suite
-├── 3d_printables/     # 3D printable models
-│   ├── stl/          # STL files
-│   ├── step/         # STEP files
-│   └── blend/        # Blender files
-└── docs/             # Documentation
-```
+## 🧠 About
 
-## Development Setup
+The XO Agent is a FastAPI + CLI-powered task runner with GitHub webhook support. It listens to signed commands from CI or CLI, validates them with a shared secret, and executes corresponding Fabric-based tasks.
 
-1. Create and activate a virtual environment:
+🌌 **Persona**: `Vault Keeper` — Guardian of the sealed drops and the living digital archive.
 
-```bash
-python -m venv .venv
-source .venv/bin/activate  # On Unix/macOS
-# or
-.venv\Scripts\activate  # On Windows
-```
+---
 
-2. Install development dependencies:
+## 🚀 Features
+
+- ✅ Modular **task registry** (YAML-based, dynamic)
+- ✅ FastAPI server with `/agent/webhook`, `/agent/test`, `/agent/tasks`, etc.
+- ✅ GitHub Actions → webhook integration
+- ✅ Fabric task dispatching (e.g. `pulse.sync`, `vault.sign-all`)
+- ✅ Secure `X-Agent-Secret` middleware
+- ✅ Lore-preserving log messages
+- ✅ Fly.io deploy-ready (`fly.toml`, `Dockerfile`)
+- ✅ Developer-mode CLI (`run_agent.py`, `agent_cli.py`)
+
+---
+
+## 🧪 Test Locally
 
 ```bash
-pip install -e ".[dev]"
+uvicorn xo_agents.api:app --port 8003 --reload
 ```
-
-3. Run tests:
-
-```bash
-tox
-```
-
-## Features
-
-- Modular architecture
-- Comprehensive test suite
-- CLI interface
-- 3D printable models support
-- Service integrations
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests
-5. Submit a pull request
-
-## License
-
-MIT License
