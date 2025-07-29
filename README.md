@@ -24,6 +24,7 @@ xo-core/
 ## Development Setup
 
 1. Create and activate a virtual environment:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # On Unix/macOS
@@ -32,11 +33,13 @@ source .venv/bin/activate  # On Unix/macOS
 ```
 
 2. Install development dependencies:
+
 ```bash
 pip install -e ".[dev]"
 ```
 
 3. Run tests:
+
 ```bash
 tox
 ```

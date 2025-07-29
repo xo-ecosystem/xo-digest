@@ -109,7 +109,7 @@ def validate(c):
     
     # Test import
     try:
-        import fabfile
+        import fabfile_health
         print("✅ fabfile.py imports successfully")
     except Exception as e:
         print(f"❌ fabfile.py import failed: {e}")

@@ -1,0 +1,9 @@
+# vault/seals/eighth/_drop.yml
+drop_name: "Eighth Seal"
+drop_folder: "vault/seals/eighth"
+cid: "QmdtJfjQHsNVk8gvxtj8YyfcLxMxTRnKWQPpPt6nrWCf5o"
+uri_template: "ipfs://{cid}/{id}.json"
+preview_file: "000.preview.mdx"
+metadata_file: "metadata/000.json"
+status_file: "metadata/000.status.json"
+owner: "xoseals.eth"

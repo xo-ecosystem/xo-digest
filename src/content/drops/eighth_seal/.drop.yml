@@ -1,0 +1,16 @@
+
+
+
+drop: eighth
+title: Eighth Seal Drop
+image: webp/drop-symbol.webp
+variants:
+  - scroll-teaser.webp
+  - seal-flame.webp
+  - darkmode-symbol.png
+description: The mystical Eighth Seal reveals ancient wisdom and hidden knowledge
+category: seals
+rarity: legendary
+mint_price: 0.08 ETH
+max_supply: 1000
+launch_date: 2025-07-21T00:00:00Z

@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>DNS History Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="dnsChart" width="800" height="300"></canvas>
+    <script>
+        const ctx = document.getElementById('dnsChart').getContext('2d');
+        const data = {
+            labels: ["2025-07-28T02:30:00.000Z", "2025-07-28T02:30:05.000Z", "2025-07-28T02:30:10.000Z", "2025-07-28T02:30:15.000Z"],
+            datasets: [{
+                label: 'DNS Validity',
+                data: [1, 1, 0, 1],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: true
+            }]
+        };
+        new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            callback: function(value) {
+                                return value === 1 ? 'Valid' : 'Invalid';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+    

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Message in a Bottle - Main",
+    "description": "Mystical bottle containing a sealed scroll",
+    "image": "ipfs://<CID>/drop_main.webp",
+    "attributes": [
+      {
+        "trait_type": "Rarity",
+        "value": "Epic"
+      }
+    ]
+  },
+    ...
+]

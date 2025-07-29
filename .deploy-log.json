@@ -1,0 +1,46 @@
+[
+  {
+    "timestamp": "2025-07-28T02:30:00.000Z",
+    "service": "vault",
+    "basic_ok": true,
+    "api_ok": true,
+    "overall": true,
+    "dns": {
+      "valid": true,
+      "ip": "104.21.123.45"
+    }
+  },
+  {
+    "timestamp": "2025-07-28T02:30:05.000Z",
+    "service": "inbox",
+    "basic_ok": true,
+    "api_ok": true,
+    "overall": true,
+    "dns": {
+      "valid": true,
+      "ip": "104.21.123.46"
+    }
+  },
+  {
+    "timestamp": "2025-07-28T02:30:10.000Z",
+    "service": "preview",
+    "basic_ok": true,
+    "api_ok": false,
+    "overall": false,
+    "dns": {
+      "valid": false,
+      "ip": null
+    }
+  },
+  {
+    "timestamp": "2025-07-28T02:30:15.000Z",
+    "service": "agent0",
+    "basic_ok": true,
+    "api_ok": true,
+    "overall": true,
+    "dns": {
+      "valid": true,
+      "ip": "104.21.123.47"
+    }
+  }
+] 

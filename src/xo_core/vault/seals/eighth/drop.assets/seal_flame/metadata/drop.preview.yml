@@ -1,0 +1,20 @@
+title: "Flame Scroll Drop"
+bundle: seal_flame
+date: 2025-07-21
+preview:
+  - id: drop_r1_c0
+    label: "XO Flame Seal"
+    file: drop_r1_c0.webp
+    alt: "A glowing seal with XO motif surrounded by flame"
+  - id: drop_r1_c1
+    label: "Scrollbearer Flame"
+    file: drop_r1_c1.webp
+    alt: "A hooded figure holding a flaming scroll"
+  - id: unicorn_scroll_01
+    label: "Scrollbearer Variant 1"
+    file: unicorn_scroll_01.webp
+    alt: "Scrollbearer unicorn variant holding a scroll – Version 1"
+  - id: unicorn_scroll_02
+    label: "Scrollbearer Variant 2"
+    file: unicorn_scroll_02.webp
+    alt: "Scrollbearer unicorn variant holding a scroll – Version 2"

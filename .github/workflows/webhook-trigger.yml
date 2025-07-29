@@ -1,0 +1,165 @@
+name: 🔗 Webhook Trigger
+
+on:
+  repository_dispatch:
+    types: [webhook-trigger]
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Task to execute"
+        required: true
+        default: "pulse.sync"
+        type: choice
+        options:
+          - pulse.sync
+          - vault.sign-all
+          - vault.bundle
+          - agent.dispatch
+          - patch.apply
+          - dns.check
+          - deploy.test
+      args:
+        description: "Task arguments (JSON array)"
+        required: false
+        default: "[]"
+        type: string
+      webhook_url:
+        description: "Webhook URL to trigger"
+        required: false
+        default: "https://agent.21xo.com/agent/webhook"
+        type: string
+
+jobs:
+  trigger-webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: 📦 Install dependencies
+        run: |
+          pip install requests
+
+      - name: 🔍 Validate webhook payload
+        run: |
+          echo "Validating webhook payload..."
+
+          # Parse task from workflow dispatch or repository dispatch
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TASK="${{ github.event.inputs.task }}"
+            ARGS="${{ github.event.inputs.args }}"
+            WEBHOOK_URL="${{ github.event.inputs.webhook_url }}"
+          else
+            TASK="${{ github.event.client_payload.task }}"
+            ARGS="${{ github.event.client_payload.args }}"
+            WEBHOOK_URL="${{ github.event.client_payload.webhook_url }}"
+          fi
+
+          # Default values
+          TASK=${TASK:-"pulse.sync"}
+          ARGS=${ARGS:-"[]"}
+          WEBHOOK_URL=${WEBHOOK_URL:-"https://agent.21xo.com/agent/webhook"}
+
+          echo "Task: $TASK"
+          echo "Args: $ARGS"
+          echo "Webhook URL: $WEBHOOK_URL"
+
+          # Validate task is supported
+          SUPPORTED_TASKS=("pulse.sync" "vault.sign-all" "vault.bundle" "agent.dispatch" "patch.apply" "dns.check" "deploy.test")
+          if [[ ! " ${SUPPORTED_TASKS[@]} " =~ " ${TASK} " ]]; then
+            echo "❌ Unsupported task: $TASK"
+            echo "Supported tasks: ${SUPPORTED_TASKS[*]}"
+            exit 1
+          fi
+
+          echo "✅ Payload validation passed"
+
+      - name: 🚀 Trigger webhook
+        run: |
+          # Get task and args
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TASK="${{ github.event.inputs.task }}"
+            ARGS="${{ github.event.inputs.args }}"
+            WEBHOOK_URL="${{ github.event.inputs.webhook_url }}"
+          else
+            TASK="${{ github.event.client_payload.task }}"
+            ARGS="${{ github.event.client_payload.args }}"
+            WEBHOOK_URL="${{ github.event.client_payload.webhook_url }}"
+          fi
+
+          # Default values
+          TASK=${TASK:-"pulse.sync"}
+          ARGS=${ARGS:-"[]"}
+          WEBHOOK_URL=${WEBHOOK_URL:-"https://agent.21xo.com/agent/webhook"}
+
+          # Create webhook payload
+          PAYLOAD=$(cat <<EOF
+          {
+            "task": "$TASK",
+            "args": $ARGS
+          }
+          EOF
+          )
+
+          echo "📡 Sending webhook to: $WEBHOOK_URL"
+          echo "📦 Payload: $PAYLOAD"
+
+          # Send webhook with agent secret
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-Agent-Secret: ${{ secrets.XO_AGENT_SECRET }}" \
+            -d "$PAYLOAD")
+
+          # Extract status code
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "📊 Response Code: $HTTP_CODE"
+          echo "📄 Response Body: $BODY"
+
+          # Check if successful
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            echo "✅ Webhook triggered successfully"
+          else
+            echo "❌ Webhook failed with status: $HTTP_CODE"
+            exit 1
+          fi
+
+      - name: 📝 Log webhook event
+        run: |
+          echo "📝 Logging webhook event..."
+
+          # Create log entry
+          LOG_ENTRY=$(cat <<EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "event": "webhook_triggered",
+            "task": "$TASK",
+            "args": $ARGS,
+            "webhook_url": "$WEBHOOK_URL",
+            "github_event": "${{ github.event_name }}",
+            "actor": "${{ github.actor }}",
+            "repository": "${{ github.repository }}",
+            "sha": "${{ github.sha }}"
+          }
+          EOF
+          )
+
+          # Append to webhook log
+          echo "$LOG_ENTRY" >> logs/webhook_events.json
+
+          echo "✅ Webhook event logged"
+
+      - name: 🔄 Commit webhook log
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add logs/webhook_events.json
+          git commit -m "📝 Log webhook trigger: $TASK" || exit 0
+          git push

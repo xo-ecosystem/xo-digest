@@ -1,46 +1,129 @@
+# Diagnose Cheatsheet
 
+Troubleshooting tips and commands.
 
-# 🧪 XO Fabric Diagnostic Cheatsheet
+# Diagnose Cheatsheet
 
-## 🚀 Direct CLI Usage (dynamic_loader.py)
+A quick reference for diagnosing and resolving issues in the XO Core environment.
 
-| Command | Description |
-|--------|-------------|
-| `python dynamic_loader.py --diagnose` | Basic diagnostics |
-| `--export=summary.md` | Save as Markdown |
-| `--export=summary.json` | Save as JSON |
-| `--pulse-bundle` | Generate `.mdx` bundle |
-| `--upload=ipfs` | Upload to IPFS |
-| `--upload=arweave` | Upload to Arweave |
-| `--verbose` | Enable detailed logs |
+## ✅ Setup & Environment
 
-## 🧵 Fabric (xo-fab) Tasks
+- Check if environment variables are loaded:
+  ```bash
+  direnv status
+  env | grep XO_
+  ```
+- Reload `.envrc`:
 
-| Task | Description |
-|------|-------------|
-| `xo-fab diagnose` | Run diagnostics (default) |
-| `--export=reports/loader.md` | Save Markdown |
-| `--export=reports/loader.json` | Save JSON |
-| `--pulse-bundle` | Create Pulse Bundle |
-| `--upload=ipfs` / `--upload=arweave` | Cloud upload |
-| `xo-fab diagnose.report` | Full diagnostic report |
-| `--path=vault/reports/loader.md` | Export custom path |
+  ```bash
+  direnv reload
+  ```
 
-## 🧪 CI/CD & Automation
+- Ensure Python environment is active:
+  ```bash
+  which python
+  python --version
+  ```
 
-| Task | Description |
-|------|-------------|
-| `xo-fab diagnose.ci` | CI-friendly output |
-| `xo-fab diagnose.vault` | Vault checks |
-| `xo-fab diagnose.production` | Prod-readiness |
-| `xo-fab diagnose.real_world` | Real-case simulations |
-| `xo-fab diagnose.webhook_test` | Webhook ping |
-| `xo-fab diagnose.github_test` | GitHub issue test |
+## 🔍 Debugging CLI & Tasks
 
-## 🔧 Advanced Features
+- List available Fabric tasks:
 
-- Simulate missing tasks, circular imports, mock services
-- CI Integration: GitHub Actions, Webhook, JSON logs
-- Vault Sync: Reports exportable as pulses
-- Auto-Fix: Detect and optionally patch broken imports or tasks
-- Upload Options: Arweave / IPFS with CID tracking
+  ```bash
+  xo-fab --list
+  ```
+
+- Run a specific task with debug:
+
+  ```bash
+  python -m invoke -c fabfile <task> --debug
+  ```
+
+- Diagnose namespace load errors:
+  ```bash
+  python -m invoke -c fabfile diagnose.namespaces
+  ```
+
+## 🧪 FastAPI Health Check
+
+- Check if API is running:
+
+  ```bash
+  curl -s http://localhost:8000/health | jq
+  ```
+
+- Access Swagger UI:
+  http://localhost:8000/docs
+
+## ⚠️ Common Issues
+
+- ❌ `No module named '...fab_tasks'`:
+  → Check `__init__.py` presence in `fab_tasks` subfolders.
+
+- ❌ `direnv: .envrc is blocked`:
+  → Run `direnv allow`.
+
+- ❌ `fabfile.py` tasks not detected:
+  → Ensure correct module structure and `invoke -c` is used.
+
+## 💡 Tips
+
+- Use `cursor .` or `code .` to launch the workspace.
+- Keep `.vscode/extensions.json` updated for dev onboarding.
+- Use `git status` to confirm sync before replacing files manually.
+
+## 📚 Related
+
+- See `docs/env/envrc-switching.md` for environment context switching.
+- See `docs/task_namespaces.md` for organizing Fabric tasks.
+
+## 🧭 Onboarding Guide for New Devs (and Curious Explorers)
+
+Whether you're an experienced dev or someone like Brie jumping in with fresh eyes, here's how to start:
+
+### 💼 Getting Started
+
+- Launch the workspace:
+  ```bash
+  cursor .  # Or `code .` if using VS Code
+  ```
+- Recommended extensions will be suggested automatically. You can also check `.vscode/extensions.json` for manual install.
+- Run this to view all available commands:
+  ```bash
+  xo-fab --list
+  ```
+
+### 🔁 Refreshing Files
+
+If you've replaced or copied files into the workspace manually (via Finder/Explorer):
+
+- In Cursor: use `Cmd+Shift+P → Reload Window` to refresh open tabs.
+- If a file looks crossed out or stale, close and re-open it.
+
+### 🧪 Health Check
+
+- Ensure FastAPI backend is running:
+  ```bash
+  curl -s http://localhost:8000/health | jq
+  ```
+- Frontend is accessible via:
+  ```
+  http://localhost:5173/
+  ```
+
+### ✅ Verifying Fabric Tasks
+
+- Run a test task:
+  ```bash
+  python -m invoke -c fabfile env.status
+  ```
+- Or check which ones are available:
+  ```bash
+  python -m invoke -c fabfile --list
+  ```
+
+💡 _Docs, diagnostics, and dev insights are all stored inside the Vault._ You can explore them later via:
+
+```
+/public/vault/daily/
+```

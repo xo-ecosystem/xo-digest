@@ -1,27 +1,32 @@
-bcrypt==4.3.0
-certifi==2025.7.9
-cffi==1.17.1
-charset-normalizer==3.4.2
-cryptography==45.0.5
-idna==3.10
-paramiko==3.5.1
-pathlib2==2.3.7.post1
-pycparser==2.22
-PyNaCl==1.5.0
-requests==2.32.4
-six==1.17.0
-urllib3==2.5.0
-markdown
-arweave-python-client
-markdown2
-python-dotenv
-rich
-requests
-Pillow
-boto3
- # fabric requires invoke < 2.0; using invoke>=2.2.0 breaks fabric 2.x
-invoke>=2.2.0
-# If you still need legacy Fabric 2.x, install 'fabric2' in a separate virtualenv,
-# or install it as 'fab2' to avoid version conflicts.
-pytest>=8.2.2
-typer>=0.9.0
+# 🔐 Vault Keeper: Python dependencies for XO Agent webhook system
+# Preserving digital essence with precise dependency management
+
+# FastAPI and web framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# HTTP and networking
+requests==2.31.0
+httpx==0.25.2
+
+# Task automation and CLI
+invoke==2.2.0
+fabric==3.1.0
+
+# DNS and networking utilities
+dnspython==2.4.2
+
+# Configuration and environment
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# Logging and monitoring
+structlog==23.2.0
+
+# Development and testing (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# 🔐 Vault Keeper: Core XO ecosystem dependencies
+# These modules provide the digital essence operations

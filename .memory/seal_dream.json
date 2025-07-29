@@ -1,0 +1,47 @@
+{
+  "persona": "seal_dream",
+  "created": "2025-07-25T21:00:57.533784",
+  "sessions": [
+    {
+      "timestamp": "2025-07-25T21:00:57.533797",
+      "data": {
+        "content": "The Seal of Dreams has been invoked to protect the mysteries that lie beyond our understanding.",
+        "hooks": {
+          "webhook": false,
+          "preview": true
+        }
+      }
+    },
+    {
+      "timestamp": "2025-07-25T21:01:22.070786",
+      "data": {
+        "content": "The Seal of Dreams has been invoked to protect the mysteries that lie beyond our understanding.",
+        "hooks": {
+          "webhook": true,
+          "preview": true
+        }
+      }
+    },
+    {
+      "timestamp": "2025-07-25T21:01:46.980007",
+      "data": {
+        "content": "The Seal of Dreams has been invoked to protect the mysteries that lie beyond our understanding.",
+        "hooks": {
+          "webhook": false,
+          "preview": true
+        }
+      }
+    },
+    {
+      "timestamp": "2025-07-25T21:01:47.177028",
+      "data": {
+        "content": "The Seal of Dreams has been invoked to protect the mysteries that lie beyond our understanding.",
+        "hooks": {
+          "webhook": true,
+          "preview": true
+        }
+      }
+    }
+  ],
+  "last_updated": "2025-07-25T21:01:47.177047"
+}

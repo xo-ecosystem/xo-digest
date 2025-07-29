@@ -1,0 +1,17 @@
+
+
+title: "Eighth Seal – Scrollbearer 3D"
+subtitle: "The unicorn carries not only light but legacy"
+style: glowing_oracle
+effects:
+  glow: true
+  frame: soft-scroll
+  ambient: starfield
+layout:
+  mode: centered
+  aspect: 3:4
+display:
+  main: drop_main.webp
+  variants:
+    - unicorn_scroll_01.webp
+    - unicorn_scroll_02.webp

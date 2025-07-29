@@ -1,63 +1,66 @@
-# 🔁 XO `.envrc` Switcher & Relinker
+# Envrc Switching
 
-Enable seamless switching between environment setups (e.g., XO vs legacy FAB2), with safety fallback and auto-relinking for `.envrc.link`. Ensures smooth DX across projects using `direnv`.
+This guide explains how to manage multiple `.envrc` configurations within the XO Core system using helper commands and symlink logic. It enables developers to seamlessly switch environments depending on which toolset (Fabric v1 or v2) or context (local, production) they're using.
 
-## 🗂 File Conventions
+## 🔀 Switching Environments
 
-| File            | Purpose                                     |
-| --------------- | ------------------------------------------- |
-| `.envrc`        | Auto-loaded by `direnv`, symlink to `.link` |
-| `.envrc.link`   | Controlled symlink to real `.envrc*` files  |
-| `.envrc.fab2`   | Legacy Fabric 2 environment config          |
-| `.envrc` (real) | Fallback file if `.envrc.link` missing      |
+XO Core supports `.envrc.<name>` variants like:
 
-## 🧰 Fabric Tasks
+- `.envrc.fab1` → For Fabric v1 compatibility
+- `.envrc.fab2` → For Fabric v2+ enhanced task loading
+- `.envrc.link` → Symlink target (active configuration)
 
-### 1. `xo-fab env.switch`
+Use the CLI helper:
 
 ```bash
-xo-fab env.switch --mode=xo|fab2|link [--apply]
+xo-fab env.switch fab2
 ```
 
-- Switches `.envrc.link` to:
-  - `.envrc` (default XO mode)
-  - `.envrc.fab2` (legacy mode)
-  - `.envrc.link` (explicit relink)
-- `--apply`: force link `.envrc → .envrc.link` and run `direnv allow`
-- Handles:
-  - 🧹 Cleaning broken symlinks
-  - ✅ Logs updated status
+This command:
 
-### 2. `xo-fab env.relink`
+- Backs up the current `.envrc`
+- Links the selected `.envrc.<name>` to `.envrc`
+- Reloads direnv and environment variables
+
+## ♻️ Auto-Restore Fallback
+
+If `.envrc` is missing or broken, you can relink the last known working configuration:
 
 ```bash
 xo-fab env.relink
 ```
 
-- Recreates `.envrc.link → .envrc` if:
-  - Link is broken
-  - File is stale
-- Logs successful relink or error if missing fallback
+This tries to re-establish the symlink to `.envrc.link`.
 
-## 🧪 Examples
+## 🌱 Onboarding Tips (for Brie or non-devs)
+
+- Use Cursor or VS Code to view project structure
+- Avoid editing `.envrc` directly — use the CLI helpers
+- The active environment is visible via:
+
+  ```bash
+  xo-fab env.status
+  ```
+
+- When switching, Cursor might prompt to reload open files — accept the reload
+- After switching, re-run:
+
+  ```bash
+  direnv reload
+  ```
+
+## 🧪 Diagnostics
+
+To verify a working environment setup:
 
 ```bash
-xo-fab env.switch --mode=fab2 --apply
-xo-fab env.relink
+xo-fab env.diagnose
 ```
 
-## 🧭 Future Ideas
+This reports any issues with Python paths, `.envrc` links, or key variables.
 
-| Feature                       | Status     | Notes                                                                   |
-| ----------------------------- | ---------- | ----------------------------------------------------------------------- |
-| `xo-fab env.status`           | 🔜 Planned | Print the current `.envrc.link → target` with link health check         |
-| `xo-fab env.edit`             | 🧪 Draft   | Opens the current `.envrc.link` target in `$EDITOR`                     |
-| `xo-fab env.template`         | 🔜 Planned | Generate `.envrc.link` from `.envrc.link.template` if missing           |
-| `xo-fab env.ensure`           | 🧪 Draft   | Ensure `.envrc.link` exists and relinks if invalid                      |
-| `.envrc.link.default` support | 🔜 Planned | Fallback logic if target is undefined or missing                        |
-| Git-aware `.envrc` switching  | ❌         | Auto switch based on Git branch or tag (e.g., main → XO, legacy → fab2) |
-| VSCode direnv extension hook  | ❌         | Auto-run `env.switch` or `direnv allow` from VSCode launch              |
+## 🗃️ Best Practices
 
----
-
-🧩 Used for onboarding, CI/CD, or fallback resolution in hybrid Fabric environments.
+- Keep `.envrc.link` in sync with your current configuration
+- Always run `xo-fab env.status` before debugging issues
+- Add project-specific logic in `.envrc.local` if needed

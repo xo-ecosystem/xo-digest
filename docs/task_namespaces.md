@@ -1,125 +1,100 @@
-# Task Namespaces Documentation
+# Task Namespaces
 
-This document provides an overview of all available task namespaces in the XO Core project.
+Details about task namespaces.
 
-## Core Tasks
+# Task Namespaces
 
-### ✅ pulse
+XO Core organizes tasks into modular namespaces for clarity and maintainability.
 
-**Module:** `xo_core.fab_tasks.pulse_tasks`
+## 🧭 Usage
 
-**Description:** Pulse-related tasks for content management
+- List all tasks:
 
-**Status:** Not available
+  ```bash
+  xo-fab --list
+  ```
 
-### ✅ vault
+- Run a task in a namespace:
+  ```bash
+  xo-fab pulse.sync
+  xo-fab vault.verify-all
+  ```
 
-**Module:** `xo_core.fab_tasks.vault_tasks`
+## 📦 Available Namespaces
 
-**Description:** Vault-related tasks for secure storage
+- `vault.` → Signing, snapshot, archive, and mesh tasks
+- `pulse.` → Blog/post management
+- `drop.` → XO drop deployment, syncing, previews
+- `seal.` → Sealing and bundling tasks
+- `env.` → Environment switching and status
+- `storage.` → Storj-based asset handling
+- `agent.` → Agent0-AI task coordination
+- `backend.` → API health and orchestration
+- `cosmos.` → Cross-service coordination and init
 
-**Status:** Not available
+## 🔧 Create New Namespace
 
-### ✅ summary
+1. Add a new file under `src/xo_core/fab_tasks/<your_namespace>.py`
+2. Use `@task` decorators and `Collection()` to register
+3. Add to `fabfile.py` loader or dynamic imports
 
-**Module:** `xo_core.fab_tasks.summary_tasks`
+## 🧠 Tip
 
-**Description:** Task summary and documentation generation
+Namespace prefixes help separate responsibilities and scale across the XO ecosystem.
 
-**Status:** Not available
+## 🧭 Onboarding Guide for New Devs (and Curious Explorers)
 
-### ✅ validate_tasks
+Whether you're jumping into XO Fabric automation for the first time or refining your own namespace:
 
-**Module:** `xo_core.fab_tasks.validate_tasks`
+### 💼 Getting Started
 
-**Description:** Task validation utilities
+- Explore available namespaces:
+  ```bash
+  xo-fab --list
+  ```
+- Try out a common one:
+  ```bash
+  xo-fab pulse.sync
+  ```
 
-**Status:** Not available
+### 🧠 Authoring Your Own
 
-## Ci Tasks
+- Add a new namespace file to:
+  ```
+  src/xo_core/fab_tasks/<your_namespace>.py
+  ```
+- Use the `@task` decorator from `invoke`.
+- Register with a `Collection()` and plug it into `fabfile.py`.
 
-### ✅ cz-lint
+### 💡 Pro Tips
 
-**Module:** `xo_core.commitizen_tasks`
+- Modular tasks help scale across teams and services.
+- Use `--debug` to trace issues.
+- For errors like `No module named 'fab_tasks.xyz'`, check for missing `__init__.py`.
 
-**Description:** Commitizen linting and checks
+📚 All fabric usage is mirrored in Vault under:
 
-**Status:** Not available
-
-## Content Tasks
-
-### 📦 drop
-
-**Module:** `xo_core.fab_tasks.drop_tasks`
-
-**Description:** XO-Drop content management tasks
-
-**Status:** Loaded
-
-## Runtime Tasks
-
-### 📦 runtime
-
-**Module:** `xo_core.fab_tasks.runtime_tasks`
-
-**Description:** Runtime environment management
-
-**Status:** Not available
-
-## Testing Tasks
-
-### 📦 test
-
-**Module:** `xo_core.fab_tasks.test_tasks`
-
-**Description:** Testing and diagnostics tasks
-
-**Status:** Not available
-
-## Info Tasks
-
-### 📦 namespace
-
-**Module:** `xo_core.fab_tasks.info_tasks`
-
-**Description:** Namespace information and documentation tasks
-
-**Status:** Loaded
-
-## External Tasks
-
-### 📦 xo_agent
-
-**Module:** `xo_agent.tasks`
-
-**Description:** XO Agent integration tasks
-
-**Status:** Loaded
-
-### 📦 xo
-
-**Module:** `xo_agent.tasks`
-
-**Description:** XO Agent tasks (alias)
-
-**Status:** Loaded
-
-### 📦 agent0
-
-**Module:** `agent0.tasks`
-
-**Description:** Agent0 integration tasks
-
-**Status:** Loaded
-
-## Usage
-
-To see all available tasks:
-```bash
-fab --list
+```
+/public/vault/daily/
 ```
 
-To get detailed namespace information:
+## 📦 Vault Bundle Metadata
+
+This file is included in the `core_docs_bundle` published to Vault.
+
+Bundle Name: `core_docs_bundle`
+Location: `/public/vault/daily/core_docs_bundle.zip`
+Includes:
+
+- `diagnose_cheatsheet.md`
+- `task_namespaces.md`
+- `env/envrc-switching.md`
+
+Published via:
+
 ```bash
-fab namespace.info
+xo-fab pulse.sync:core_docs_bundle
+xo-fab vault.bundle:core_docs_bundle
 ```
+
+See full metadata in `core_docs_bundle.mdx` for reference and indexing.

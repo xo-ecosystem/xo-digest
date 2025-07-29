@@ -1,0 +1,28 @@
+{
+  "name": "Eighth Seal: The Scroll Bearer",
+  "description": "A sacred emissary bearing the final scroll. Part of the Seven + One XO Seals.",
+  "image": "ipfs://QmdtJfjQHsNVk8gvxtj8YyfcLxMxTRnKWQPpPt6nrWCf5o/scroll.png",
+  "external_url": "https://xoledger.com/constellation/eighth_seal",
+  "attributes": [
+    {
+      "trait_type": "Role",
+      "value": "Scroll Bearer"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Memory"
+    },
+    {
+      "trait_type": "Series",
+      "value": "Seven + One"
+    },
+    {
+      "trait_type": "Drop",
+      "value": "Eighth Seal"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Vault NFT"
+    }
+  ]
+}
