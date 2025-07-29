@@ -1,40 +1,187 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.pyc
+<file name=1 path=/Users/xo/xo-core/.gitignore># -----------------------------------------------------------
+# XO‑Core canonical .gitignore
+# One tidy list, alphabetised within sections.
+# -----------------------------------------------------------
+
+###############################
+# 1. Environment & secret files
+###############################
+.env
+.env.*
+.envrc
+arweave_wallet.json
+secrets/
+unseal_keys.json
+vault/private.key
+
+##############################################
+# 2. Virtual environments & direnv activations
+##############################################
+.venv/
+.direnv/
+venv/
+.Python
+__pypackages__/
+
+################################
+# 3. Build / distribution output
+################################
+build/
+dist/
 *.egg-info/
 .eggs/
 
-# Environments
-.env
-.env.*
+#############################
+# 4. Dependency artefact dirs
+#############################
+node_modules/
+package-lock.json
+
+########################
+# 5. Logs & lock files
+########################
+.logs/
+*.log
+*.lock
+
+#################################
+# 6. Python bytecode & py caches
+#################################
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.pytest_cache/
+.cache/ 
+
+#########################################
+# 6.1 PEP 582 local package directories
+#########################################
+__pypackages__/
+
+###########################
+# 7. Test / coverage output
+###########################
+\.coverage*
+.coverage/
+htmlcov/
+reports/
+
+################
+# 8. Tool caches
+################
+.pre-commit-cache/
+.tox/
+
+##################
+# 9. IDE artefacts
+##################
+.idea/
+.vscode/
+*.code-workspace
+!xo-core.code-workspace
+*.sublime-*
+
+###########################
+# 10. OS / backup artefacts
+###########################
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*~
+
+##############################
+# 11. Vault content management
+##############################
+vault/**
+!vault/daily/
+!vault/daily/.gitkeep
+.vault/**
+*.zip
+
+#########################
+# 12. Incoming scratch dir
+#########################
+_incoming/
+
+##############################
+# 13. Misc workspace artefacts
+##############################
+.history/
+history/
+xo-core-reforged/patch_bundle/
+tmp/
+.cursor/
+
+# Wrangler scratch tmp folders (Cloudflare)
+**/.wrangler/tmp/
+
+#########################################
+# 14. 3rd‑party submodule working copies
+#########################################
+/agent0/
+/xo-dev-scaffold-latest/
+
+#########################################
+# 15. Git internal cache cleanup targets
+#########################################
+.git/index.lock
+
+# Prevent ghost folders
+scripts/scripts/
+scripts/fab_tasks/
+fab_tasks/xo-drops-local-backup/
+xo-drops-local-backup/
+
+# Prevent nested Git repos from being accidentally tracked
+**/.git
+# Local backups and digest repos
+xo-digest/
+xo-drops-local-backup/
+
+# Ignore Python envs
 .venv/
-.venv*/ 
+.direnv/
 .envrc
 
-# Logs and runtime
-logs/
-*.log
-*.sqlite3
-*.db
+######################################
+# 16. Future tool integration patterns
+######################################
+
+# Poetry (Python packaging)
+poetry.lock
+
+# Ruff (Python linter)
+ruff_cache/
+
+# Coverage.py alt dirs
+.coverage.*
+coverage.xml
+
+# Jupyter Notebooks (scratch + cache)
+.ipynb_checkpoints/
+
+# pyright / pytype (static typing tools)
+.pyright/
+.pytype/
+
+# Docker & container leftovers
 *.pid
+*.pid.lock
 *.sock
+*.log.1
+.docker/
 
-# IDEs
-.vscode/
-.idea/
+# Editorconfig logs (rare)
+.editorconfig
 
-# OS
-.DS_Store
+# Test result XMLs (CI)
+test-results/
+*.xml
 
-# Fly deploy artifacts
-fly.toml.local
-
-# Vault sensitive files
-vault/unseal_keys.json
-vault/private.key
-vault/private.key.b64
-vault/.keys.enc
-vault/.storj.yml
+# LLM or agent frameworks (optional)
+agent_logs/
+scratchpad/
+gen_logs/
+codex-output/
+.logbook/</file>
