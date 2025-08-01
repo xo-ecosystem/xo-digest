@@ -1,0 +1,42 @@
+{
+  "name": "21NGO Token",
+  "symbol": "21NGO",
+  "initialSupply": 21000000,
+  "description": "The official token of the 21XO Foundation DAO. Every sell funds the DAO treasury with a 21% tax.",
+  "features": {
+    "sellTax": 21,
+    "maxTxPercent": 2,
+    "treasuryFunding": true,
+    "antiBot": true
+  },
+  "networks": {
+    "base": {
+      "chainId": 8453,
+      "explorer": "https://basescan.org",
+      "rpc": "https://mainnet.base.org"
+    },
+    "ethereum": {
+      "chainId": 1,
+      "explorer": "https://etherscan.io",
+      "rpc": "https://eth.llamarpc.com"
+    },
+    "sepolia": {
+      "chainId": 11155111,
+      "explorer": "https://sepolia.etherscan.io",
+      "rpc": "https://rpc.sepolia.org"
+    }
+  },
+  "deployment": {
+    "treasuryAddress": "0x0000000000000000000000000000000000000000",
+    "ownerAddress": "0x0000000000000000000000000000000000000000",
+    "gasLimit": 5000000,
+    "gasPrice": "auto"
+  },
+  "metadata": {
+    "website": "https://21xo.foundation",
+    "twitter": "https://twitter.com/21xo_foundation",
+    "discord": "https://discord.gg/21xo",
+    "github": "https://github.com/xo-ecosystem/21xo_foundation",
+    "telegram": "https://t.me/dao21xo"
+  }
+}
