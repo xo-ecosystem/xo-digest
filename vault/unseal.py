@@ -1,30 +1,94 @@
-
-
-import os
+import time
 import requests
+from pathlib import Path
+import os
+from vault.bootstrap import (
+    get_vault_client,
+    get_vault_unseal_keys,
+    write_vault_bootstrap_log,
+)
 
-VAULT_ADDR = os.getenv("VAULT_ADDR", "http://127.0.0.1:8200")
-UNSEAL_KEYS = [
-    os.getenv("VAULT_UNSEAL_KEY_1"),
-    os.getenv("VAULT_UNSEAL_KEY_2"),
-    os.getenv("VAULT_UNSEAL_KEY_3"),
-]
+"""
+🔐 XO Vault Unseal Task
+
+This script is used to automatically unseal a HashiCorp-compatible Vault instance using
+unseal keys from various sources. It is meant to be Fab-compatible and works silently 
+behind the scenes.
+
+Typically called via:
+  fab vault.unseal
+
+Related logic:
+  - Sealed Vault detection
+  - Key rotation/encryption handled elsewhere (`.keys.enc`)
+  - Fallback to environment variables
+"""
+
 
 def vault_unseal():
-    for key in UNSEAL_KEYS:
+    """Unseal vault using keys from various sources with clear progress logging."""
+    print("🔐 Starting vault unseal process...")
+
+    # Get unseal keys with fallback logic
+    unseal_keys = get_vault_unseal_keys()
+    if not unseal_keys:
+        print("❌ No valid unseal method found. Please ensure one of:")
+        print("   - vault/unseal_keys.json exists with valid keys")
+        print("   - vault/.keys.enc exists with valid keys")
+        print(
+            "   - VAULT_UNSEAL_KEY_1, VAULT_UNSEAL_KEY_2, VAULT_UNSEAL_KEY_3 environment variables"
+        )
+        return False
+
+    # Get vault client
+    client = get_vault_client()
+    if client is None:
+        print("❌ Could not initialize vault client")
+        return False
+
+    # Check if vault is already unsealed
+    try:
+        if not client.sys.is_sealed():
+            print("✅ Vault is already unsealed")
+            return True
+    except Exception as e:
+        print(f"⚠️ Could not check vault status: {e}")
+        # Continue with unseal attempt anyway
+
+    # Unseal with progress tracking
+    print(f"🔐 Attempting to unseal with {len(unseal_keys)} keys...")
+
+    for i, key in enumerate(unseal_keys, 1):
         if not key:
-            print("❌ Missing one or more VAULT_UNSEAL_KEYs in .envrc or environment.")
-            return
+            print(f"⚠️ Skipping empty key {i}")
+            continue
+
         try:
-            res = requests.put(
-                f"{VAULT_ADDR}/v1/sys/unseal",
-                json={"key": key}
-            )
-            res.raise_for_status()
-            data = res.json()
-            print(f"🔑 Unseal progress: {data.get('progress')}/3 (Sealed: {data.get('sealed')})")
-            if data.get("sealed") is False:
-                print("✅ Vault is now unsealed.")
-                break
+            # Use hvac client if available, fallback to requests
+            if hasattr(client, "sys") and hasattr(client.sys, "submit_unseal_key"):
+                result = client.sys.submit_unseal_key(key)
+                if result:
+                    print(f"🔐 Unsealed key {i}/{len(unseal_keys)}")
+                    if not client.sys.is_sealed():
+                        print("✅ Vault unsealed successfully!")
+                        write_vault_bootstrap_log()
+                        return True
+            else:
+                # Fallback to direct HTTP requests
+                vault_addr = os.getenv("VAULT_ADDR", "http://127.0.0.1:8200")
+                res = requests.put(f"{vault_addr}/v1/sys/unseal", json={"key": key})
+                res.raise_for_status()
+                data = res.json()
+                print(
+                    f"🔐 Unsealed key {i}/{len(unseal_keys)} - Progress: {data.get('progress')}/3"
+                )
+                if data.get("sealed") is False:
+                    print("✅ Vault unsealed successfully!")
+                    write_vault_bootstrap_log()
+                    return True
+
         except Exception as e:
-            print(f"❌ Failed to unseal with provided key: {e}")
+            print(f"❌ Error unsealing with key {i}: {e}")
+
+    print("❌ Failed to unseal vault with provided keys")
+    return False

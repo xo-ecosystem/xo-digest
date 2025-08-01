@@ -97,6 +97,64 @@ def digest_index(c):
     print(f"📦 index.json generated with {len(entries)} entries.")
 
 
+@task
+def unseal(c):
+    """Unseal vault using keys from various sources."""
+    from vault.unseal import vault_unseal
+
+    success = vault_unseal()
+    if success:
+        print("✅ Vault unseal task completed successfully")
+    else:
+        print("❌ Vault unseal task failed")
+        exit(1)
+
+
+@task
+def status(c):
+    """Check vault status and health."""
+    from xo_core.vault.utils import vault_status
+
+    print("🔍 Checking vault status...")
+    is_unsealed = vault_status()
+    if is_unsealed:
+        print("✅ Vault is healthy and unsealed")
+    else:
+        print("❌ Vault is sealed or unhealthy")
+
+
+@task
+def pull_secrets(c):
+    """Pull vault secrets from GitHub or local encrypted file."""
+    from xo_core.vault.utils import vault_pull_secrets
+
+    print("📥 Pulling vault secrets...")
+    vault_pull_secrets()
+
+
+@task
+def zip_bundle(c):
+    """Create a ZIP bundle of vault contents for backup/transfer."""
+    from xo_core.vault.utils import zip_vault_bundle
+
+    print("📦 Creating vault bundle...")
+    bundle_path = zip_vault_bundle()
+    if bundle_path:
+        print(f"✅ Bundle created: {bundle_path}")
+    else:
+        print("❌ Failed to create bundle")
+
+
+@task
+def status_log(c):
+    """Sync current vault state into logbook."""
+    from vault.bootstrap import write_vault_bootstrap_log
+
+    print("📓 Writing vault status to logbook...")
+    write_vault_bootstrap_log()
+    print("✅ Vault status logged")
+
+
 # Create namespace
 ns = Collection("vault")
 
@@ -107,6 +165,13 @@ ns.add_task(digest_export, name="digest-export")
 ns.add_task(digest_index, name="digest-index")
 ns.add_task(bundle)
 ns.add_task(archive)
+
+# Add core vault tasks
+ns.add_task(unseal)
+ns.add_task(status)
+ns.add_task(pull_secrets, name="pull-secrets")
+ns.add_task(zip_bundle, name="zip-bundle")
+ns.add_task(status_log, name="status-log")
 
 # Add community tasks
 ns.add_task(inbox_render, name="inbox-render")

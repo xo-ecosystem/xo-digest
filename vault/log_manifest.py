@@ -2,6 +2,7 @@
 def vault_log_manifest(c):
     """📄 Write MDX manifest summarizing Vault bootstrap to logbook."""
     from datetime import datetime
+
     mdx_path = Path("vault/logbook/vault_bootstrap.mdx")
     mdx_path.parent.mkdir(parents=True, exist_ok=True)
     now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")

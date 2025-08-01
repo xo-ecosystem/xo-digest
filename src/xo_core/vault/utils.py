@@ -4,10 +4,12 @@ from pathlib import Path
 
 # xo_core.vault.utils
 
+
 def pin_to_ipfs(filepath, metadata=None):
     """Stub for IPFS pinning utility"""
     print(f"📌 [stub] Pinning {filepath} to IPFS...")
     return {"cid": "stub-cid", "url": f"ipfs://stub-cid/{filepath}"}
+
 
 def log_status(message, level="info"):
     """Stub for logging to Vault or console"""
@@ -31,21 +33,48 @@ def vault_status():
         print(f"❌ Error checking Vault status: {e}")
         return False
 
+
 def vault_pull_secrets():
     """Try to pull Vault secrets from GitHub CLI or local encrypted file."""
     import subprocess
     import json
+
     vault_keys = []
 
     # Try GitHub CLI first
     try:
-        result = subprocess.run(["gh", "secret", "list", "--repo", "xo-ecosystem/xo-core", "--json", "name"], capture_output=True, text=True)
+        result = subprocess.run(
+            [
+                "gh",
+                "secret",
+                "list",
+                "--repo",
+                "xo-ecosystem/xo-core",
+                "--json",
+                "name",
+            ],
+            capture_output=True,
+            text=True,
+        )
         if result.returncode == 0:
             print("📥 GitHub Secrets found:")
             names = json.loads(result.stdout)
             for i in range(1, 4):
                 key = f"VAULT_UNSEAL_KEY_{i}"
-                value_result = subprocess.run(["gh", "secret", "view", key, "--repo", "xo-ecosystem/xo-core", "--json", "value"], capture_output=True, text=True)
+                value_result = subprocess.run(
+                    [
+                        "gh",
+                        "secret",
+                        "view",
+                        key,
+                        "--repo",
+                        "xo-ecosystem/xo-core",
+                        "--json",
+                        "value",
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
                 if value_result.returncode == 0:
                     val = json.loads(value_result.stdout)["value"]
                     os.environ[key] = val
@@ -76,4 +105,52 @@ def vault_pull_secrets():
     if not vault_keys and not Path("vault/.keys.enc").exists():
         print("❌ No unseal keys loaded.")
 
-__all__ = ["pin_to_ipfs", "log_status", "vault_status", "vault_pull_secrets"]
+
+def zip_vault_bundle():
+    """Create a ZIP bundle of vault contents for backup/transfer."""
+    import zipfile
+    from datetime import datetime
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    bundle_name = f"vault_bundle_{timestamp}.zip"
+    bundle_path = Path(f"vault/{bundle_name}")
+
+    # Create bundle directory if it doesn't exist
+    bundle_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Files to include in bundle
+    vault_files = [
+        "vault/unseal_keys.json",
+        "vault/.keys.enc",
+        "vault/logbook/",
+        "vault/daily/",
+        "vault/constellation/",
+    ]
+
+    with zipfile.ZipFile(bundle_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for file_path in vault_files:
+            path = Path(file_path)
+            if path.exists():
+                if path.is_file():
+                    zipf.write(path, path.name)
+                    print(f"📦 Added {path.name} to bundle")
+                elif path.is_dir():
+                    for file in path.rglob("*"):
+                        if file.is_file():
+                            arcname = file.relative_to(Path("."))
+                            zipf.write(file, arcname)
+                            print(f"📦 Added {arcname} to bundle")
+            else:
+                print(f"⚠️ Skipping {file_path} (not found)")
+
+    print(f"✅ Vault bundle created: {bundle_path}")
+    return bundle_path
+
+
+__all__ = [
+    "pin_to_ipfs",
+    "log_status",
+    "vault_status",
+    "vault_pull_secrets",
+    "zip_vault_bundle",
+]
