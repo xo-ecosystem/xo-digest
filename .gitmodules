@@ -1,3 +1,6 @@
 [submodule "public/xo-exchange"]
 	path = public/xo-exchange
 	url = https://github.com/xo-ecosystem/xo-exchange.git
+[submodule "xo-core-docs"]
+	path = xo-core-docs
+	url = https://github.com/xo-verses/xo-core-docs.git
