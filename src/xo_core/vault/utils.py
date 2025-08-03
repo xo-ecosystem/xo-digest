@@ -147,10 +147,39 @@ def zip_vault_bundle():
     return bundle_path
 
 
+def unseal_vault(c):
+    """Fab task wrapper for vault unseal."""
+    try:
+        from src.xo_core.vault.unseal import vault_unseal
+        success = vault_unseal()
+        if success:
+            print("✅ HashiCorp Vault unseal task completed successfully")
+        else:
+            print("❌ HashiCorp Vault unseal task failed")
+            exit(1)
+    except Exception as e:
+        print(f"❌ Unseal task failed: {e}")
+        exit(1)
+
+
+def run_bootstrap(c):
+    """Fab task wrapper for vault bootstrap."""
+    try:
+        from src.xo_core.vault.bootstrap import write_vault_bootstrap_log
+        print("🔧 Running XO Vault bootstrap...")
+        write_vault_bootstrap_log()
+        print("✅ XO Vault bootstrap completed")
+    except Exception as e:
+        print(f"❌ Bootstrap task failed: {e}")
+        exit(1)
+
+
 __all__ = [
     "pin_to_ipfs",
     "log_status",
     "vault_status",
     "vault_pull_secrets",
     "zip_vault_bundle",
+    "unseal_vault",
+    "run_bootstrap",
 ]
