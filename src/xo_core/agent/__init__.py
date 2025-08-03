@@ -12,8 +12,7 @@ namespace = Collection("agent")
 namespace.add_collection(agent0_ns)
 namespace.add_collection(xo_agent_ns)
 
-# Stub imports for upcoming modules
-# from xo_core.agent.agent_game import AgentGame
-# from xo_core.agent.agent_persona import AgentPersona
-# from xo_core.agent.agent_api import agent_api as AgentAPI
-# from xo_core.agent.agent_hooks import AgentHooks
+from xo_core.agent.agent_game import AgentGame
+from xo_core.agent.agent_persona import AgentPersona
+from xo_core.agent.agent_api import agent_api as AgentAPI
+from xo_core.agent.agent_hooks import AgentHooks
