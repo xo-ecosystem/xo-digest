@@ -1,3 +1,4 @@
+# [o3-fix 2025-08-03] Boot order fix and docs namespace wiring
 from invoke import Collection, task
 import os
 import subprocess
@@ -7,8 +8,13 @@ from fab_tasks.dns_check_21xo import ns as dns_ns
 from fab_tasks.deploy import ns as deploy_ns
 from fab_tasks.patch import ns as patch_ns
 from fab_tasks.dynamic_loader import ns as loader_ns
+from fab_tasks.vault_check import vault_check
+from xo_core.fab_tasks.fix_loader import run_safe_loader
+from xo_core.fab_tasks.docs import ns as docs_ns  # [o3-fix 2025-08-03]
 
-# Import vault tasks
+# Load namespaced tasks dynamically with logging
+# [o3-fix 2025-08-03] Removed dynamic loader auto-load to ensure root Collection is defined first
+
 try:
     from src.xo_core.fab_tasks.vault_tasks import ns as vault_ns
 except ImportError as e:
@@ -51,6 +57,75 @@ def wire_hooks(c):
     from xo_core.agent.hooks import wire_hooks
 
     wire_hooks()
+
+
+@task
+def deploy_vault_api(c, environment="production"):
+    """
+    🚀 Deploy XO Vault API to production.
+
+    Args:
+        environment: Deployment environment (production, staging, development)
+    """
+    print(f"🚀 Deploying XO Vault API to {environment}...")
+
+    # Build and deploy using Docker Compose
+    try:
+        # Build the XO Vault API
+        c.run("docker-compose -f docker-compose.xo.yml build xo-vault-api")
+
+        # Deploy the stack
+        c.run("docker-compose -f docker-compose.xo.yml up -d")
+
+        print("✅ XO Vault API deployed successfully!")
+        print("📊 Services:")
+        print("   - XO Vault API: http://localhost:8801")
+        print("   - HashiCorp Vault: http://localhost:8200")
+        print("   - XO Node: http://localhost:8080")
+        print("   - API Docs: http://localhost:8801/docs")
+
+    except Exception as e:
+        print(f"❌ Deployment failed: {e}")
+        exit(1)
+
+
+@task
+def vault_status(c):
+    """🔍 Check XO Vault system status."""
+    print("🔍 Checking XO Vault system status...")
+
+    try:
+        # Check XO Vault API
+        try:
+            import requests
+        except ImportError:
+            print("❌ requests library not available")
+            return
+
+        response = requests.get("http://localhost:8801/health", timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            print(f"✅ XO Vault API: {data['status']}")
+            print(
+                f"   - HashiCorp Vault: {'Connected' if data['vault_connected'] else 'Disconnected'}"
+            )
+            print(f"   - Version: {data['version']}")
+        else:
+            print("❌ XO Vault API: Unhealthy")
+    except Exception as e:
+        print(f"❌ XO Vault API: {e}")
+
+    try:
+        # Check HashiCorp Vault
+        response = requests.get("http://localhost:8200/v1/sys/seal-status", timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            status = "Unsealed" if not data.get("sealed", True) else "Sealed"
+            print(f"✅ HashiCorp Vault: {status}")
+        else:
+            print("❌ HashiCorp Vault: Unreachable")
+    except Exception as e:
+        print(f"❌ HashiCorp Vault: {e}")
 
 
 @task
@@ -129,9 +204,52 @@ agent_ns = Collection("agent")
 agent_ns.add_task(dispatch, "dispatch")
 agent_ns.add_task(wire_hooks, "wire-hooks")
 
+
+@task
+def agent_health_check(c):
+    """Check agent system health and availability"""
+    print("🩺 Checking XO Agent system health...")
+
+    try:
+        import requests
+
+        # Check local agent health endpoint
+        try:
+            response = requests.get("http://localhost:8000/health", timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Local Agent: {data.get('status', 'unknown')}")
+                print(f"   Message: {data.get('msg', 'N/A')}")
+            else:
+                print(f"⚠️ Local Agent: HTTP {response.status_code}")
+        except requests.exceptions.RequestException:
+            print("⚠️ Local Agent: Not running or unreachable")
+
+        # Check production agent endpoint
+        agent_url = os.getenv("XO_AGENT0_URL", "https://agent0.21xo.com")
+        try:
+            response = requests.get(f"{agent_url}/health", timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Production Agent: {data.get('status', 'unknown')}")
+            else:
+                print(f"⚠️ Production Agent: HTTP {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"⚠️ Production Agent: {e}")
+
+        print("✅ Agent health check completed")
+
+    except ImportError:
+        print("❌ requests library not available")
+
+
+agent_ns.add_task(agent_health_check, "health-check")
+
 # Create dashboard namespace
 dashboard_ns = Collection("dashboard")
 dashboard_ns.add_task(dashboard_sync, "sync")
+# [o3-fix 2025-08-03] Temporarily disable loader until we debug the Task/Collection mixing issue
+# loader_ns = run_safe_loader()
 
 # Main namespace
 ns = Collection()
@@ -139,8 +257,9 @@ ns.add_collection(agent_ns)
 ns.add_collection(dns_ns)
 ns.add_collection(deploy_ns)
 ns.add_collection(patch_ns)
-ns.add_collection(loader_ns)
 ns.add_collection(dashboard_ns)
+ns.add_collection(docs_ns)  # [o3-fix 2025-08-03] expose docs namespace
+# ns.add_collection(loader_ns, name="loader")
 
 # Add vault namespace if available
 if vault_ns:
@@ -149,3 +268,4 @@ if vault_ns:
 # Individual tasks
 ns.add_task(deploy_prod, "deploy-prod")
 ns.add_task(cosmic_align, "cosmic-align")
+ns.add_task(vault_check, "vault-check")
