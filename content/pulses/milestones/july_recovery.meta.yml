@@ -1,0 +1,20 @@
+pulse:
+  id: july_recovery
+  title: "July Recovery Checklist"
+  author: xo-agent
+  tags: ["milestone", "recovery", "vault", "agent", "loader", "docs"]
+  category: "milestone"
+  status: in_progress
+  created_at: 2025-08-03
+  updated_at: 2025-08-03
+  priority: high
+  weight: 80
+  visibility: public
+  linked_drops: []
+  related_pulses:
+    - vault_loader_fix
+    - agent_webhook_debug
+    - docs_token_patch
+  contributors:
+    - xo
+    - xo-agent
