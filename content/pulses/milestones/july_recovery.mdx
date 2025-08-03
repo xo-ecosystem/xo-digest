@@ -1,0 +1,51 @@
+---
+title: "July Recovery Checklist"
+status: "in_progress"
+tags: ["milestone", "recovery", "vault", "agent", "docs"]
+created_at: 2025-08-03
+updated_at: 2025-08-03
+---
+
+# ✅ XO July Recovery — Core Focus
+
+This milestone consolidates all unfinished and failed July objectives into a strict checklist. No distractions. No optics. Just recovery.
+
+## 🔁 Loader System
+
+- [ ] Clean `dynamic_loader.py`
+- [ ] Fix circular imports with `vault` + `docs`
+- [ ] Show `docs.token` in `fab --list`
+
+## ⚙️ CLI & Alias Fix
+
+- [ ] Fix `.zshrc` alias to correct path
+- [ ] Remove deprecated compdef/layout
+- [ ] Validate `xo-fab loader.list`
+
+## 🔐 GitHub App Integration
+
+- [ ] Finalize `docs.token` logic
+- [ ] Store `GH_TOKEN` in `.env.local`
+- [ ] Validate GitHub Action deployment
+
+## 🔁 Prod Syncing
+
+- [ ] Patch `fab deploy.prod`
+- [ ] Ensure logs + dry-run
+- [ ] Confirm prod parity
+
+## 🧠 Webhook & Agent Integration
+
+- [ ] Fix `vault.unseal` circular import
+- [ ] Deploy working `webhook.py`
+- [ ] Validate agent + vault flow
+
+## 📝 Close July
+
+- [ ] Push tag `v0.1.1-july_recovery`
+- [ ] Save log summary
+- [ ] Register digest in XO Vault
+
+---
+
+📦 This pulse will be auto-synced and included in the `/vault/daily` digest upon completion.
