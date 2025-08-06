@@ -1,0 +1,21 @@
+You are analyzing the trait 'message_bottle' from the XO drop 'message_bottle'.
+
+Trait Details:
+- Name: message_bottle
+- Description: A mysterious bottle containing a scroll with ancient wisdom
+- Rarity: rare
+- Game Effects: {'mario_kart': {'speed_boost': 0.15, 'stealth_mode': 30}, 'sims': {'creativity_plus': 2, 'charisma_plus': 1}, 'minecraft': {'mining_speed': 1.2, 'jump_boost': 1.5}}
+
+Generate 3 creative variations of this trait that could:
+1. Enhance the original concept
+2. Create an opposite/contrasting version
+3. Evolve it into a more powerful form
+
+For each variation, provide:
+- Name
+- Description
+- Rarity level
+- Game effects for MarioKart and Sims
+- Lore connection to the original
+
+Format your response as a structured list with clear sections.

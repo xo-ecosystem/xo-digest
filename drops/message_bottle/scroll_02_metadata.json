@@ -1,0 +1,20 @@
+{
+  "name": "Scroll 02 - Pingpong Loop",
+  "description": "An ancient scroll gently unfurls and rewinds in endless motion.",
+  "animation_url": "ipfs://<INSERT_IPFS_HASH>/scroll_02_pingpong.webm",
+  "image": "ipfs://<INSERT_IPFS_HASH>/scroll_02_thumbnail.png",
+  "attributes": [
+    {
+      "trait_type": "Loop Style",
+      "value": "Pingpong"
+    },
+    {
+      "trait_type": "Media Type",
+      "value": "webm"
+    },
+    {
+      "trait_type": "Length",
+      "value": "10.4 seconds"
+    }
+  ]
+}

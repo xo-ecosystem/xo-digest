@@ -1,0 +1,20 @@
+- id: scroll_02
+  name: "Ancient Unfolded"
+  type: "visual"
+  file: scroll_02_pingpong.webm
+  rarity: "rare"
+
+  title: "Scroll 02 - Pingpong Loop"
+  media:
+    image: ipfs://<insert>/scroll_02_thumbnail.png
+    animation: ipfs://<insert>/scroll_02_pingpong.webm
+  tags: ["scroll", "pingpong", "loop", "video"]
+  description: "An ancient scroll gently unfurls and rewinds in endless motion."
+
+  attributes:
+    - trait_type: Loop Style
+      value: Pingpong
+    - trait_type: Media Type
+      value: webm
+    - trait_type: Length
+      value: 10.4 seconds

@@ -1,0 +1,15 @@
+- id: scroll_02
+  title: "Scroll 02 - Pingpong Loop"
+  description: "An ancient scroll gently unfurls and rewinds in endless motion."
+  media:
+    image: ipfs://<insert>/scroll_02_thumbnail.png
+    animation: ipfs://<insert>/scroll_02_pingpong.webm
+  tags: ["scroll", "pingpong", "loop", "video"]
+  rarity: epic
+  attributes:
+    - trait_type: Loop Style
+      value: Pingpong
+    - trait_type: Media Type
+      value: webm
+    - trait_type: Length
+      value: 10.4 seconds

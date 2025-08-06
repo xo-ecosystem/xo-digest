@@ -1,0 +1,14 @@
+Based on the trait 'message_bottle' from 'message_bottle', expand the universe lore.
+
+Current trait context:
+- Description: A mysterious bottle containing a scroll with ancient wisdom
+- Rarity: rare
+- Game compatibility: {'mario_kart': {'speed_boost': 0.15, 'stealth_mode': 30}, 'sims': {'creativity_plus': 2, 'charisma_plus': 1}, 'minecraft': {'mining_speed': 1.2, 'jump_boost': 1.5}}
+
+Create:
+1. A backstory explaining how this trait came to exist
+2. 2-3 related characters or entities that might possess similar traits
+3. A prophecy or legend involving this trait
+4. How this trait connects to other drops in the XO universe
+
+Make it engaging and interconnected with the broader XO mythology.

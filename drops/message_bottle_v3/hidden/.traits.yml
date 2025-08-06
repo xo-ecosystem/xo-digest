@@ -1,0 +1,46 @@
+message_bottle_legendary:
+  description: Legendary ascension of A mysterious bottle containing a scroll with
+    ancient wisdom - achieving ultimate form
+  rarity: legendary
+  evolution_source:
+  - message_bottle
+  legendary_powers:
+  - transcendence
+  - omniscience
+  - creation
+  game_effects:
+    mario_kart:
+      legendary_speed: 5.0
+      legendary_shield: 60
+      legendary_gravity: 5.0
+    sims:
+      legendary_inspiration: 10
+      legendary_aura: 30
+      legendary_creativity: 10
+    minecraft:
+      legendary_vision: 1000
+      legendary_finder: 200
+      legendary_mining: 3.0
+cosmic_resonance_legendary:
+  description: Legendary ascension of Enhanced connection to the cosmic forces - achieving
+    ultimate form
+  rarity: legendary
+  evolution_source:
+  - cosmic_resonance
+  legendary_powers:
+  - transcendence
+  - omniscience
+  - creation
+  game_effects:
+    mario_kart:
+      legendary_speed: 5.0
+      legendary_shield: 60
+      legendary_gravity: 5.0
+    sims:
+      legendary_inspiration: 10
+      legendary_aura: 30
+      legendary_creativity: 10
+    minecraft:
+      legendary_vision: 1000
+      legendary_finder: 200
+      legendary_mining: 3.0

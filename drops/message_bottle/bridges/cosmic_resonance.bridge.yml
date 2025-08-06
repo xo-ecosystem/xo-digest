@@ -1,0 +1,37 @@
+trait_name: cosmic_resonance
+drop_id: message_bottle
+base_rarity: epic
+game_effects:
+- game: mario_kart
+  effect_type: anti_gravity
+  value: 2.0
+  description: anti_gravity effect for mario_kart
+  rarity_multiplier: 1.0
+- game: mario_kart
+  effect_type: shield_boost
+  value: 15
+  description: shield_boost effect for mario_kart
+  rarity_multiplier: 1.0
+- game: sims
+  effect_type: inspiration_aura
+  value: 10
+  description: inspiration_aura effect for sims
+  rarity_multiplier: 1.0
+- game: sims
+  effect_type: skill_boost
+  value: 1.5
+  description: skill_boost effect for sims
+  rarity_multiplier: 1.0
+- game: minecraft
+  effect_type: night_vision
+  value: 300
+  description: night_vision effect for minecraft
+  rarity_multiplier: 1.0
+- game: minecraft
+  effect_type: resource_finder
+  value: 50
+  description: resource_finder effect for minecraft
+  rarity_multiplier: 1.0
+cross_platform_sync: true
+created_at: '2025-08-06T04:12:36.894199'
+updated_at: '2025-08-06T04:12:36.894205'

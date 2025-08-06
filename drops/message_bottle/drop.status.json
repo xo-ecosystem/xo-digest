@@ -1,0 +1,21 @@
+{
+  "drop": "message_bottle",
+  "title": "Message in a Bottle",
+  "image": "drop_main.webp",
+  "animation": "drop_main_looped.mp4",
+  "variants": "scroll_02_pingpong.webm",
+  "status": "active",
+  "description": "A glowing bottle washed ashore at twilight, containing a sealed scroll marked XO. It begins the unfolding of the Seals.",
+  "tags": [
+    "scroll",
+    "bottle",
+    "animation",
+    "message",
+    "seal"
+  ],
+  "rarity": "limited",
+  "mint_price": "0.021 ETH",
+  "max_supply": 777,
+  "category": "seals",
+  "created_at": "2025-08-05T00:00:00Z"
+}

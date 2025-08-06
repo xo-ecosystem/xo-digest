@@ -1,0 +1,27 @@
+message_bottle:
+  description: "A mysterious bottle containing a scroll with ancient wisdom"
+  rarity: "rare"
+  game_effects:
+    mario_kart:
+      speed_boost: 0.15
+      stealth_mode: 30
+    sims:
+      creativity_plus: 2
+      charisma_plus: 1
+    minecraft:
+      mining_speed: 1.2
+      jump_boost: 1.5
+
+cosmic_resonance:
+  description: "Enhanced connection to the cosmic forces"
+  rarity: "epic"
+  game_effects:
+    mario_kart:
+      anti_gravity: 2.0
+      shield_boost: 15
+    sims:
+      inspiration_aura: 10
+      skill_boost: 1.5
+    minecraft:
+      night_vision: 300
+      resource_finder: 50

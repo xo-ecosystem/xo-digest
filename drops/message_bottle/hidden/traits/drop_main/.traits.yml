@@ -1,0 +1,22 @@
+- id: drop_main
+  name: "Sealed Flame Core"
+  type: "visual"
+  file: drop_main_optimized.webm
+  rarity: "core"
+
+  title: "The Origin Flame"
+  media:
+    image: ipfs://<insert>/drop_main_thumbnail.webp
+    animation: ipfs://<insert>/drop_main_optimized.webm
+  tags: ["bottle", "sealed", "core", "drop"]
+  description: "A timeless sealed vessel, glowing with inner intent. It holds the untold pulse of a generation."
+
+  attributes:
+    - trait_type: Essence
+      value: Flame
+    - trait_type: Media Type
+      value: webm
+    - trait_type: Access
+      value: Open
+    - trait_type: Age
+      value: Unknown

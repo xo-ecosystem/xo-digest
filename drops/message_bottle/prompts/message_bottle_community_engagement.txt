@@ -1,0 +1,13 @@
+Create an engaging community prompt for the trait 'message_bottle' from 'message_bottle'.
+
+Trait context:
+- Description: A mysterious bottle containing a scroll with ancient wisdom
+- Rarity: rare
+
+Design a prompt that:
+1. Invites community members to share their interpretation
+2. Asks for creative ideas about how this trait might manifest
+3. Encourages storytelling without requiring ownership
+4. Connects to broader themes of creativity and imagination
+
+Make it accessible to both casual fans and deep lore enthusiasts.

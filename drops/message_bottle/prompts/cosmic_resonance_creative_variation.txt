@@ -1,0 +1,21 @@
+You are analyzing the trait 'cosmic_resonance' from the XO drop 'message_bottle'.
+
+Trait Details:
+- Name: cosmic_resonance
+- Description: Enhanced connection to the cosmic forces
+- Rarity: epic
+- Game Effects: {'mario_kart': {'anti_gravity': 2.0, 'shield_boost': 15}, 'sims': {'inspiration_aura': 10, 'skill_boost': 1.5}, 'minecraft': {'night_vision': 300, 'resource_finder': 50}}
+
+Generate 3 creative variations of this trait that could:
+1. Enhance the original concept
+2. Create an opposite/contrasting version
+3. Evolve it into a more powerful form
+
+For each variation, provide:
+- Name
+- Description
+- Rarity level
+- Game effects for MarioKart and Sims
+- Lore connection to the original
+
+Format your response as a structured list with clear sections.

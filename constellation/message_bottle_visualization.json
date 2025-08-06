@@ -1,0 +1,16 @@
+{
+  "nodes": [
+    {
+      "id": "message_bottle",
+      "label": "message_bottle",
+      "group": "drops",
+      "x": 412,
+      "y": 493
+    }
+  ],
+  "edges": [],
+  "metadata": {
+    "total_drops": 1,
+    "generated_at": "2025-08-06T04:27:16.366828"
+  }
+}

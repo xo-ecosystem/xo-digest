@@ -1,0 +1,27 @@
+drop_id: message_bottle
+title: "Message in a Bottle"
+summary: "A sealed relic drifting through time, its scrolls now awakening with ancient light. The first call to the community echoes here."
+
+core_traits:
+  - drop_main
+  - scroll_01
+  - scroll_02
+
+rewards:
+  - scents
+  - remix slots
+  - lore highlights
+  - inbox pins
+
+contributors:
+  - artists
+  - lorekeepers
+  - remixers
+  - traitmakers
+
+inbox:
+  allow_non_nft: true
+  seed_personas:
+    - vault_keeper
+    - the_scrollbearer
+    - you

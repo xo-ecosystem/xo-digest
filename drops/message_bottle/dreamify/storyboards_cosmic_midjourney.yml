@@ -1,0 +1,29 @@
+drop_id: message_bottle
+style: cosmic
+model: midjourney
+generated_at: '2025-08-06T04:27:04.576776'
+storyboards:
+- trait_name: message_bottle
+  description: A mysterious bottle containing a scroll with ancient wisdom
+  rarity: rare
+  model: midjourney
+  style: cosmic
+  prompt: "Create a cosmic storyboard scene featuring: A mysterious bottle containing\
+    \ a scroll with ancient wisdom\n                \n                Style: cosmic,\
+    \ cinematic lighting, detailed character design\n                Mood: Mysterious\
+    \ and enchanting\n                Rarity: rare level\n                Format:\
+    \ Wide aspect ratio, storyboard panels\n                \n                --ar\
+    \ 16:9 --v 6 --q 2 --s 750"
+  generated_at: '2025-08-06T04:27:04.576431'
+- trait_name: cosmic_resonance
+  description: Enhanced connection to the cosmic forces
+  rarity: epic
+  model: midjourney
+  style: cosmic
+  prompt: "Create a cosmic storyboard scene featuring: Enhanced connection to the\
+    \ cosmic forces\n                \n                Style: cosmic, cinematic lighting,\
+    \ detailed character design\n                Mood: Mysterious and enchanting\n\
+    \                Rarity: epic level\n                Format: Wide aspect ratio,\
+    \ storyboard panels\n                \n                --ar 16:9 --v 6 --q 2 --s\
+    \ 750"
+  generated_at: '2025-08-06T04:27:04.576606'

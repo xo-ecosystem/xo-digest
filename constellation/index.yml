@@ -1,0 +1,35 @@
+name: XO Constellation
+description: Living map of XO universe connections
+created_at: '2025-08-06T04:27:16.365990'
+drops:
+- drop_id: message_bottle
+  title: message_bottle
+  description: A drop in the XO universe
+  tags: []
+  traits:
+  - message_bottle
+  - cosmic_resonance
+  rarity_levels:
+  - epic
+  - rare
+  connections: []
+  coordinates:
+    x: 412
+    y: 493
+  linked_at: '2025-08-06T04:27:16.364973'
+- drop_id: seal_flame
+  title: seal_flame
+  description: A drop in the XO universe
+  tags: []
+  traits:
+  - eternal_flame
+  - seal_breaker
+  rarity_levels:
+  - legendary
+  - epic
+  connections: []
+  coordinates:
+    x: 241
+    y: 121
+  linked_at: '2025-08-06T04:45:35.937152'
+updated_at: '2025-08-06T04:45:35.945211'

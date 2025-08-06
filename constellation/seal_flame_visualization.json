@@ -1,0 +1,16 @@
+{
+  "nodes": [
+    {
+      "id": "seal_flame",
+      "label": "seal_flame",
+      "group": "drops",
+      "x": 241,
+      "y": 121
+    }
+  ],
+  "edges": [],
+  "metadata": {
+    "total_drops": 2,
+    "generated_at": "2025-08-06T04:45:35.946614"
+  }
+}

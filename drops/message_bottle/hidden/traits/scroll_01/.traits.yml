@@ -1,0 +1,20 @@
+- id: scroll_01
+  name: "The First Ember"
+  type: "visual"
+  file: scroll_01.webm
+  rarity: "core"
+
+  title: "Scroll 01 - Origin Flicker"
+  media:
+    image: ipfs://<insert>/scroll_01_thumbnail.webp
+    animation: ipfs://<insert>/scroll_01.webm
+  tags: ["scroll", "flame", "origin"]
+  description: "The first scroll to glow in the vault. Said to contain the original pulse fragment that began the lorechain."
+
+  attributes:
+    - trait_type: Energy
+      value: Flickering Glow
+    - trait_type: Role
+      value: Lore Catalyst
+    - trait_type: Media Type
+      value: webm

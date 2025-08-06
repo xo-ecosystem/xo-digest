@@ -1,0 +1,32 @@
+message_bottle_cosmic:
+  description: Cosmic evolution of A mysterious bottle containing a scroll with ancient
+    wisdom - transcending mortal limitations
+  rarity: legendary
+  evolution_source:
+  - message_bottle
+  game_effects:
+    mario_kart:
+      cosmic_gravity: 3.0
+      cosmic_shield: 30
+    sims:
+      cosmic_inspiration: 5
+      cosmic_aura: 15
+    minecraft:
+      cosmic_vision: 600
+      cosmic_finder: 100
+cosmic_resonance_cosmic:
+  description: Cosmic evolution of Enhanced connection to the cosmic forces - transcending
+    mortal limitations
+  rarity: legendary
+  evolution_source:
+  - cosmic_resonance
+  game_effects:
+    mario_kart:
+      cosmic_gravity: 3.0
+      cosmic_shield: 30
+    sims:
+      cosmic_inspiration: 5
+      cosmic_aura: 15
+    minecraft:
+      cosmic_vision: 600
+      cosmic_finder: 100

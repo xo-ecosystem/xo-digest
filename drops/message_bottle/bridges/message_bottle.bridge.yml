@@ -1,0 +1,37 @@
+trait_name: message_bottle
+drop_id: message_bottle
+base_rarity: rare
+game_effects:
+- game: mario_kart
+  effect_type: speed_boost
+  value: 0.15
+  description: speed_boost effect for mario_kart
+  rarity_multiplier: 1.0
+- game: mario_kart
+  effect_type: stealth_mode
+  value: 30
+  description: stealth_mode effect for mario_kart
+  rarity_multiplier: 1.0
+- game: sims
+  effect_type: creativity_plus
+  value: 2
+  description: creativity_plus effect for sims
+  rarity_multiplier: 1.0
+- game: sims
+  effect_type: charisma_plus
+  value: 1
+  description: charisma_plus effect for sims
+  rarity_multiplier: 1.0
+- game: minecraft
+  effect_type: mining_speed
+  value: 1.2
+  description: mining_speed effect for minecraft
+  rarity_multiplier: 1.0
+- game: minecraft
+  effect_type: jump_boost
+  value: 1.5
+  description: jump_boost effect for minecraft
+  rarity_multiplier: 1.0
+cross_platform_sync: true
+created_at: '2025-08-06T04:12:36.892328'
+updated_at: '2025-08-06T04:12:36.892336'

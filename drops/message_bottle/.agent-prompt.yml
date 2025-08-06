@@ -1,0 +1,11 @@
+persona: vault_keeper
+task: publish drop
+drop_id: message_bottle
+description: Validate and publish the drop `message_bottle`. Ensure all images are
+  uploaded to IPFS, .traits.yml is present and patched, and status.json includes updated
+  CID references. Finalize the Vault bundle.
+goals:
+- Upload all files to IPFS if needed
+- Patch .traits.yml with CID references
+- Patch drop.status.json if required
+- Output deployment log or summary to /vault/logbook/

@@ -1,0 +1,14 @@
+Based on the trait 'cosmic_resonance' from 'message_bottle', expand the universe lore.
+
+Current trait context:
+- Description: Enhanced connection to the cosmic forces
+- Rarity: epic
+- Game compatibility: {'mario_kart': {'anti_gravity': 2.0, 'shield_boost': 15}, 'sims': {'inspiration_aura': 10, 'skill_boost': 1.5}, 'minecraft': {'night_vision': 300, 'resource_finder': 50}}
+
+Create:
+1. A backstory explaining how this trait came to exist
+2. 2-3 related characters or entities that might possess similar traits
+3. A prophecy or legend involving this trait
+4. How this trait connects to other drops in the XO universe
+
+Make it engaging and interconnected with the broader XO mythology.

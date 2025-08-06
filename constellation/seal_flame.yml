@@ -1,0 +1,15 @@
+drop_id: seal_flame
+title: seal_flame
+description: A drop in the XO universe
+tags: []
+traits:
+- eternal_flame
+- seal_breaker
+rarity_levels:
+- legendary
+- epic
+connections: []
+coordinates:
+  x: 241
+  y: 121
+linked_at: '2025-08-06T04:45:35.937152'

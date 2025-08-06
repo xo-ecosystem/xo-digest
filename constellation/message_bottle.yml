@@ -1,0 +1,15 @@
+drop_id: message_bottle
+title: message_bottle
+description: A drop in the XO universe
+tags: []
+traits:
+- message_bottle
+- cosmic_resonance
+rarity_levels:
+- epic
+- rare
+connections: []
+coordinates:
+  x: 412
+  y: 493
+linked_at: '2025-08-06T04:27:16.364973'

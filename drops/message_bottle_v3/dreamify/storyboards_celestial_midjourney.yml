@@ -1,0 +1,32 @@
+drop_id: message_bottle_v3
+style: celestial
+model: midjourney
+generated_at: '2025-08-06T04:43:36.926400'
+storyboards:
+- trait_name: message_bottle_legendary
+  description: Legendary ascension of A mysterious bottle containing a scroll with
+    ancient wisdom - achieving ultimate form
+  rarity: legendary
+  model: midjourney
+  style: celestial
+  prompt: "Create a celestial storyboard scene featuring: Legendary ascension of A\
+    \ mysterious bottle containing a scroll with ancient wisdom - achieving ultimate\
+    \ form\n                \n                Style: celestial, cinematic lighting,\
+    \ detailed character design\n                Mood: Mysterious and enchanting\n\
+    \                Rarity: legendary level\n                Format: Wide aspect\
+    \ ratio, storyboard panels\n                \n                --ar 16:9 --v 6\
+    \ --q 2 --s 750"
+  generated_at: '2025-08-06T04:43:36.925872'
+- trait_name: cosmic_resonance_legendary
+  description: Legendary ascension of Enhanced connection to the cosmic forces - achieving
+    ultimate form
+  rarity: legendary
+  model: midjourney
+  style: celestial
+  prompt: "Create a celestial storyboard scene featuring: Legendary ascension of Enhanced\
+    \ connection to the cosmic forces - achieving ultimate form\n                \n\
+    \                Style: celestial, cinematic lighting, detailed character design\n\
+    \                Mood: Mysterious and enchanting\n                Rarity: legendary\
+    \ level\n                Format: Wide aspect ratio, storyboard panels\n      \
+    \          \n                --ar 16:9 --v 6 --q 2 --s 750"
+  generated_at: '2025-08-06T04:43:36.926199'

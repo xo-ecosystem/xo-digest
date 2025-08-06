@@ -1,0 +1,11 @@
+enabled_at: '2025-08-06T04:45:11.613284'
+enabled_features:
+- react
+- morph
+- autopilot
+- portal
+feature_descriptions:
+  react: Inbox responder with persona-driven reactions
+  morph: Trait and content evolution over time
+  autopilot: Automated deployment and publishing
+  portal: Web-embeddable drop previews
