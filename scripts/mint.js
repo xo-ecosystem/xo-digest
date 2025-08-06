@@ -22,7 +22,7 @@ async function main() {
         const dropInfo = await xoDrop.getDrop(1);
         console.log("Drop Info:");
         console.log("- Name:", dropInfo.name);
-        console.log("- Price:", ethers.utils.formatEther(dropInfo.price), "ETH");
+        console.log("- Price:", ethers.formatEther(dropInfo.price), "ETH");
         console.log("- Current Supply:", dropInfo.currentSupply.toString());
         console.log("- Max Supply:", dropInfo.maxSupply.toString());
         
@@ -52,7 +52,7 @@ async function main() {
         const dropInfo = await xoDrop.getDrop(2);
         console.log("Drop Info:");
         console.log("- Name:", dropInfo.name);
-        console.log("- Price:", ethers.utils.formatEther(dropInfo.price), "ETH");
+        console.log("- Price:", ethers.formatEther(dropInfo.price), "ETH");
         console.log("- Current Supply:", dropInfo.currentSupply.toString());
         console.log("- Max Supply:", dropInfo.maxSupply.toString());
         
@@ -79,7 +79,7 @@ async function main() {
     console.log("\n📊 Token Holdings:");
     for (let dropId = 1; dropId <= 2; dropId++) {
         const balance = await xoDrop.balanceOf(signer.address, dropId);
-        if (balance.gt(0)) {
+        if (Number(balance) > 0) {
             const dropInfo = await xoDrop.getDrop(dropId);
             console.log(`- ${dropInfo.name}: ${balance.toString()} tokens`);
         }

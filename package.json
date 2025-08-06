@@ -1,23 +1,33 @@
 {
   "name": "xo-core",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "XO Core - Living Universe Infrastructure",
+  "main": "index.js",
   "scripts": {
-    "dev": "npx vite",
-    "build": "npx vite build",
-    "preview": "npx vite preview"
+    "test": "hardhat test",
+    "compile": "hardhat compile",
+    "deploy:polygon": "hardhat run scripts/deploy.js --network polygon",
+    "deploy:mumbai": "hardhat run scripts/deploy.js --network polygonMumbai",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "mint:test": "hardhat run scripts/mint.js --network localhost",
+    "node": "hardhat node"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.0",
-    "js-yaml": "^4.1.0"
+    "@openzeppelin/contracts": "^4.9.0",
+    "dotenv": "^16.0.3"
   },
   "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@vitejs/plugin-react": "^4.6.0",
-    "typescript": "^5.2.0",
-    "vite": "^7.0.4"
-  }
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.17.0"
+  },
+  "keywords": [
+    "xo",
+    "universe",
+    "nft",
+    "drops",
+    "polygon",
+    "ethereum"
+  ],
+  "author": "XO Ecosystem",
+  "license": "MIT"
 }

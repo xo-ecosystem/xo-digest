@@ -1,0 +1,27 @@
+{
+  "contractAddress": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+  "network": "localhost",
+  "deployedAt": "2025-08-06T03:07:08.991Z",
+  "drops": {
+    "message_bottle_v3": {
+      "dropId": 1,
+      "name": "Message Bottle V3 - Legendary Evolution",
+      "maxSupply": 777,
+      "price": "0.021 ETH",
+      "traits": [
+        "message_bottle_legendary",
+        "cosmic_resonance_legendary"
+      ]
+    },
+    "seal_flame": {
+      "dropId": 2,
+      "name": "Seal Flame",
+      "maxSupply": 500,
+      "price": "0.021 ETH",
+      "traits": [
+        "eternal_flame",
+        "seal_breaker"
+      ]
+    }
+  }
+}

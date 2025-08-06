@@ -1,0 +1,46 @@
+{
+  "contractAddress": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+  "network": "localhost",
+  "deployedAt": "2025-08-06T03:09:39.017Z",
+  "scents": {
+    "eternal_flame": {
+      "scentId": 1,
+      "name": "Eternal Flame Scent",
+      "maxSupply": 333,
+      "price": "0.015 ETH",
+      "notes": [
+        "smoke",
+        "amber",
+        "vanilla"
+      ],
+      "intensity": "strong",
+      "season": "autumn"
+    },
+    "cosmic_resonance": {
+      "scentId": 2,
+      "name": "Cosmic Resonance Scent",
+      "maxSupply": 777,
+      "price": "0.015 ETH",
+      "notes": [
+        "ozone",
+        "jasmine",
+        "musk"
+      ],
+      "intensity": "medium",
+      "season": "spring"
+    },
+    "seal_breaker": {
+      "scentId": 3,
+      "name": "Seal Breaker Scent",
+      "maxSupply": 500,
+      "price": "0.015 ETH",
+      "notes": [
+        "leather",
+        "sage",
+        "cedar"
+      ],
+      "intensity": "light",
+      "season": "winter"
+    }
+  }
+}

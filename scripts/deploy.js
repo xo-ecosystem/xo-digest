@@ -8,9 +8,10 @@ async function main() {
     
     // Deploy the contract
     const xoDrop = await XOSeason1Drop.deploy();
-    await xoDrop.deployed();
+    await xoDrop.waitForDeployment();
     
-    console.log("✅ XO Season 1 Drop deployed to:", xoDrop.address);
+    const address = await xoDrop.getAddress();
+    console.log("✅ XO Season 1 Drop deployed to:", address);
     
     // Create initial drops
     console.log("📦 Creating initial drops...");
@@ -27,7 +28,7 @@ async function main() {
         "ipfs://QmMessageBottleV3Image", // Replace with actual IPFS hash
         "https://xo-vault.com/drops/message_bottle_v3",
         777, // Max supply
-        ethers.utils.parseEther("0.021"), // Price: 0.021 ETH
+        ethers.parseEther("0.021"), // Price: 0.021 ETH
         messageBottleV3Traits
     );
     
@@ -45,7 +46,7 @@ async function main() {
         "ipfs://QmSealFlameImage", // Replace with actual IPFS hash
         "https://xoseals.com/drops/seal_flame",
         500, // Max supply
-        ethers.utils.parseEther("0.021"), // Price: 0.021 ETH
+        ethers.parseEther("0.021"), // Price: 0.021 ETH
         sealFlameTraits
     );
     
@@ -139,7 +140,7 @@ async function main() {
     
     // Save deployment info
     const deploymentInfo = {
-        contractAddress: xoDrop.address,
+        contractAddress: address,
         network: network.name,
         deployedAt: new Date().toISOString(),
         drops: {
