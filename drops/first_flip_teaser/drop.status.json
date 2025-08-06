@@ -1,0 +1,48 @@
+{
+  "drop_id": "first_flip_teaser",
+  "title": "First Flip Teaser - XO Vault Power Showcase",
+  "description": "Demonstrates the full power of the XO Vault system - showcasing immutability, inbox mastery, digest compilation, trait evolution, and lore weaving capabilities.",
+  "status": "active",
+  "mint_status": "ready",
+  "mint_price": "0.021",
+  "mint_currency": "ETH",
+  "max_supply": 777,
+  "current_supply": 0,
+  "mint_date": "2025-08-06T00:00:00Z",
+  "tags": [
+    "teaser",
+    "vault_power",
+    "showcase",
+    "immutability",
+    "inbox",
+    "digest",
+    "traits",
+    "lore",
+    "cross_game",
+    "community"
+  ],
+  "traits": [
+    "vault_immutability",
+    "inbox_mastery", 
+    "digest_compiler",
+    "trait_evolution",
+    "lore_weaving"
+  ],
+  "rarity_distribution": {
+    "legendary": 2,
+    "epic": 2,
+    "rare": 1
+  },
+  "game_compatibility": [
+    "mario_kart",
+    "sims", 
+    "minecraft"
+  ],
+  "constellation_links": [
+    "message_bottle_v3",
+    "seal_flame",
+    "cosmic_resonance"
+  ],
+  "created_at": "2025-08-06T00:00:00Z",
+  "updated_at": "2025-08-06T00:00:00Z"
+}

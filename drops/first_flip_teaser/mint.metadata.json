@@ -1,0 +1,68 @@
+{
+  "name": "First Flip Teaser - XO Vault Power Showcase",
+  "description": "Demonstrates the full power of the XO Vault system - showcasing immutability, inbox mastery, digest compilation, trait evolution, and lore weaving capabilities.",
+  "image": "ipfs://QmFirstFlipTeaserImage",
+  "external_url": "https://xo-vault.com/drops/first_flip_teaser",
+  "attributes": [
+    {
+      "trait_type": "Vault Power",
+      "value": "Vault Immutability",
+      "rarity": "legendary"
+    },
+    {
+      "trait_type": "Communication",
+      "value": "Inbox Mastery",
+      "rarity": "epic"
+    },
+    {
+      "trait_type": "Information",
+      "value": "Digest Compiler",
+      "rarity": "rare"
+    },
+    {
+      "trait_type": "Evolution",
+      "value": "Trait Evolution",
+      "rarity": "legendary"
+    },
+    {
+      "trait_type": "Storytelling",
+      "value": "Lore Weaving",
+      "rarity": "epic"
+    },
+    {
+      "trait_type": "MarioKart Effect",
+      "value": "Vault Boost: +50%, Permanent Shield: 60s"
+    },
+    {
+      "trait_type": "Sims Effect", 
+      "value": "Vault Wisdom: +5, Permanent Aura: +30"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "Vault Vision: 1000 blocks, Mining Speed: +3.0"
+    },
+    {
+      "trait_type": "Drop Type",
+      "value": "Teaser"
+    },
+    {
+      "trait_type": "Edition",
+      "value": "First Flip"
+    },
+    {
+      "trait_type": "Constellation",
+      "value": "XO Vault Power"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "ipfs://QmFirstFlipTeaserImage",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "maxSupply": 777,
+    "mintPrice": "0.021 ETH"
+  }
+}

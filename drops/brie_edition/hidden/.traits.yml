@@ -1,0 +1,59 @@
+brie_unicorn:
+  description: "A special scroll-bearing unicorn created specifically for Brie - the first of its kind in the XO universe"
+  rarity: "legendary"
+  special_edition: "1/1"
+  game_effects:
+    mario_kart:
+      brie_boost: 1.0
+      unicorn_speed: 0.8
+      scroll_power: 0.6
+    sims:
+      brie_inspiration: 10
+      unicorn_creativity: 8
+      scroll_wisdom: 6
+    minecraft:
+      brie_vision: 2000
+      unicorn_finder: 1000
+      scroll_mining: 5.0
+
+scroll_bearer:
+  description: "The power to carry and protect ancient scrolls containing the wisdom of the XO universe"
+  rarity: "epic"
+  game_effects:
+    mario_kart:
+      scroll_boost: 0.4
+      bearer_shield: 45
+    sims:
+      scroll_creativity: 5
+      bearer_inspiration: 4
+    minecraft:
+      scroll_vision: 800
+      bearer_mining: 2.5
+
+sentimental_core:
+  description: "A deeply personal connection to the XO universe - this trait represents the emotional heart of the ecosystem"
+  rarity: "legendary"
+  game_effects:
+    mario_kart:
+      sentimental_boost: 0.7
+      core_shield: 90
+    sims:
+      sentimental_creativity: 8
+      core_inspiration: 7
+    minecraft:
+      sentimental_vision: 1500
+      core_mining: 4.0
+
+first_edition:
+  description: "The very first edition of this special drop - marking the beginning of a new era in the XO universe"
+  rarity: "legendary"
+  game_effects:
+    mario_kart:
+      first_boost: 0.5
+      edition_speed: 0.3
+    sims:
+      first_creativity: 6
+      edition_inspiration: 5
+    minecraft:
+      first_vision: 1000
+      edition_mining: 3.0

@@ -1,0 +1,58 @@
+{
+  "persona_name": "brie_unicorn_scrollbearer",
+  "drop_id": "brie_edition",
+  "description": "A special scroll-bearing unicorn persona created specifically for Brie - the first of its kind in the XO universe",
+  "personality": "Magical, wise, and deeply connected to the XO universe. Brie's unicorn carries ancient scrolls containing the wisdom of the cosmos.",
+  "special_abilities": [
+    "Scroll Protection - Can protect and preserve ancient wisdom",
+    "Unicorn Magic - Possesses the magical abilities of a unicorn",
+    "Sentimental Connection - Deep emotional bond with the XO universe",
+    "First Edition Power - Special abilities as the first of its kind",
+    "Cross-Game Compatibility - Works across MarioKart, Sims, and Minecraft"
+  ],
+  "traits": [
+    "brie_unicorn",
+    "scroll_bearer", 
+    "sentimental_core",
+    "first_edition"
+  ],
+  "rarity_levels": {
+    "legendary": 3,
+    "epic": 1
+  },
+  "game_compatibility": {
+    "mario_kart": {
+      "speed_boost": 1.0,
+      "shield_power": 90,
+      "special_ability": "Unicorn Dash"
+    },
+    "sims": {
+      "creativity_boost": 10,
+      "inspiration_power": 7,
+      "special_ability": "Scroll Wisdom"
+    },
+    "minecraft": {
+      "vision_range": 2000,
+      "mining_speed": 5.0,
+      "special_ability": "Ancient Knowledge"
+    }
+  },
+  "constellation_connections": [
+    "message_bottle_v3",
+    "first_flip_teaser",
+    "seal_flame"
+  ],
+  "special_edition": {
+    "type": "1/1",
+    "recipient": "Brie",
+    "significance": "First scroll-bearing unicorn in the XO universe",
+    "creation_date": "2025-08-06T00:00:00Z"
+  },
+  "unlockable_content": {
+    "scroll_story": "A special 1-of-1 story scroll created just for Brie",
+    "hidden_traits": "Private metadata and hidden traits",
+    "constellation_access": "Special access to constellation features"
+  },
+  "created_at": "2025-08-06T00:00:00Z",
+  "updated_at": "2025-08-06T00:00:00Z"
+}

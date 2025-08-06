@@ -1,0 +1,60 @@
+scrollbearer_puppet:
+  description: "A 3D printable scrollbearer puppet character - the first physical manifestation of the XO universe"
+  rarity: "legendary"
+  physical_type: "3D_printable"
+  file_formats: ["STL", "OBJ", "GLB"]
+  game_effects:
+    mario_kart:
+      puppet_boost: 0.6
+      physical_speed: 0.4
+    sims:
+      puppet_creativity: 6
+      physical_inspiration: 5
+    minecraft:
+      puppet_vision: 800
+      physical_mining: 2.5
+
+message_bottle_unicorn:
+  description: "A hidden easter egg - 3D printable message bottle unicorn character"
+  rarity: "epic"
+  physical_type: "3D_printable"
+  file_formats: ["STL", "OBJ", "GLB"]
+  easter_egg: true
+  game_effects:
+    mario_kart:
+      unicorn_boost: 0.5
+      bottle_power: 0.3
+    sims:
+      unicorn_creativity: 4
+      bottle_inspiration: 3
+    minecraft:
+      unicorn_vision: 600
+      bottle_mining: 2.0
+
+physical_manifestation:
+  description: "The power to bridge digital and physical worlds through 3D printing"
+  rarity: "legendary"
+  game_effects:
+    mario_kart:
+      physical_boost: 0.7
+      bridge_speed: 0.5
+    sims:
+      physical_creativity: 7
+      bridge_inspiration: 6
+    minecraft:
+      physical_vision: 1000
+      bridge_mining: 3.0
+
+printable_magic:
+  description: "Magic that works in both digital and physical realms"
+  rarity: "epic"
+  game_effects:
+    mario_kart:
+      magic_boost: 0.4
+      realm_speed: 0.3
+    sims:
+      magic_creativity: 5
+      realm_inspiration: 4
+    minecraft:
+      magic_vision: 700
+      realm_mining: 2.2

@@ -1,0 +1,27 @@
+eternal_flame:
+  description: "An eternal flame that never extinguishes, representing the unbreakable spirit"
+  rarity: "legendary"
+  game_effects:
+    mario_kart:
+      flame_boost: 0.3
+      eternal_shield: 45
+    sims:
+      flame_inspiration: 4
+      eternal_aura: 20
+    minecraft:
+      flame_light: 1000
+      eternal_mining: 2.0
+
+seal_breaker:
+  description: "The power to break ancient seals and unlock hidden knowledge"
+  rarity: "epic"
+  game_effects:
+    mario_kart:
+      seal_break: 0.25
+      unlock_speed: 0.2
+    sims:
+      seal_wisdom: 3
+      unlock_creativity: 2
+    minecraft:
+      seal_vision: 500
+      unlock_finder: 100

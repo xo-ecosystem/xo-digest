@@ -1,0 +1,69 @@
+vault_immutability:
+  description: "The power to create immutable, permanent records in the XO Vault"
+  rarity: "legendary"
+  game_effects:
+    mario_kart:
+      vault_boost: 0.5
+      permanent_shield: 60
+    sims:
+      vault_wisdom: 5
+      permanent_aura: 30
+    minecraft:
+      vault_vision: 1000
+      permanent_mining: 3.0
+
+inbox_mastery:
+  description: "Master of the XO inbox system - can send and receive messages across the universe"
+  rarity: "epic"
+  game_effects:
+    mario_kart:
+      inbox_speed: 0.3
+      message_boost: 0.2
+    sims:
+      inbox_creativity: 4
+      communication_plus: 3
+    minecraft:
+      inbox_finder: 200
+      message_range: 500
+
+digest_compiler:
+  description: "Ability to compile and create daily lore digests from the XO constellation"
+  rarity: "rare"
+  game_effects:
+    mario_kart:
+      digest_boost: 0.15
+      lore_speed: 0.1
+    sims:
+      digest_inspiration: 2
+      lore_creativity: 2
+    minecraft:
+      digest_vision: 300
+      lore_finder: 100
+
+trait_evolution:
+  description: "Can evolve and transform traits over time, creating new possibilities"
+  rarity: "legendary"
+  game_effects:
+    mario_kart:
+      evolution_boost: 0.4
+      trait_speed: 0.3
+    sims:
+      evolution_creativity: 5
+      trait_inspiration: 4
+    minecraft:
+      evolution_mining: 2.5
+      trait_vision: 800
+
+lore_weaving:
+  description: "Master storyteller who can weave new lore into the XO universe"
+  rarity: "epic"
+  game_effects:
+    mario_kart:
+      lore_boost: 0.25
+      story_speed: 0.2
+    sims:
+      lore_creativity: 3
+      story_inspiration: 3
+    minecraft:
+      lore_finder: 150
+      story_vision: 400
