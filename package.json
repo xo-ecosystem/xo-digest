@@ -6,11 +6,29 @@
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
-    "deploy:polygon": "hardhat run scripts/deploy.js --network polygon",
-    "deploy:mumbai": "hardhat run scripts/deploy.js --network polygonMumbai",
+    
     "deploy:local": "hardhat run scripts/deploy.js --network localhost",
     "mint:test": "hardhat run scripts/mint.js --network localhost",
-    "node": "hardhat node"
+    "node": "hardhat node",
+    
+    "deploy:polygon": "hardhat run scripts/deploy.js --network polygon",
+    "deploy:arbitrum": "hardhat run scripts/deploy.js --network arbitrum",
+    "deploy:optimism": "hardhat run scripts/deploy.js --network optimism",
+    "deploy:base": "hardhat run scripts/deploy.js --network base",
+    
+    "deploy:mumbai": "hardhat run scripts/deploy.js --network polygonMumbai",
+    "deploy:arbitrum-goerli": "hardhat run scripts/deploy.js --network arbitrumGoerli",
+    "deploy:optimism-goerli": "hardhat run scripts/deploy.js --network optimismGoerli",
+    "deploy:base-goerli": "hardhat run scripts/deploy.js --network baseGoerli",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    
+    "deploy:all-mainnet": "npm run deploy:polygon && npm run deploy:arbitrum && npm run deploy:optimism && npm run deploy:base",
+    "deploy:all-testnet": "npm run deploy:mumbai && npm run deploy:arbitrum-goerli && npm run deploy:optimism-goerli && npm run deploy:base-goerli && npm run deploy:sepolia",
+    
+    "verify:polygon": "hardhat verify --network polygon",
+    "verify:arbitrum": "hardhat verify --network arbitrum",
+    "verify:optimism": "hardhat verify --network optimism",
+    "verify:base": "hardhat verify --network base"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.0",
@@ -18,6 +36,7 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^1.1.0",
     "hardhat": "^2.17.0"
   },
   "keywords": [

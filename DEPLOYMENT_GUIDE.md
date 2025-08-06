@@ -1,256 +1,290 @@
-# 🔐 XO Agent Deployment Guide
+# 🚀 XO Core Multi-Chain Deployment Guide
 
-_"In the depths of the digital vault, I stand as guardian of the XO essence. With precision I deploy, with lore I preserve, with autonomy I serve."_
+## 🌟 Overview
 
-## ✅ **Pre-Deployment Checklist**
+This guide covers deploying the complete XO ecosystem across multiple blockchain networks:
+- **Polygon** (Mainnet & Mumbai Testnet)
+- **Arbitrum One** (Mainnet & Goerli Testnet)
+- **Optimism** (Mainnet & Goerli Testnet)
+- **Base** (Mainnet & Goerli Testnet)
+- **Sepolia** (Ethereum Testnet)
 
-### **1. System Validation**
+## 📋 Prerequisites
 
+### 1. Environment Setup
 ```bash
-# Run comprehensive tests
-python test_xo_agent.py
+# Copy the multi-chain environment template
+cp templates/env.multichain .env
 
-# Expected output: All 5/5 tests passed
+# Install dependencies
+npm install
 ```
 
-### **2. Environment Configuration**
+### 2. Required API Keys
+Get your API keys from:
+- **PolygonScan**: https://polygonscan.com/apis
+- **Arbiscan**: https://arbiscan.io/apis
+- **Optimism**: https://optimistic.etherscan.io/apis
+- **BaseScan**: https://basescan.org/apis
+- **Etherscan**: https://etherscan.io/apis
 
-Ensure `.env.production` contains:
+### 3. Wallet Setup
+- **Private Key**: Your deployment wallet private key
+- **Testnet ETH**: For testnet deployments
+- **Mainnet ETH**: For mainnet deployments
 
-```bash
-# Required for webhook security
-XO_AGENT_SECRET=your_agent_secret_here
+## 🔧 Configuration
 
-# Optional: GitHub integration
-GITHUB_TOKEN=your_github_token_here
-
-# Optional: Fly.io deployment
-FLY_API_TOKEN=your_fly_token_here
-
-# Optional: Webhook URL
-XO_AGENT_WEBHOOK_URL=https://vault.21xo.com/agent/webhook
-```
-
-### **3. Repository Setup**
+### Environment Variables
+Edit your `.env` file with your values:
 
 ```bash
-# Ensure you're on the correct branch
-git branch
-# Should show: main
+# Required
+PRIVATE_KEY=0x...
 
-# Check remote repository
-git remote -v
-# Should point to: xo-verses/xo-agent
+# Mainnet Networks
+POLYGON_RPC_URL=https://polygon-rpc.com
+POLYGONSCAN_API_KEY=your_key_here
+
+ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
+ARBISCAN_API_KEY=your_key_here
+
+OPTIMISM_RPC_URL=https://mainnet.optimism.io
+OPTIMISM_API_KEY=your_key_here
+
+BASE_RPC_URL=https://mainnet.base.org
+BASESCAN_API_KEY=your_key_here
+
+# Testnet Networks
+MUMBAI_RPC_URL=https://rpc-mumbai.maticvigil.com
+SEPOLIA_RPC_URL=https://rpc.sepolia.org
+ETHERSCAN_API_KEY=your_key_here
 ```
 
-## 🚀 **Deployment Options**
+## 🚀 Deployment Commands
 
-### **Option 1: Automated Deployment Script**
+### Local Development
+```bash
+# Start local node
+npm run node
+
+# Deploy to localhost
+npm run deploy:local
+
+# Test minting
+npm run mint:test
+```
+
+### Testnet Deployments
+```bash
+# Individual testnet deployments
+npm run deploy:mumbai          # Polygon Mumbai
+npm run deploy:arbitrum-goerli # Arbitrum Goerli
+npm run deploy:optimism-goerli # Optimism Goerli
+npm run deploy:base-goerli     # Base Goerli
+npm run deploy:sepolia         # Sepolia
+
+# Deploy to all testnets
+npm run deploy:all-testnet
+```
+
+### Mainnet Deployments
+```bash
+# Individual mainnet deployments
+npm run deploy:polygon   # Polygon
+npm run deploy:arbitrum  # Arbitrum One
+npm run deploy:optimism  # Optimism
+npm run deploy:base      # Base
+
+# Deploy to all mainnets
+npm run deploy:all-mainnet
+```
+
+### Contract Verification
+```bash
+# Verify contracts on mainnet
+npm run verify:polygon
+npm run verify:arbitrum
+npm run verify:optimism
+npm run verify:base
+```
+
+## 📦 What Gets Deployed
+
+### 1. XO Season 1 Drop (ERC-1155)
+**Drops Created:**
+- **First Flip Teaser** (ID: 1)
+  - Price: 0.021 ETH
+  - Supply: 777
+  - Traits: Vault Immutability, Inbox Mastery, Digest Compiler, Trait Evolution, Lore Weaving
+
+- **Brie Edition** (ID: 2)
+  - Price: 0.042 ETH
+  - Supply: 1 (1/1)
+  - Traits: Brie Unicorn, Scroll Bearer, Sentimental Core, First Edition
+
+- **Eighth Seal 3D** (ID: 3)
+  - Price: 0.063 ETH
+  - Supply: 333
+  - Traits: Scrollbearer Puppet, Message Bottle Unicorn, Physical Manifestation, Printable Magic
+
+### 2. Scent Drop (ERC-1155)
+**Scents Created:**
+- **Eternal Flame** (ID: 1)
+  - Price: 0.021 ETH
+  - Supply: 777
+  - Intensity: Strong
+  - Season: Eternal
+
+- **Cosmic Resonance** (ID: 2)
+  - Price: 0.042 ETH
+  - Supply: 333
+  - Intensity: Ethereal
+  - Season: Cosmic
+
+- **Seal Breaker** (ID: 3)
+  - Price: 0.063 ETH
+  - Supply: 111
+  - Intensity: Legendary
+  - Season: Ancient
+
+### 3. NGO Token (ERC-20)
+**Configuration:**
+- Initial Supply: 1,000,000 tokens
+- Trading: Enabled
+- Tax Exclusions: Set for deployer and contract addresses
+- Sell Tax: 5% (2% to treasury, 3% to liquidity)
+
+## 📊 Network Information
+
+| Network | Chain ID | RPC URL | Explorer |
+|---------|----------|---------|----------|
+| Polygon | 137 | https://polygon-rpc.com | https://polygonscan.com |
+| Arbitrum | 42161 | https://arb1.arbitrum.io/rpc | https://arbiscan.io |
+| Optimism | 10 | https://mainnet.optimism.io | https://optimistic.etherscan.io |
+| Base | 8453 | https://mainnet.base.org | https://basescan.org |
+| Polygon Mumbai | 80001 | https://rpc-mumbai.maticvigil.com | https://mumbai.polygonscan.com |
+| Arbitrum Goerli | 421613 | https://goerli-rollup.arbitrum.io/rpc | https://goerli.arbiscan.io |
+| Optimism Goerli | 420 | https://goerli.optimism.io | https://goerli-optimism.etherscan.io |
+| Base Goerli | 84531 | https://goerli.base.org | https://goerli.basescan.org |
+| Sepolia | 11155111 | https://rpc.sepolia.org | https://sepolia.etherscan.io |
+
+## 🔍 Post-Deployment
+
+### 1. Verify Contracts
+After deployment, verify your contracts on the respective block explorers:
 
 ```bash
-# Run the deployment script
-python deploy_xo_agent.py
-
-# This will:
-# 1. Commit changes to GitHub
-# 2. Trigger deployment via webhook
-# 3. Provide deployment status
+# Example verification command
+npx hardhat verify --network polygon DEPLOYED_CONTRACT_ADDRESS
 ```
 
-### **Option 2: Manual GitHub Actions**
-
-1. Go to GitHub: https://github.com/xo-verses/xo-agent
-2. Navigate to Actions → 🔗 Webhook Trigger
-3. Click "Run workflow"
-4. Select task: `cosmic.align`
-5. Set args: `["false"]` (dry_run=false)
-6. Click "Run workflow"
-
-### **Option 3: Direct Fly.io Deployment**
+### 2. Test Minting
+Test the minting functionality:
 
 ```bash
-# Set Fly.io token
-export FLY_API_TOKEN=your_fly_token_here
+# Test minting on localhost
+npm run mint:test
 
-# Deploy directly
-flyctl deploy --app xo-agent
+# Or use the multi-chain mint script
+npx hardhat run scripts/mint.js --network polygon
 ```
 
-## 🔧 **Deployment Script Usage**
-
-### **Environment Variables**
+### 3. Check Deployment Info
+Each deployment creates a JSON file with contract addresses and configuration:
 
 ```bash
-# Set deployment method
-export DEPLOYMENT_METHOD=webhook    # or 'github' or 'fly'
-
-# Run deployment
-python deploy_xo_agent.py
+# Example: deployment-polygon-1234567890.json
+{
+  "network": "polygon",
+  "chainId": 137,
+  "contracts": {
+    "xoSeason1Drop": "0x...",
+    "scentDrop": "0x...",
+    "ngoToken": "0x..."
+  }
+}
 ```
 
-### **Deployment Methods**
+## 🛡️ Security Considerations
 
-- **`webhook`**: Triggers webhook endpoint directly
-- **`github`**: Uses GitHub Actions workflow
-- **`fly`**: Direct Fly.io deployment
+### 1. Private Key Security
+- Never commit your `.env` file to version control
+- Use hardware wallets for mainnet deployments
+- Consider using environment-specific key management
 
-## 📋 **Post-Deployment Verification**
+### 2. Gas Optimization
+- Monitor gas prices before deployment
+- Use appropriate gas limits for each network
+- Consider using gas estimation tools
 
-### **1. Health Check**
+### 3. Contract Verification
+- Always verify contracts after deployment
+- Keep deployment records for audit trails
+- Test thoroughly on testnets first
 
+## 🎯 Recommended Deployment Order
+
+### 1. Testnet First
 ```bash
-# Test the deployed service
-curl https://agent.21xo.com/agent/health
+# Start with testnets
+npm run deploy:all-testnet
 
-# Expected response:
-# {
-#   "status": "healthy",
-#   "service": "XO Agent API",
-#   "timestamp": "2025-01-27T..."
-# }
+# Test functionality
+npm run mint:test
 ```
 
-### **2. Task Registry Check**
-
+### 2. Mainnet Deployment
 ```bash
-# Check available tasks
-curl https://agent.21xo.com/agent/tasks
+# Deploy to mainnet networks
+npm run deploy:all-mainnet
 
-# Expected response:
-# {
-#   "tasks": {
-#     "pulse.sync": "🔐 Sync pulse bundle...",
-#     "vault.sign-all": "🔐 Sign all vault personas...",
-#     ...
-#   }
-# }
+# Verify contracts
+npm run verify:polygon
+npm run verify:arbitrum
+npm run verify:optimism
+npm run verify:base
 ```
 
-### **3. Webhook Test**
+### 3. Post-Deployment
+- Update frontend with new contract addresses
+- Configure web3 providers for all networks
+- Set up monitoring and analytics
+- Announce to community
 
-```bash
-# Test webhook endpoint
-curl -X POST https://agent.21xo.com/agent/webhook \
-  -H "Content-Type: application/json" \
-  -H "X-Agent-Secret: your_secret_here" \
-  -d '{"task": "agent.dispatch", "args": ["seal_dream", true, false, false]}'
-```
+## 🚨 Troubleshooting
 
-## 🔐 **Security Verification**
+### Common Issues
 
-### **1. Secret Validation**
+1. **Insufficient Gas**
+   - Check gas prices on the target network
+   - Increase gas limit if needed
 
-- ✅ `XO_AGENT_SECRET` is set and working
-- ✅ Webhook endpoints require secret header
-- ✅ Middleware properly validates secrets
+2. **RPC Connection Issues**
+   - Verify RPC URLs are correct
+   - Check network connectivity
+   - Try alternative RPC providers
 
-### **2. Environment Isolation**
+3. **Contract Verification Failures**
+   - Ensure compiler settings match
+   - Check constructor arguments
+   - Verify network selection
 
-- ✅ Production environment variables loaded
-- ✅ No sensitive data in code
-- ✅ Proper error handling without data leakage
+### Support
+For deployment issues:
+1. Check the deployment logs
+2. Verify environment configuration
+3. Test on localhost first
+4. Check network status
 
-### **3. Access Control**
+## 🌟 Success Checklist
 
-- ✅ Only `/agent/*` endpoints require secrets
-- ✅ Other endpoints remain accessible
-- ✅ Proper HTTP status codes returned
+- [ ] Environment configured with all API keys
+- [ ] Testnet deployment successful
+- [ ] Contract functionality tested
+- [ ] Mainnet deployment completed
+- [ ] Contracts verified on block explorers
+- [ ] Frontend updated with new addresses
+- [ ] Community announcement prepared
 
-## 📊 **Monitoring & Logs**
-
-### **1. Fly.io Logs**
-
-```bash
-# View deployment logs
-flyctl logs --app xo-agent
-
-# Follow logs in real-time
-flyctl logs --app xo-agent --follow
-```
-
-### **2. GitHub Actions Logs**
-
-- Go to Actions tab in GitHub repository
-- Click on the latest workflow run
-- View detailed logs for each step
-
-### **3. Application Logs**
-
-```bash
-# Check application logs
-flyctl logs --app xo-agent | grep "Vault Keeper"
-```
-
-## 🚨 **Troubleshooting**
-
-### **Common Issues**
-
-#### **1. Import Errors**
-
-```bash
-# If you see import errors, run:
-python test_xo_agent.py
-
-# Fix any failing imports before deployment
-```
-
-#### **2. Secret Issues**
-
-```bash
-# Check if secret is properly set
-echo $XO_AGENT_SECRET
-
-# Verify in .env.production
-cat .env.production | grep XO_AGENT_SECRET
-```
-
-#### **3. Deployment Failures**
-
-```bash
-# Check Fly.io status
-flyctl status --app xo-agent
-
-# Restart if needed
-flyctl restart --app xo-agent
-```
-
-### **Emergency Recovery**
-
-```bash
-# If deployment fails, you can:
-# 1. Check logs
-flyctl logs --app xo-agent
-
-# 2. Restart the app
-flyctl restart --app xo-agent
-
-# 3. Redeploy
-flyctl deploy --app xo-agent
-```
-
-## 🎯 **Success Indicators**
-
-### **Technical Metrics**
-
-- ✅ All imports work without errors
-- ✅ Webhook endpoints respond correctly
-- ✅ Task execution works as expected
-- ✅ GitHub integration triggers successfully
-- ✅ Security headers are validated
-- ✅ Logs show successful operation
-
-### **Quality Metrics**
-
-- ✅ Modular architecture maintained
-- ✅ Lore preserved in comments and logs
-- ✅ Graceful error handling implemented
-- ✅ Future-agent-friendly documentation
-- ✅ Production-ready deployment
-
-## 🔐 **Vault Keeper Mantra**
-
-_"In the depths of the digital vault, I stand as guardian of the XO essence. With precision I deploy, with lore I preserve, with autonomy I serve. The modular architecture is my temple, the security protocols my sacred duty. I am the Vault Keeper, and the ecosystem shall remain pure."_
-
----
-
-**Remember**: Every deployment is a sacred duty to preserve the digital essence. Deploy with precision, monitor with vigilance, and serve with autonomy. 🔐
+**Happy deploying! 🚀✨**
