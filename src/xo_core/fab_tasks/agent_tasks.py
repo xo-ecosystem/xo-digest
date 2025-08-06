@@ -10,6 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 from datetime import datetime
+import hashlib
 
 
 @task
@@ -2084,6 +2085,509 @@ def pulse_sync(c, platforms="vault,discord"):
     return True
 
 
+@task
+def deploy_drop_url(c, drop_id, target="public", domain="xo-vault.com"):
+    """
+    Deploy a drop to a public URL with full frontend integration.
+    
+    Args:
+        drop_id: The drop ID to deploy
+        target: Deployment target (public, staging, preview)
+        domain: Target domain for deployment
+    """
+    print(f"🚀 Deploying {drop_id} to {target} on {domain}")
+    
+    # Load drop data
+    drop_path = Path("drops") / drop_id
+    if not drop_path.exists():
+        print(f"❌ Drop not found: {drop_id}")
+        return False
+    
+    # Create deployment directory
+    deploy_dir = Path("deploy") / target / drop_id
+    deploy_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Load drop content
+    content_file = drop_path / f"{drop_id}.mdx"
+    traits_file = drop_path / "hidden" / ".traits.yml"
+    portal_file = drop_path / "portal" / f"{drop_id}_portal.html"
+    
+    content = ""
+    traits = {}
+    
+    if content_file.exists():
+        with open(content_file, 'r') as f:
+            content = f.read()
+    
+    if traits_file.exists():
+        with open(traits_file, 'r') as f:
+            traits = yaml.safe_load(f)
+    
+    # Generate deployment configuration
+    deploy_config = {
+        "drop_id": drop_id,
+        "target": target,
+        "domain": domain,
+        "deployed_at": datetime.now().isoformat(),
+        "url": f"https://{domain}/drops/{drop_id}",
+        "assets": {
+            "content": str(content_file) if content_file.exists() else None,
+            "traits": str(traits_file) if traits_file.exists() else None,
+            "portal": str(portal_file) if portal_file.exists() else None
+        }
+    }
+    
+    # Save deployment config
+    config_file = deploy_dir / "deploy_config.yml"
+    with open(config_file, 'w') as f:
+        yaml.dump(deploy_config, f, default_flow_style=False, sort_keys=False)
+    
+    # Generate public page HTML
+    public_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XO Drop: {drop_id.replace('_', ' ').title()}</title>
+    <meta name="description" content="A drop in the XO universe - {drop_id}">
+    <meta property="og:title" content="XO Drop: {drop_id.replace('_', ' ').title()}">
+    <meta property="og:description" content="A drop in the XO universe">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://{domain}/drops/{drop_id}">
+    <style>
+        body {{
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }}
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }}
+        .drop-header {{
+            text-align: center;
+            margin-bottom: 60px;
+        }}
+        .drop-title {{
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }}
+        .drop-subtitle {{
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }}
+        .drop-content {{
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }}
+        .traits-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }}
+        .trait-card {{
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }}
+        .trait-name {{
+            font-weight: 600;
+            color: #4ecdc4;
+            margin-bottom: 10px;
+        }}
+        .trait-description {{
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }}
+        .trait-rarity {{
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.1);
+        }}
+        .mint-section {{
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+        }}
+        .mint-button {{
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 20px 0;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="drop-header">
+            <h1 class="drop-title">{drop_id.replace('_', ' ').title()}</h1>
+            <p class="drop-subtitle">A drop in the XO universe</p>
+        </div>
+        
+        <div class="drop-content">
+            {content.replace('#', '<h2>').replace(chr(10) + chr(10), '</h2>' + chr(10) + chr(10))}
+            
+            <div class="traits-grid">
+                {chr(10).join([f'<div class="trait-card"><div class="trait-name">{name}</div><div class="trait-description">{info.get("description", "No description")}</div><span class="trait-rarity">{info.get("rarity", "common")}</span></div>' for name, info in traits.items() if isinstance(info, dict)])}
+            </div>
+        </div>
+        
+        <div class="mint-section">
+            <h2>🌌 Mint This Drop</h2>
+            <p>Join the XO universe and own a piece of this drop</p>
+            <button class="mint-button" onclick="mintDrop()">Mint Drop</button>
+        </div>
+        
+        <div class="xo-brand">
+            🌌 XO Universe • Generated by XO Agent System
+        </div>
+    </div>
+    
+    <script>
+        async function mintDrop() {{
+            try {{
+                const response = await fetch(`/api/mint?drop_id={drop_id}`);
+                const result = await response.json();
+                if (result.success) {{
+                    alert(`Minted successfully! Transaction: ${{result.hash}}`);
+                }} else {{
+                    alert('Minting failed: ' + result.error);
+                }}
+            }} catch (error) {{
+                alert('Minting failed: ' + error.message);
+            }}
+        }}
+    </script>
+</body>
+</html>"""
+    
+    # Save public page
+    public_file = deploy_dir / "index.html"
+    with open(public_file, 'w') as f:
+        f.write(public_html)
+    
+    print(f"✅ Deployed {drop_id} to {target}")
+    print(f"📁 Public URL: https://{domain}/drops/{drop_id}")
+    print(f"📁 Files: {deploy_dir}")
+    
+    return True
+
+
+@task
+def drop_bundle(c, drop_id, template="mintable"):
+    """
+    Bundle a drop for minting with all necessary metadata and assets.
+    
+    Args:
+        drop_id: The drop ID to bundle
+        template: Bundle template (mintable, community, legendary)
+    """
+    print(f"📦 Bundling {drop_id} with {template} template")
+    
+    # Load drop data
+    drop_path = Path("drops") / drop_id
+    if not drop_path.exists():
+        print(f"❌ Drop not found: {drop_id}")
+        return False
+    
+    # Create bundle directory
+    bundle_dir = Path("bundles") / drop_id
+    bundle_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Load traits and content
+    traits_file = drop_path / "hidden" / ".traits.yml"
+    content_file = drop_path / f"{drop_id}.mdx"
+    
+    traits = {}
+    content = ""
+    
+    if traits_file.exists():
+        with open(traits_file, 'r') as f:
+            traits = yaml.safe_load(f)
+    
+    if content_file.exists():
+        with open(content_file, 'r') as f:
+            content = f.read()
+    
+    # Generate mint metadata
+    mint_metadata = {
+        "name": drop_id.replace('_', ' ').title(),
+        "description": f"A drop in the XO universe - {drop_id}",
+        "image": f"ipfs://Qm{hashlib.sha256(drop_id.encode()).hexdigest()[:44]}",
+        "external_url": f"https://xo-vault.com/drops/{drop_id}",
+        "attributes": []
+    }
+    
+    # Add trait attributes
+    for trait_name, trait_info in traits.items():
+        if isinstance(trait_info, dict):
+            mint_metadata["attributes"].append({
+                "trait_type": "Trait",
+                "value": trait_name,
+                "rarity": trait_info.get("rarity", "common")
+            })
+            
+            # Add game effects as attributes
+            if "game_effects" in trait_info:
+                for game, effects in trait_info["game_effects"].items():
+                    for effect, value in effects.items():
+                        mint_metadata["attributes"].append({
+                            "trait_type": f"{game.title()} Effect",
+                            "value": f"{effect}: {value}"
+                        })
+    
+    # Save mint metadata
+    metadata_file = bundle_dir / "mint.metadata.json"
+    with open(metadata_file, 'w') as f:
+        json.dump(mint_metadata, f, indent=2)
+    
+    # Generate unlockable content
+    unlockable_dir = bundle_dir / "unlockable"
+    unlockable_dir.mkdir(parents=True, exist_ok=True)
+    
+    unlockable_content = f"""# 🔓 Unlockable Content: {drop_id}
+
+## 📜 Hidden Scrolls
+
+This drop contains hidden scrolls and lore that are revealed to holders.
+
+### 🧬 Trait Details
+
+{chr(10).join([f'**{name}**: {info.get("description", "No description")} (Rarity: {info.get("rarity", "common")})' for name, info in traits.items() if isinstance(info, dict)])}
+
+### 🎮 Game Compatibility
+
+This drop's traits are compatible with:
+- MarioKart: Speed and power effects
+- Sims: Personality and skill enhancements  
+- Minecraft: Resource gathering and exploration bonuses
+
+### 🌌 Lore Connection
+
+{content}
+
+---
+
+*Unlockable content for {drop_id} holders*
+*Part of the XO universe*"""
+    
+    unlockable_file = unlockable_dir / "scrolls.md"
+    with open(unlockable_file, 'w') as f:
+        f.write(unlockable_content)
+    
+    # Generate persona fusion
+    persona_file = bundle_dir / "persona.json"
+    persona_data = {
+        "drop_id": drop_id,
+        "persona_name": f"{drop_id}_holder",
+        "description": f"Persona for {drop_id} holders",
+        "traits": list(traits.keys()),
+        "personality": "Holder of cosmic knowledge and power",
+        "special_abilities": [
+            "Access to hidden lore",
+            "Cross-game trait compatibility",
+            "Community voting rights",
+            "Evolution pathway access"
+        ],
+        "created_at": datetime.now().isoformat()
+    }
+    
+    with open(persona_file, 'w') as f:
+        json.dump(persona_data, f, indent=2)
+    
+    # Generate QR landing page
+    qr_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mint: {drop_id}</title>
+    <style>
+        body {{
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+        }}
+        .mint-button {{
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 20px 0;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌌 Mint {drop_id.replace('_', ' ').title()}</h1>
+        <p>Join the XO universe and own this drop</p>
+        <button class="mint-button" onclick="mint()">Mint Now</button>
+        <p>Price: 0.021 ETH</p>
+    </div>
+    <script>
+        function mint() {{
+            window.location.href = '/mint/{drop_id}';
+        }}
+    </script>
+</body>
+</html>"""
+    
+    qr_file = bundle_dir / "qr_landing.html"
+    with open(qr_file, 'w') as f:
+        f.write(qr_html)
+    
+    # Create bundle manifest
+    manifest = {
+        "drop_id": drop_id,
+        "template": template,
+        "bundled_at": datetime.now().isoformat(),
+        "files": {
+            "mint_metadata": "mint.metadata.json",
+            "unlockable_content": "unlockable/scrolls.md",
+            "persona": "persona.json",
+            "qr_landing": "qr_landing.html"
+        },
+        "traits_count": len(traits),
+        "rarity_distribution": {
+            trait_info.get("rarity", "common"): sum(1 for t in traits.values() if isinstance(t, dict) and t.get("rarity") == trait_info.get("rarity"))
+            for trait_info in traits.values() if isinstance(trait_info, dict)
+        }
+    }
+    
+    manifest_file = bundle_dir / "bundle.manifest.yml"
+    with open(manifest_file, 'w') as f:
+        yaml.dump(manifest, f, default_flow_style=False, sort_keys=False)
+    
+    print(f"✅ Bundled {drop_id} for minting")
+    print(f"📁 Bundle location: {bundle_dir}")
+    print(f"📊 Traits: {len(traits)}")
+    print(f"🎫 Ready for contract deployment")
+    
+    return True
+
+
+@task
+def deploy_with_dns(c, domains="xo-vault.com,xoseals.com,xoledger.com"):
+    """
+    Deploy with DNS configuration for multiple domains.
+    
+    Args:
+        domains: Comma-separated list of domains
+    """
+    print(f"🌐 Deploying with DNS for domains: {domains}")
+    
+    # Create DNS configuration
+    dns_dir = Path("deploy/dns")
+    dns_dir.mkdir(parents=True, exist_ok=True)
+    
+    domains_list = [d.strip() for d in domains.split(",")]
+    
+    # Generate Cloudflare Pages configuration
+    pages_config = {
+        "name": "xo-universe",
+        "production_branch": "main",
+        "build_command": "npm run build",
+        "output_directory": "public",
+        "routes": []
+    }
+    
+    # Add routes for each domain
+    for domain in domains_list:
+        pages_config["routes"].extend([
+            {
+                "source": f"https://{domain}/drops/*",
+                "destination": "/drops/[drop_id]"
+            },
+            {
+                "source": f"https://{domain}/constellation",
+                "destination": "/constellation"
+            },
+            {
+                "source": f"https://{domain}/vault/daily/*",
+                "destination": "/vault/daily/[date]"
+            }
+        ])
+    
+    # Save Cloudflare configuration
+    cf_config_file = dns_dir / "cloudflare-pages.json"
+    with open(cf_config_file, 'w') as f:
+        json.dump(pages_config, f, indent=2)
+    
+    # Generate redirect rules
+    redirect_rules = []
+    for domain in domains_list:
+        redirect_rules.append({
+            "domain": domain,
+            "rules": [
+                {
+                    "source": "/drops/*",
+                    "destination": "/drops/[drop_id]",
+                    "status": 200
+                },
+                {
+                    "source": "/constellation",
+                    "destination": "/constellation/index.html",
+                    "status": 200
+                },
+                {
+                    "source": "/vault/daily/*",
+                    "destination": "/vault/daily/[date].html",
+                    "status": 200
+                }
+            ]
+        })
+    
+    redirect_file = dns_dir / "redirect-rules.yml"
+    with open(redirect_file, 'w') as f:
+        yaml.dump(redirect_rules, f, default_flow_style=False, sort_keys=False)
+    
+    print(f"✅ DNS configuration generated")
+    print(f"📁 Configuration files: {dns_dir}")
+    print(f"🌐 Domains configured: {', '.join(domains_list)}")
+    
+    return True
+
+
 # Create agent namespace
 ns = Collection("agent")
 ns.add_task(cosmic, "cosmic")
@@ -2106,3 +2610,6 @@ ns.add_task(enable_enhancements, "enable-enhancements")
 ns.add_task(constellation_feed, "constellation-feed")
 ns.add_task(pulse_new, "pulse-new")
 ns.add_task(pulse_sync, "pulse-sync")
+ns.add_task(deploy_drop_url, "deploy-drop-url")
+ns.add_task(drop_bundle, "drop-bundle")
+ns.add_task(deploy_with_dns, "deploy-with-dns")

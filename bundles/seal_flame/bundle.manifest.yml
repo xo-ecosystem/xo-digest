@@ -1,0 +1,12 @@
+drop_id: seal_flame
+template: mintable
+bundled_at: '2025-08-06T04:57:39.044191'
+files:
+  mint_metadata: mint.metadata.json
+  unlockable_content: unlockable/scrolls.md
+  persona: persona.json
+  qr_landing: qr_landing.html
+traits_count: 2
+rarity_distribution:
+  legendary: 1
+  epic: 1

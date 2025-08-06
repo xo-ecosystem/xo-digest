@@ -1,0 +1,17 @@
+{
+  "drop_id": "seal_flame",
+  "persona_name": "seal_flame_holder",
+  "description": "Persona for seal_flame holders",
+  "traits": [
+    "eternal_flame",
+    "seal_breaker"
+  ],
+  "personality": "Holder of cosmic knowledge and power",
+  "special_abilities": [
+    "Access to hidden lore",
+    "Cross-game trait compatibility",
+    "Community voting rights",
+    "Evolution pathway access"
+  ],
+  "created_at": "2025-08-06T04:57:39.043975"
+}

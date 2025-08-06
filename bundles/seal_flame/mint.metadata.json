@@ -1,0 +1,66 @@
+{
+  "name": "Seal Flame",
+  "description": "A drop in the XO universe - seal_flame",
+  "image": "ipfs://Qm6f649372d0dfe93e179a812e80ffb235118e778f00f6",
+  "external_url": "https://xo-vault.com/drops/seal_flame",
+  "attributes": [
+    {
+      "trait_type": "Trait",
+      "value": "eternal_flame",
+      "rarity": "legendary"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "flame_boost: 0.3"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "eternal_shield: 45"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "flame_inspiration: 4"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "eternal_aura: 20"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "flame_light: 1000"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "eternal_mining: 2.0"
+    },
+    {
+      "trait_type": "Trait",
+      "value": "seal_breaker",
+      "rarity": "epic"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "seal_break: 0.25"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "unlock_speed: 0.2"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "seal_wisdom: 3"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "unlock_creativity: 2"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "seal_vision: 500"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "unlock_finder: 100"
+    }
+  ]
+}

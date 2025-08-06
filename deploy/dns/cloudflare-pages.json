@@ -1,0 +1,44 @@
+{
+  "name": "xo-universe",
+  "production_branch": "main",
+  "build_command": "npm run build",
+  "output_directory": "public",
+  "routes": [
+    {
+      "source": "https://xo-vault.com/drops/*",
+      "destination": "/drops/[drop_id]"
+    },
+    {
+      "source": "https://xo-vault.com/constellation",
+      "destination": "/constellation"
+    },
+    {
+      "source": "https://xo-vault.com/vault/daily/*",
+      "destination": "/vault/daily/[date]"
+    },
+    {
+      "source": "https://xoseals.com/drops/*",
+      "destination": "/drops/[drop_id]"
+    },
+    {
+      "source": "https://xoseals.com/constellation",
+      "destination": "/constellation"
+    },
+    {
+      "source": "https://xoseals.com/vault/daily/*",
+      "destination": "/vault/daily/[date]"
+    },
+    {
+      "source": "https://xoledger.com/drops/*",
+      "destination": "/drops/[drop_id]"
+    },
+    {
+      "source": "https://xoledger.com/constellation",
+      "destination": "/constellation"
+    },
+    {
+      "source": "https://xoledger.com/vault/daily/*",
+      "destination": "/vault/daily/[date]"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+- domain: xo-vault.com
+  rules:
+  - source: /drops/*
+    destination: /drops/[drop_id]
+    status: 200
+  - source: /constellation
+    destination: /constellation/index.html
+    status: 200
+  - source: /vault/daily/*
+    destination: /vault/daily/[date].html
+    status: 200
+- domain: xoseals.com
+  rules:
+  - source: /drops/*
+    destination: /drops/[drop_id]
+    status: 200
+  - source: /constellation
+    destination: /constellation/index.html
+    status: 200
+  - source: /vault/daily/*
+    destination: /vault/daily/[date].html
+    status: 200
+- domain: xoledger.com
+  rules:
+  - source: /drops/*
+    destination: /drops/[drop_id]
+    status: 200
+  - source: /constellation
+    destination: /constellation/index.html
+    status: 200
+  - source: /vault/daily/*
+    destination: /vault/daily/[date].html
+    status: 200

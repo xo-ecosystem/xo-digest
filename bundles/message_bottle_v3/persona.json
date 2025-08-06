@@ -1,0 +1,17 @@
+{
+  "drop_id": "message_bottle_v3",
+  "persona_name": "message_bottle_v3_holder",
+  "description": "Persona for message_bottle_v3 holders",
+  "traits": [
+    "message_bottle_legendary",
+    "cosmic_resonance_legendary"
+  ],
+  "personality": "Holder of cosmic knowledge and power",
+  "special_abilities": [
+    "Access to hidden lore",
+    "Cross-game trait compatibility",
+    "Community voting rights",
+    "Evolution pathway access"
+  ],
+  "created_at": "2025-08-06T04:57:31.715054"
+}

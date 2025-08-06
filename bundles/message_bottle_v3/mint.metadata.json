@@ -1,0 +1,90 @@
+{
+  "name": "Message Bottle V3",
+  "description": "A drop in the XO universe - message_bottle_v3",
+  "image": "ipfs://Qmc46fa706f3e70b962684766840e89a879672edca3058",
+  "external_url": "https://xo-vault.com/drops/message_bottle_v3",
+  "attributes": [
+    {
+      "trait_type": "Trait",
+      "value": "message_bottle_legendary",
+      "rarity": "legendary"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "legendary_speed: 5.0"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "legendary_shield: 60"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "legendary_gravity: 5.0"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "legendary_inspiration: 10"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "legendary_aura: 30"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "legendary_creativity: 10"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "legendary_vision: 1000"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "legendary_finder: 200"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "legendary_mining: 3.0"
+    },
+    {
+      "trait_type": "Trait",
+      "value": "cosmic_resonance_legendary",
+      "rarity": "legendary"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "legendary_speed: 5.0"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "legendary_shield: 60"
+    },
+    {
+      "trait_type": "Mario_Kart Effect",
+      "value": "legendary_gravity: 5.0"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "legendary_inspiration: 10"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "legendary_aura: 30"
+    },
+    {
+      "trait_type": "Sims Effect",
+      "value": "legendary_creativity: 10"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "legendary_vision: 1000"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "legendary_finder: 200"
+    },
+    {
+      "trait_type": "Minecraft Effect",
+      "value": "legendary_mining: 3.0"
+    }
+  ]
+}
