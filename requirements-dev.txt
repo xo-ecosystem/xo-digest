@@ -21,3 +21,5 @@ markdown
 pytest
 pytest-mock
 arweave-python-client
+
+flake8

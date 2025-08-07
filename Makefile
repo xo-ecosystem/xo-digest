@@ -1,7 +1,7 @@
 # ✅ XO Core - Hybrid Makefile Fallback
 # Essential tasks from xo-fab in Make format for reliable automation
 
-.PHONY: help setup docs vault agent deploy clean test lint
+.PHONY: help setup docs vault agent deploy clean test lint doctor secure
 
 # Default target
 help:
@@ -27,6 +27,7 @@ help:
 	@echo "  clean          Clean temporary files"
 	@echo "  lint           Run linting checks"
 	@echo "  test           Run test suite"
+	@echo "  doctor          Run full health + environment checks"
 
 # Environment setup
 setup:
@@ -95,3 +96,34 @@ version:
 	@echo "📦 XO Core v0.1.0"
 	@echo "🐍 Python: $$(python --version)"
 	@echo "📦 Fabric: $$(fab --version 2>/dev/null || echo 'Not available')"
+# Doctor check
+doctor:
+	@echo "🩺 Running XO Doctor Check..."
+	@make lint
+	@make test
+	@make vault-check
+	@make agent-health
+	@echo "✅ All checks passed (or warnings shown above)."
+	@echo "🔍 Validating .env.local presence..."
+	@[ -f .env.local ] && echo "✅ .env.local found" || echo "⚠️  .env.local missing"
+
+	@echo "🔍 Checking for git issues..."
+	@git status --porcelain | grep '^??' >/dev/null && echo '⚠️  Untracked files present' || echo '✅ No untracked files'
+	@git diff --quiet || echo '⚠️  Uncommitted changes detected'
+
+# Secure task
+secure:
+	@echo "🔐 Securing XO Core repository..."
+	@echo "📛 Checking for secrets in tracked .env.local..."
+	@if git ls-files --error-unmatch .env.local 2>/dev/null; then \
+	  echo "⚠️  .env.local is tracked. Removing from Git index..."; \
+	  git rm --cached .env.local; \
+	  echo ".env.local" >> .gitignore; \
+	  git add .gitignore; \
+	  echo "✅ .env.local removed from Git tracking and added to .gitignore."; \
+	else \
+	  echo "✅ .env.local is not tracked by Git."; \
+	fi
+	@echo "🔍 Checking for common secret patterns..."
+	@grep -r --exclude-dir=.git -E 'API_KEY|SECRET|PRIVATE_KEY|TOKEN' . || echo "✅ No obvious secrets found."
+	@echo "🔒 Repository secure (manual review still advised)."
