@@ -14,6 +14,10 @@ arweave_wallet.json
 secrets/
 unseal_keys.json
 vault/private.key
+vault/unseal_keys.json
+vault/init_keys.json
+vault/bootstrap_keys.json
+
 
 ##############################################
 # 2. Virtual environments & direnv activations
@@ -243,6 +247,8 @@ public/previews/
 public/vault/previews/
 public/xo-exchange/
 public/dashboard/
+xo-core-docs/site/
+public
 
 # 🛠️ Static bundles
 drop.assets/original/
@@ -283,4 +289,4 @@ Thumbs.db
 *.tar.gz
 *.zip
 *.rar
-*.7z
+*.7z.env.local
