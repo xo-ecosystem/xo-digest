@@ -290,3 +290,6 @@ Thumbs.db
 *.zip
 *.rar
 *.7z.env.local
+/artifacts/
+/cache/
+/src/content/index.html
