@@ -1,0 +1,53 @@
+{
+  "drop": "seal_flame",
+  "title": "Seal Flame",
+  "description": "A mystical seal bearer cloaked in shadow, holding the Eternal Flame. This drop unlocks future interactions in XO Games.",
+  "image": "webm/seal_flame_01.webm",
+  "variants": [
+    "webm/seal_flame_01.webm",
+    "webm/seal_flame_02.webm",
+    "webm/seal_flame_03.webm"
+  ],
+  "tags": [
+    "seal",
+    "flame",
+    "mystical",
+    "game",
+    "forward-compatible"
+  ],
+  "category": "seals",
+  "rarity": "epic",
+  "mint_price": "0.063 ETH",
+  "max_supply": 333,
+  "launch_date": "2025-08-06T00:00:00Z",
+  "status": "prelaunch",
+  "game_traits": [
+    {
+      "trait": "FlameBearer",
+      "description": "Carries the Eternal Flame; unlocks fire-based skills and bonus XP.",
+      "games": [
+        "minecraft",
+        "unity",
+        "sims"
+      ],
+      "rarity": "epic"
+    },
+    {
+      "trait": "SealedScroll",
+      "description": "Scroll embedded within cloak grants lore-reading ability.",
+      "games": [
+        "sims",
+        "unity"
+      ],
+      "rarity": "rare"
+    },
+    {
+      "trait": "ShadowCloak",
+      "description": "Grants stealth advantage in supported games.",
+      "games": [
+        "minecraft"
+      ],
+      "rarity": "uncommon"
+    }
+  ]
+}

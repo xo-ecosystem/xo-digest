@@ -9,14 +9,21 @@ from fab_tasks.deploy import ns as deploy_ns
 from fab_tasks.patch import ns as patch_ns
 from fab_tasks.dynamic_loader import ns as loader_ns
 from fab_tasks.vault_check import vault_check
-from xo_core.fab_tasks.fix_loader import run_safe_loader
+
+# [o3-fix 2025-08-04] Temporarily comment out to resolve path conflicts
+# from xo_core.fab_tasks.fix_loader import run_safe_loader
 from xo_core.fab_tasks.docs import ns as docs_ns  # [o3-fix 2025-08-03]
+from xo_core.fab_tasks.verify_tasks import ns as verify_ns  # [o3-fix 2025-08-04]
+from xo_core.fab_tasks.chain_tasks import ns as chain_ns  # [o3-fix 2025-08-04]
+from xo_core.fab_tasks.agent_tasks import ns as agent_cosmic_ns  # [o3-fix 2025-08-04]
+from xo_core.fab_tasks.drop_tasks import ns as drop_ns  # [o3-fix 2025-08-04]
+from xo_core.fab_tasks.agent_tasks import explore_drop
 
 # Load namespaced tasks dynamically with logging
 # [o3-fix 2025-08-03] Removed dynamic loader auto-load to ensure root Collection is defined first
 
 try:
-    from src.xo_core.fab_tasks.vault_tasks import ns as vault_ns
+    from xo_core.fab_tasks.vault_tasks import ns as vault_ns
 except ImportError as e:
     print(f"⚠️ Could not import vault tasks: {e}")
     vault_ns = None
@@ -244,6 +251,7 @@ def agent_health_check(c):
 
 
 agent_ns.add_task(agent_health_check, "health-check")
+agent_ns.add_task(explore_drop, "explore_drop")
 
 # Create dashboard namespace
 dashboard_ns = Collection("dashboard")
@@ -259,6 +267,10 @@ ns.add_collection(deploy_ns)
 ns.add_collection(patch_ns)
 ns.add_collection(dashboard_ns)
 ns.add_collection(docs_ns)  # [o3-fix 2025-08-03] expose docs namespace
+ns.add_collection(verify_ns)  # [o3-fix 2025-08-04] expose verify namespace
+ns.add_collection(chain_ns)  # [o3-fix 2025-08-04] expose chain namespace
+ns.add_collection(agent_cosmic_ns)  # [o3-fix 2025-08-04] expose cosmic agent namespace
+ns.add_collection(drop_ns)  # [o3-fix 2025-08-04] expose drop management namespace
 # ns.add_collection(loader_ns, name="loader")
 
 # Add vault namespace if available

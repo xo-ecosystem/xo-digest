@@ -25,3 +25,42 @@ seal_breaker:
     minecraft:
       seal_vision: 500
       unlock_finder: 100
+
+sealed:
+  description: "The trait is currently sealed and will be revealed later."
+  rarity: "legendary"
+  locked: true
+  game_effects:
+    minecraft:
+      glow: "orange"
+      fire_ability: true
+    sims:
+      glow: "orange"
+      fire_ability: true
+    unity_webgl:
+      glow: "orange"
+      fire_ability: true
+
+unknown:
+  description: "The element of this trait is unknown and will be revealed later."
+  rarity: "epic"
+  locked: true
+  game_effects:
+    minecraft:
+      element: "unknown"
+    sims:
+      element: "unknown"
+    unity_webgl:
+      element: "unknown"
+
+forward_compatible:
+  description: "This trait is forward-compatible and can be filled later."
+  rarity: "rare"
+  locked: true
+  game_effects:
+    minecraft:
+      compatibility: "forward"
+    sims:
+      compatibility: "forward"
+    unity_webgl:
+      compatibility: "forward"

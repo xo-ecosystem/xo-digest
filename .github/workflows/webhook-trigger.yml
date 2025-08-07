@@ -28,7 +28,7 @@ on:
       webhook_url:
         description: "Webhook URL to trigger"
         required: false
-        default: "https://agent.21xo.com/agent/webhook"
+        default: "https://agent0.21xo.com/agent/webhook"
         type: string
 
 jobs:
@@ -65,7 +65,7 @@ jobs:
           # Default values
           TASK=${TASK:-"pulse.sync"}
           ARGS=${ARGS:-"[]"}
-          WEBHOOK_URL=${WEBHOOK_URL:-"https://agent.21xo.com/agent/webhook"}
+          WEBHOOK_URL=${WEBHOOK_URL:-"https://agent0.21xo.com/agent/webhook"}
 
           echo "Task: $TASK"
           echo "Args: $ARGS"
@@ -97,7 +97,7 @@ jobs:
           # Default values
           TASK=${TASK:-"pulse.sync"}
           ARGS=${ARGS:-"[]"}
-          WEBHOOK_URL=${WEBHOOK_URL:-"https://agent.21xo.com/agent/webhook"}
+          WEBHOOK_URL=${WEBHOOK_URL:-"https://agent0.21xo.com/agent/webhook"}
 
           # Create webhook payload
           PAYLOAD=$(cat <<EOF

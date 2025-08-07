@@ -61,6 +61,15 @@ except Exception as e:
 
     logging.warning(f"⚠️ Vault namespace not loaded: {e}")
 
+try:
+    from .agent import ns as agent_ns
+
+    tasks.add_collection(agent_ns, name="agent")
+except Exception as e:
+    import logging
+
+    logging.warning(f"⚠️ Agent namespace not loaded: {e}")
+
 from .help_card import ns as help_card_ns
 from .bundle import ns as bundle_ns
 from .test_all import ns as test_all_ns
@@ -86,16 +95,14 @@ __all__ = ["help_card_ns", "bundle_ns", "test_all_ns"]
 # This module exposes the full task tree for use in `fabfile.py`
 # xo_core/fab_tasks/__init__.py
 
-from .drop_tasks import bundle
-from invoke import Collection
-
-drop_ns = Collection("drop")
-drop_ns.add_task(bundle)
-tasks.add_collection(drop_ns)
+# [o3-fix 2025-08-04] drop_tasks imports handled in fabfile.py directly
+# Commenting out problematic legacy drop_ns registration
 
 from .pulse_tasks import ns as pulse_tasks_ns
 from .pulse_namespace import ns as pulse_ns
-from .vault_tasks import ns as vault_tasks_ns
+
+# [o3-fix 2025-08-04] Comment out vault_tasks import to break circular dependency
+# from .vault_tasks import ns as vault_tasks_ns
 
 # Register all main collections
 try:
@@ -116,12 +123,8 @@ except Exception as e:
     import logging
 
     logging.warning(f"⚠️ Pulse namespace not loaded: {e}")
-try:
-    tasks.add_collection(vault_tasks_ns, name="vault_tasks")
-except Exception as e:
-    import logging
-
-    logging.warning(f"⚠️ Vault tasks namespace not loaded: {e}")
+# [o3-fix 2025-08-04] vault_tasks_ns commented out above, skip registration
+# Vault tasks will be loaded via fabfile.py directly
 
 # Doctor report task
 from invoke import task

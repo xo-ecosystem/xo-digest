@@ -71,7 +71,7 @@ def trigger_webhook_deployment(env_vars):
 
     # Get webhook URL from environment
     webhook_url = env_vars.get(
-        "XO_AGENT_WEBHOOK_URL", "https://vault.21xo.com/agent/webhook"
+        "XO_AGENT_WEBHOOK_URL", "https://agent0.21xo.com/agent/webhook"
     )
     agent_secret = env_vars.get("XO_AGENT_SECRET")
 

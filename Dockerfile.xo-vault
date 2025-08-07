@@ -1,0 +1,41 @@
+# XO Vault API Dockerfile
+# FastAPI-based backend for immutable, decentralized publishing
+
+FROM python:3.10-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV ENV=production
+ENV VAULT_ADDR=http://vault:8200
+
+# Set work directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements-xo-core-stack.txt /app/requirements.txt
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY src/xo_core/vault/ /app/vault/
+COPY vault/ /app/vault-data/
+
+# Create necessary directories
+RUN mkdir -p /app/vault-data/logbook /app/vault-data/daily /app/vault-data/constellation
+
+# Expose port
+EXPOSE 8801
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8801/health || exit 1
+
+# Run the application
+CMD ["uvicorn", "vault.api:app", "--host", "0.0.0.0", "--port", "8801"] 

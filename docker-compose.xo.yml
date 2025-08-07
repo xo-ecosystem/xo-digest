@@ -1,0 +1,76 @@
+# XO Vault System Docker Compose
+# Complete architecture: xo-vault-api + HashiCorp Vault + xo-node
+
+version: "3.8"
+
+services:
+  # XO Vault API - FastAPI backend for immutable publishing
+  xo-vault-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.xo-vault
+    container_name: xo-vault-api
+    ports:
+      - "8801:8801"
+    environment:
+      - ENV=production
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=${VAULT_TOKEN:-}
+    volumes:
+      - ./vault:/app/vault-data
+      - ./src/xo_core/vault:/app/vault
+    depends_on:
+      - vault
+    restart: unless-stopped
+    networks:
+      - xo-vault-network
+
+  # HashiCorp Vault - Secrets manager
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: xo-vault
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_DEV_ROOT_TOKEN_ID:-dev-token}
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+      - VAULT_DEV_TLS_DISABLE=true
+    volumes:
+      - ./vault:/vault/file
+      - ./vault/unseal_keys.json:/vault/unseal_keys.json:ro
+    cap_add:
+      - IPC_LOCK
+    restart: unless-stopped
+    networks:
+      - xo-vault-network
+    command: vault server -dev -dev-root-token-id=${VAULT_DEV_ROOT_TOKEN_ID:-dev-token} -dev-listen-address=0.0.0.0:8200
+
+  # XO Node - Public frontend (placeholder for GitHub Pages/IPFS)
+  xo-node:
+    image: nginx:alpine
+    container_name: xo-node
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/usr/share/nginx/html
+    restart: unless-stopped
+    networks:
+      - xo-vault-network
+
+  # Optional: Redis for caching (if needed)
+  redis:
+    image: redis:alpine
+    container_name: xo-vault-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - xo-vault-network
+
+networks:
+  xo-vault-network:
+    driver: bridge
+
+volumes:
+  vault-data:
+    driver: local

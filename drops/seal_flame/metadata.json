@@ -1,0 +1,46 @@
+{
+  "name": "Seal Flame",
+  "description": "The bearer of potential. Mint now, ignite later.",
+  "image": "ipfs://QmSealFlameMainImage",
+  "external_url": "https://xo-vault.com/drops/seal_flame",
+  "attributes": [
+    {
+      "trait_type": "Status",
+      "value": "Sealed",
+      "locked": true
+    },
+    {
+      "trait_type": "Element",
+      "value": "Unknown",
+      "locked": true
+    },
+    {
+      "trait_type": "Usage",
+      "value": "Forward-compatible",
+      "locked": true
+    },
+    {
+      "trait_type": "Unlock Conditions",
+      "value": "Community-crafted scroll, Earning XP in-game, Owning message_bottle_v2"
+    },
+    {
+      "trait_type": "Game Integration",
+      "value": "Glows orange, shoots fire, gains 'Scroll of Fire' skin"
+    },
+    {
+      "trait_type": "Future-proofing",
+      "value": "Can be filled later by admin, community, or game interactions"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "ipfs://QmSealFlameMainImage",
+        "type": "image/webp"
+      }
+    ],
+    "category": "image",
+    "maxSupply": 777,
+    "mintPrice": "0.021 ETH"
+  }
+}

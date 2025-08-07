@@ -1,5 +1,5 @@
-# Ignore deployment artifacts
-dist/
+# Common for wrangler / Cloudflare workers
 node_modules/
-.env
-.env.*
+dist/
+.wrangler/
+*.log

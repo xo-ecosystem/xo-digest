@@ -1,0 +1,35 @@
+drop: seal_flame
+title: "Seal Flame"
+variants:
+  - drop_main.webp
+  - drop_variant01.webp
+description: "The bearer of potential. Mint now, ignite later."
+traits:
+  - status: 🔒 Sealed
+  - element: ❓ Unknown
+  - usage: 🧩 Forward-compatible
+
+# Placeholder traits for future updates
+placeholder_traits:
+  - 🔒 Sealed: true
+  - ❓ Unknown: true
+  - 🧩 Forward-compatible: true
+
+# Unlocking conditions
+unlock_conditions:
+  - Community-crafted scroll
+  - Earning XP in-game
+  - Owning message_bottle_v2
+
+# Game integration
+integration:
+  - Minecraft: "Glows orange, shoots fire, gains 'Scroll of Fire' skin"
+  - Sims: "Glows orange, shoots fire, gains 'Scroll of Fire' skin"
+  - Unity WebGL: "Glows orange, shoots fire, gains 'Scroll of Fire' skin"
+
+# Future-proofing
+future_proofing:
+  - Can be filled later by admin, community, or game interactions
+  - Supports metadata updates on IPFS/Arweave
+  - Compatible with XO Inbox replies and remix threads
+  - Unlocks traits/art through 1-of-1 lore reply
