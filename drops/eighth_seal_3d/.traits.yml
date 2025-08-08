@@ -1,0 +1,19 @@
+- id: seal_glow_01
+  name: Eighth Seal – Ember Glow
+  type: visual
+  file: seal_glow_01.webm
+  rarity: rare
+  title: Eighth Seal – Ember Glow
+  media:
+    image: ipfs://<insert>/seal_glow_01_thumb.png
+    animation: ipfs://<insert>/seal_glow_01.webm
+  tags: [eighth_seal, glow, loop, video]
+  description: A sealed ember pulsing with contained light.
+  attributes:
+    - trait_type: Element
+      value: Fire
+    - trait_type: Loop
+      value: Infinite
+  game_effects:
+    unity_webgl:
+      glow: orange
