@@ -1,0 +1,35 @@
+---
+id: july_recovery
+title: "July Recovery Milestone"
+date: 2025-08-03
+tags: ["recovery", "fabfile", "vault", "loader", "refactor"]
+status: "active"
+---
+
+# ✅ July Recovery Milestone
+
+This milestone documents the recovery steps and environment repair actions following the broken state of `xo-fab`, caused by circular imports in the Vault module and improper loader handling.
+
+## 🔧 Goals
+
+- Stabilize the Fabric task loader
+- Refactor `vault_tasks.py` and its dependencies
+- Delegate split cleanups to Codex and Cursor
+- Restore working `xo-fab loader.list`
+- Track health checks via Agent dispatches
+
+## 🔁 Actions Taken
+
+- [x] Moved `from . import unseal, bootstrap` inside `vault/__init__.py` functions
+- [x] Created `fix_loader.py` for dynamic and safe loading
+- [x] Aliased `xo-fab` to clean `fabfile.py` in dev path
+- [ ] Verified `xo-fab loader.list` with full task registry
+- [ ] Added Agent preview and logs for `agent.dispatch:dev_checker`
+
+## 💬 Next
+
+> Delegate `vault_tasks.py` refactor + loader discovery fallback to Codex + Cursor
+
+---
+
+_Marked and sealed by XO Recovery Unit, August 2025_

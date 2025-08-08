@@ -1,0 +1,288 @@
+- id: tile_001
+  name: Slate Ember
+  type: visual
+  file: tile_001.webp
+  rarity: rare
+  title: "Slate Ember Tile"
+  media:
+    image: ipfs://<insert>/tile_001.png
+    animation: ipfs://<insert>/tile_001.webp
+  tags: [roof, slate, ember]
+  description: "Charcoal slate kissed by ember glow."
+  attributes:
+    - trait_type: material
+      value: slate
+    - trait_type: patina
+      value: ember
+    - trait_type: scratch_density
+      value: low
+    - trait_type: origin
+      value: east gable
+    - trait_type: roof_pitch
+      value: 35°
+  game_effects:
+    unity_webgl:
+      glow: orange
+
+- id: tile_002
+  name: Copper Dawn
+  type: visual
+  file: tile_002.webp
+  rarity: uncommon
+  title: "Copper Dawn Tile"
+  media:
+    image: ipfs://<insert>/tile_002.png
+    animation: ipfs://<insert>/tile_002.webp
+  tags: [roof, copper, dawn]
+  description: "Oxidized copper warming at first light."
+  attributes:
+    - trait_type: material
+      value: copper
+    - trait_type: patina
+      value: verdigris
+    - trait_type: scratch_density
+      value: medium
+    - trait_type: origin
+      value: ridge
+    - trait_type: roof_pitch
+      value: 28°
+
+- id: tile_003
+  name: Clay Spark
+  type: visual
+  file: tile_003.webp
+  rarity: common
+  title: "Clay Spark Tile"
+  media:
+    image: ipfs://<insert>/tile_003.png
+    animation: ipfs://<insert>/tile_003.webp
+  tags: [roof, clay, spark]
+  description: "Hand-fired clay with a bright speck."
+  attributes:
+    - trait_type: material
+      value: clay
+    - trait_type: patina
+      value: kilnmark
+    - trait_type: scratch_density
+      value: low
+    - trait_type: origin
+      value: west eave
+    - trait_type: roof_pitch
+      value: 22°
+
+- id: tile_004
+  name: Iron Soot
+  type: visual
+  file: tile_004.webp
+  rarity: common
+  title: "Iron Soot Tile"
+  media:
+    image: ipfs://<insert>/tile_004.png
+    animation: ipfs://<insert>/tile_004.webp
+  tags: [roof, iron, soot]
+  description: "Weathered iron dulled by hearth soot."
+  attributes:
+    - trait_type: material
+      value: iron
+    - trait_type: patina
+      value: soot
+    - trait_type: scratch_density
+      value: high
+    - trait_type: origin
+      value: south slope
+    - trait_type: roof_pitch
+      value: 30°
+
+- id: tile_005
+  name: Quartz Flicker
+  type: visual
+  file: tile_005.webp
+  rarity: rare
+  title: "Quartz Flicker Tile"
+  media:
+    image: ipfs://<insert>/tile_005.png
+    animation: ipfs://<insert>/tile_005.webp
+  tags: [roof, quartz, flicker]
+  description: "Crystalline flecks catch stray light."
+  attributes:
+    - trait_type: material
+      value: quartz
+    - trait_type: patina
+      value: polished
+    - trait_type: scratch_density
+      value: none
+    - trait_type: origin
+      value: keystone
+    - trait_type: roof_pitch
+      value: 40°
+  game_effects:
+    unity_webgl:
+      glow: cyan
+
+- id: tile_006
+  name: Ashline
+  type: visual
+  file: tile_006.webp
+  rarity: uncommon
+  title: "Ashline Tile"
+  media:
+    image: ipfs://<insert>/tile_006.png
+    animation: ipfs://<insert>/tile_006.webp
+  tags: [roof, ash, line]
+  description: "Ash-gray banding from years of rain."
+  attributes:
+    - trait_type: material
+      value: slate
+    - trait_type: patina
+      value: ash
+    - trait_type: scratch_density
+      value: medium
+    - trait_type: origin
+      value: north face
+    - trait_type: roof_pitch
+      value: 27°
+
+- id: tile_007
+  name: Ember Vein
+  type: visual
+  file: tile_007.webp
+  rarity: epic
+  title: "Ember Vein Tile"
+  media:
+    image: ipfs://<insert>/tile_007.png
+    animation: ipfs://<insert>/tile_007.webp
+  tags: [roof, ember, vein]
+  description: "A glowing vein threads the surface."
+  attributes:
+    - trait_type: material
+      value: basalt
+    - trait_type: patina
+      value: emberline
+    - trait_type: scratch_density
+      value: low
+    - trait_type: origin
+      value: east ridge
+    - trait_type: roof_pitch
+      value: 37°
+  game_effects:
+    unity_webgl:
+      glow: red
+
+- id: tile_008
+  name: Moss Fade
+  type: visual
+  file: tile_008.webp
+  rarity: common
+  title: "Moss Fade Tile"
+  media:
+    image: ipfs://<insert>/tile_008.png
+    animation: ipfs://<insert>/tile_008.webp
+  tags: [roof, moss, fade]
+  description: "Soft moss recedes along the edge."
+  attributes:
+    - trait_type: material
+      value: clay
+    - trait_type: patina
+      value: moss
+    - trait_type: scratch_density
+      value: medium
+    - trait_type: origin
+      value: gutter
+    - trait_type: roof_pitch
+      value: 18°
+
+- id: tile_009
+  name: Char Flake
+  type: visual
+  file: tile_009.webp
+  rarity: uncommon
+  title: "Char Flake Tile"
+  media:
+    image: ipfs://<insert>/tile_009.png
+    animation: ipfs://<insert>/tile_009.webp
+  tags: [roof, char, flake]
+  description: "A brittle char flake remains intact."
+  attributes:
+    - trait_type: material
+      value: shale
+    - trait_type: patina
+      value: char
+    - trait_type: scratch_density
+      value: high
+    - trait_type: origin
+      value: west ridge
+    - trait_type: roof_pitch
+      value: 33°
+
+- id: tile_010
+  name: Firecrest
+  type: visual
+  file: tile_010.webp
+  rarity: rare
+  title: "Firecrest Tile"
+  media:
+    image: ipfs://<insert>/tile_010.png
+    animation: ipfs://<insert>/tile_010.webp
+  tags: [roof, fire, crest]
+  description: "Singed crestline marks a lucky flip."
+  attributes:
+    - trait_type: material
+      value: slate
+    - trait_type: patina
+      value: scorch
+    - trait_type: scratch_density
+      value: medium
+    - trait_type: origin
+      value: crest
+    - trait_type: roof_pitch
+      value: 29°
+  game_effects:
+    unity_webgl:
+      glow: gold
+
+- id: tile_011
+  name: Soot Whisper
+  type: visual
+  file: tile_011.webp
+  rarity: common
+  title: "Soot Whisper Tile"
+  media:
+    image: ipfs://<insert>/tile_011.png
+    animation: ipfs://<insert>/tile_011.webp
+  tags: [roof, soot, whisper]
+  description: "Barely-there soot lines trace wind."
+  attributes:
+    - trait_type: material
+      value: terracotta
+    - trait_type: patina
+      value: sootline
+    - trait_type: scratch_density
+      value: low
+    - trait_type: origin
+      value: leeward
+    - trait_type: roof_pitch
+      value: 20°
+
+- id: tile_012
+  name: Verdigris Arc
+  type: visual
+  file: tile_012.webp
+  rarity: uncommon
+  title: "Verdigris Arc Tile"
+  media:
+    image: ipfs://<insert>/tile_012.png
+    animation: ipfs://<insert>/tile_012.webp
+  tags: [roof, copper, verdigris]
+  description: "Green arc forms under winter melt."
+  attributes:
+    - trait_type: material
+      value: copper
+    - trait_type: patina
+      value: verdigris
+    - trait_type: scratch_density
+      value: medium
+    - trait_type: origin
+      value: south eave
+    - trait_type: roof_pitch
+      value: 26°
+

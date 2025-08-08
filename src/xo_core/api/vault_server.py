@@ -11,6 +11,7 @@ import subprocess
 import json
 import logging
 from pathlib import Path
+from src.xo_core.utils.traits import index_traits, load_traits
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="XO Vault API",
     description="API for executing XO Vault tasks",
-    version="0.1.0"
+    version="0.1.0",
 )
 
 # Add CORS middleware
@@ -31,9 +32,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class TaskRequest(BaseModel):
     task: str
     params: Dict[str, Any] = {}
+
 
 class TaskResponse(BaseModel):
     success: bool
@@ -41,12 +44,13 @@ class TaskResponse(BaseModel):
     data: Optional[Dict[str, Any]] = None
     error: Optional[str] = None
 
+
 def execute_fab_task(task_name: str, params: Dict[str, Any] = {}) -> Dict[str, Any]:
     """Execute a fabric task and return the result"""
     try:
         # Build the command
         cmd = ["xo-fab", task_name]
-        
+
         # Add parameters
         for key, value in params.items():
             if isinstance(value, bool):
@@ -54,17 +58,12 @@ def execute_fab_task(task_name: str, params: Dict[str, Any] = {}) -> Dict[str, A
                     cmd.append(f"--{key}")
             else:
                 cmd.append(f"--{key}={value}")
-        
+
         logger.info(f"Executing command: {' '.join(cmd)}")
-        
+
         # Execute the command
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            cwd=Path.cwd()
-        )
-        
+        result = subprocess.run(cmd, capture_output=True, text=True, cwd=Path.cwd())
+
         if result.returncode == 0:
             return {
                 "success": True,
@@ -72,8 +71,8 @@ def execute_fab_task(task_name: str, params: Dict[str, Any] = {}) -> Dict[str, A
                 "data": {
                     "stdout": result.stdout,
                     "stderr": result.stderr,
-                    "returncode": result.returncode
-                }
+                    "returncode": result.returncode,
+                },
             }
         else:
             return {
@@ -83,25 +82,23 @@ def execute_fab_task(task_name: str, params: Dict[str, Any] = {}) -> Dict[str, A
                 "data": {
                     "stdout": result.stdout,
                     "stderr": result.stderr,
-                    "returncode": result.returncode
-                }
+                    "returncode": result.returncode,
+                },
             }
     except Exception as e:
         logger.error(f"Error executing task {task_name}: {e}")
         return {
             "success": False,
             "message": f"Error executing task {task_name}",
-            "error": str(e)
+            "error": str(e),
         }
+
 
 @app.get("/")
 async def root():
     """Root endpoint"""
-    return {
-        "message": "XO Vault API Server",
-        "version": "0.1.0",
-        "status": "running"
-    }
+    return {"message": "XO Vault API Server", "version": "0.1.0", "status": "running"}
+
 
 @app.get("/api/vault/status")
 async def get_vault_status():
@@ -109,11 +106,13 @@ async def get_vault_status():
     result = execute_fab_task("cosmos.vault-agent-status")
     return TaskResponse(**result)
 
+
 @app.get("/api/vault/storage")
 async def get_storage_status():
     """Get storage status"""
     result = execute_fab_task("storage.status")
     return TaskResponse(**result)
+
 
 @app.get("/api/vault/health")
 async def get_backend_health():
@@ -121,13 +120,15 @@ async def get_backend_health():
     result = execute_fab_task("backend.check-health")
     return TaskResponse(**result)
 
+
 @app.post("/api/vault/execute")
 async def execute_task(request: TaskRequest):
     """Execute a vault task"""
     logger.info(f"Executing task: {request.task} with params: {request.params}")
-    
+
     result = execute_fab_task(request.task, request.params)
     return TaskResponse(**result)
+
 
 @app.post("/api/vault/snapshot")
 async def create_snapshot():
@@ -135,17 +136,20 @@ async def create_snapshot():
     result = execute_fab_task("seal.system-snapshot")
     return TaskResponse(**result)
 
+
 @app.post("/api/vault/setup")
 async def setup_agent(keys: int = 5):
     """Setup vault agent"""
     result = execute_fab_task("cosmos.vault-agent-setup", {"keys": keys})
     return TaskResponse(**result)
 
+
 @app.post("/api/vault/loop")
 async def initiate_loop(agents: str = "agent0,agentx,agentz"):
     """Initiate agent loop"""
     result = execute_fab_task("cosmos.initiate-loop", {"agents": agents})
     return TaskResponse(**result)
+
 
 @app.post("/api/vault/route")
 async def route_smart(path: str, drop: Optional[str] = None):
@@ -156,11 +160,13 @@ async def route_smart(path: str, drop: Optional[str] = None):
     result = execute_fab_task("storage.route-smart", params)
     return TaskResponse(**result)
 
+
 @app.post("/api/vault/sync")
 async def sync_manifest():
     """Sync spec manifest"""
     result = execute_fab_task("spec.sync-manifest")
     return TaskResponse(**result)
+
 
 @app.get("/api/vault/mesh")
 async def get_agent_mesh():
@@ -168,6 +174,42 @@ async def get_agent_mesh():
     result = execute_fab_task("backend.agent-mesh-map")
     return TaskResponse(**result)
 
+
+# --- Traits API ---
+@app.get("/api/traits")
+async def get_all_traits():
+    """Return an index of all traits across drops."""
+    try:
+        return TaskResponse(
+            success=True,
+            message="Traits index retrieved",
+            data={"traits": index_traits()},
+        )
+    except Exception as e:
+        return TaskResponse(
+            success=False, message="Failed to index traits", error=str(e)
+        )
+
+
+@app.get("/api/traits/{drop_id}")
+async def get_traits_for_drop(drop_id: str):
+    """Return traits for a specific drop."""
+    try:
+        traits = load_traits(drop_id)
+        if not traits:
+            return TaskResponse(
+                success=True, message="No traits found", data={"traits": []}
+            )
+        return TaskResponse(
+            success=True, message="Traits retrieved", data={"traits": traits}
+        )
+    except Exception as e:
+        return TaskResponse(
+            success=False, message="Failed to load traits", error=str(e)
+        )
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)

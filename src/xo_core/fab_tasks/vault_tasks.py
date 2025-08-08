@@ -1,10 +1,13 @@
 # [o3-fix 2025-08-03] Vault tasks updated for lazy community import
 from invoke import Collection, task
 
+
 def get_community_tasks():
     """Lazy import to avoid circular dependencies"""
     from xo_core.vault import get_community_tasks as _get_community_tasks
+
     return _get_community_tasks()
+
 
 # [o3-fix 2025-08-03] removed premature ns linking; root namespace declared later
 
@@ -107,7 +110,7 @@ def digest_index(c):
 @task
 def unseal(c):
     """Unseal vault using keys from various sources."""
-    from vault.unseal import vault_unseal
+    from xo_core.vault.unseal import vault_unseal
 
     success = vault_unseal()
     if success:
@@ -155,7 +158,7 @@ def zip_bundle(c):
 @task
 def status_log(c):
     """Sync current vault state into logbook."""
-    from vault.bootstrap import write_vault_bootstrap_log
+    from xo_core.vault.bootstrap import write_vault_bootstrap_log
 
     print("📓 Writing vault status to logbook...")
     write_vault_bootstrap_log()

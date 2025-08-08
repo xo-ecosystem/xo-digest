@@ -1,23 +1,42 @@
-# [o3-fix 2025-08-03] Lazy accessor to avoid circular imports
 """
-XO Core Vault package
+Canonical Vault package for XO.
 
-This initializer provides a lazy accessor `get_community_tasks` that defers
-importing heavy sub-modules (`unseal`, `bootstrap`, `community_tasks`) until
-they are actually needed.  This breaks the previous circular-import chain
-triggered during module import time.
+This module intentionally avoids importing submodules at import time to
+prevent circular imports during Fabric task discovery and test collection.
+Import symbols directly from submodules, e.g.:
+
+    from xo_core.vault.unseal import vault_unseal, vault_status
+    from xo_core.vault.bootstrap import bootstrap_vault
 """
 
 from importlib import import_module
-from typing import Any
 
-__all__ = ["get_community_tasks"]
+__all__ = ["lazy", "require", "sign_all", "get_vault_client"]
 
 
-def get_community_tasks() -> Any:
-    """Return the `xo_core.vault.community_tasks` module lazily.
+def lazy(path: str):
+    """Return a module loader; import happens on first attribute access."""
+    module = None
 
-    Doing the import at call-time avoids circular-import errors when
-    `xo_core.vault` is imported by fab tasks at start-up.
-    """
-    return import_module("xo_core.vault.community_tasks")
+    def _get():
+        nonlocal module
+        if module is None:
+            module = import_module(path)
+        return module
+
+    return _get
+
+
+def require(path: str):
+    """Immediate import helper."""
+    return import_module(path)
+
+
+def sign_all(*args, **kwargs):
+    """Passthrough to signing API without importing at module load time."""
+    return require("xo_core.vault.api").sign_all(*args, **kwargs)  # type: ignore[attr-defined]
+
+
+def get_vault_client(*args, **kwargs):
+    """Passthrough to bootstrap.get_vault_client lazily."""
+    return require("xo_core.vault.bootstrap").get_vault_client(*args, **kwargs)  # type: ignore[attr-defined]

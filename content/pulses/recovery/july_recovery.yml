@@ -1,0 +1,34 @@
+id: july_recovery
+title: "July Recovery Milestone"
+date: 2025-08-03
+tags:
+  - recovery
+  - fabfile
+  - vault
+  - loader
+  - refactor
+status: active
+tasks:
+  - id: fix_vault_imports
+    label: "Fix circular import in vault/__init__.py"
+    done: true
+
+  - id: create_fix_loader
+    label: "Create robust fix_loader.py with fallback logging"
+    done: true
+
+  - id: set_xo_fab_alias
+    label: "Alias xo-fab to fab -f ~/xo-core-dev/fabfile.py"
+    done: true
+
+  - id: verify_loader_list
+    label: "Confirm xo-fab loader.list shows all task namespaces"
+    done: false
+
+  - id: dispatch_agent_log
+    label: "Run agent.dispatch for dev_checker and confirm logs"
+    done: false
+
+  - id: delegate_codex_cursor
+    label: "Refactor vault_tasks via Codex; split helpers via Cursor"
+    done: false

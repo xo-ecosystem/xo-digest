@@ -1,0 +1,243 @@
+## XO Trait Viewer: Cross-Platform Integration Plan (MVP v1)
+
+We’re introducing a game-aware Trait Viewer for XO Drops. This bridges the `.traits.yml` files in `drops/` into:
+
+- **Per-drop Trait Viewer**: React table with game compatibility
+- **Trait Explorer**: Cross-drop browser with filters
+- **Schema + Parser**: JSON Schema and backend loader
+- **Demos**: Unity/WebGL/VRChat simulations via `game_effects`
+
+---
+
+### 1) Trait Source & Backend
+
+**Source of Truth**
+
+Each drop folder may contain a `.traits.yml` file structured like:
+
+```yaml
+- id: scroll_01
+  name: Mystic Scroll
+  description: Emits a glowing pulse.
+  rarity: epic
+  tags: [scroll, glowing, animation]
+  media:
+    image: ipfs://<insert>/thumb.png
+    animation: ipfs://<insert>/anim.webm
+  game_effects:
+    unity_webgl:
+      glow: orange
+    vrchat:
+      glow_on: true
+```
+
+**Existing capabilities**
+
+- `.traits.yml` detection, upload, and IPFS CID patching live in `src/xo_core/fab_tasks/vault/{__init__.py,vault.py}`.
+
+**Backend parser (planned)**
+
+- `src/xo_core/utils/traits.py`
+  - `load_traits(drop_id: str) -> list[dict]`
+  - `index_traits() -> dict[str, list[dict]]`
+  - Normalize fields: `name, description, rarity, tags, attributes, media, game_effects`
+
+**API routes (Vault Server)**
+
+- Extend `src/xo_core/api/vault_server.py` with:
+  - `GET /api/traits` → all traits across drops
+  - `GET /api/traits/{drop_id}` → traits for one drop
+
+**Static fallback**
+
+- `scripts/build_traits_index.py` → emits `xo-games/static/traits.index.json`
+
+---
+
+### 2) Frontend Components
+
+**Viewer Component (typed TS)**
+
+- `src/xo_core/web/components/GameTraitsViewer.tsx`
+  - Accepts `traits: Trait[]`
+  - Displays table with compatibility badges: Minecraft, Sims, Unity WebGL, VRChat
+
+**Per-Drop Integration**
+
+- `src/xo_core/web/pages/Drop.tsx`
+  - Fetch `/api/traits/{drop_id}`
+  - Render `<GameTraitsViewer traits={traits} />`
+
+**Explorer Page**
+
+- `src/xo_core/web/pages/TraitExplorer.tsx`
+  - Cross-drop viewer with filters (game, rarity, tags)
+  - Linked from `src/xo_core/web/components/Sidebar.tsx`
+
+**Types**
+
+- `src/xo_core/web/types/traits.ts`
+
+```ts
+export type GameEffects = {
+  minecraft?: Record<string, unknown>;
+  sims?: Record<string, unknown>;
+  unity_webgl?: { glow?: string };
+  vrchat?: { glow_on?: boolean };
+};
+
+export type Trait = {
+  id: string;
+  name: string;
+  description: string;
+  rarity?: string;
+  tags?: string[];
+  media?: { image?: string; animation?: string };
+  game_effects?: GameEffects;
+};
+```
+
+**Fetcher API Layer**
+
+- `src/xo_core/web/traits/api.ts`
+  - `getAllTraits()`
+  - `getDropTraits(dropId: string)`
+
+---
+
+### 3) Game Demos (Traits → Actions)
+
+**WebGL Glow Demo (fastest path)**
+
+- `src/xo_core/web/pages/ThreeGlowDemo.tsx`
+  - Loads traits from `/api/traits/{drop}`
+  - If `unity_webgl.glow` present → emit glow color via Three.js
+
+**VRChat OSC Toggle**
+
+- `scripts/vrchat_osc_mock.py`
+  - Sends OSC (e.g., `/Avatar/Parameters/GlowOn`)
+  - Triggered when `vrchat.glow_on: true`
+  - UI badge for “Connected” (manual toggle)
+
+**Minecraft Exporter (stretch)**
+
+- `xo-games/integrations/minecraft/`
+  - Export traits to `minecraft_traits.json`
+  - Future Fabric/Spigot plugin consumes JSON for e.g., glowing aura
+
+---
+
+### 4) Schema + Validation
+
+**JSON Schema (draft)**
+
+- `xo-games/schema/traits.schema.json`
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "name", "description"],
+    "properties": {
+      "id": { "type": "string" },
+      "name": { "type": "string" },
+      "description": { "type": "string" },
+      "rarity": { "type": "string" },
+      "tags": { "type": "array", "items": { "type": "string" } },
+      "media": {
+        "type": "object",
+        "properties": {
+          "image": { "type": "string" },
+          "animation": { "type": "string" }
+        }
+      },
+      "game_effects": {
+        "type": "object",
+        "properties": {
+          "minecraft": { "type": "object" },
+          "sims": { "type": "object" },
+          "unity_webgl": {
+            "type": "object",
+            "properties": { "glow": { "type": "string" } }
+          },
+          "vrchat": {
+            "type": "object",
+            "properties": { "glow_on": { "type": "boolean" } }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Update `xo-games/docs/traits.md` with schema usage, keys, and visuals.
+
+---
+
+### 5) Ordered Launch Plan (files → tasks)
+
+- **Phase 1: Parser + API**
+
+  - New: `src/xo_core/utils/traits.py`
+  - Edit: `src/xo_core/api/vault_server.py` (add `/api/traits*`)
+  - New: `scripts/build_traits_index.py`
+
+- **Phase 2: Viewer UI**
+
+  - New: `src/xo_core/web/components/GameTraitsViewer.tsx`
+  - Edit: `src/xo_core/web/pages/Drop.tsx` (fetch + render)
+  - New: `src/xo_core/web/types/traits.ts`, `src/xo_core/web/traits/api.ts`
+
+- **Phase 3: Trait Explorer**
+
+  - New: `src/xo_core/web/pages/TraitExplorer.tsx`
+  - Edit: `src/xo_core/web/components/Sidebar.tsx` (link)
+
+- **Phase 4: Glow Demo**
+
+  - New: `src/xo_core/web/pages/ThreeGlowDemo.tsx`
+
+- **Phase 5: VRChat Demo**
+
+  - New: `scripts/vrchat_osc_mock.py`
+
+- **Phase 6: Docs + Schema**
+  - New: `xo-games/schema/traits.schema.json`
+  - Edit: `xo-games/docs/traits.md`
+  - New: `xo-games/integrations/{unity,vrchat,minecraft}/README.md`
+
+---
+
+### 6) Ready-to-use Prompts
+
+- “Scan all `.traits.yml` under `drops/`, validate against schema, and generate `traits.index.json`.”
+- “Create a test entry with `unity_webgl.glow: cyan` and simulate Three.js glow logic.”
+- “Refactor `GameTraitsViewer.tsx` to support rarity-based coloring and dynamic badge icons.”
+
+---
+
+### 7) Go-live Scope (MVP v1)
+
+- Per-drop Trait Viewer, Trait Explorer, and Three.js glow demo
+- API-backed with static fallback
+- Minimal YAML change: add `game_effects` where relevant
+
+Note: Added themed demo drop `drops/seal_flip_tiles/.traits.yml` (~12 sample tiles). Preview via:
+
+```bash
+uvicorn src.xo_core.api.vault_server:app --port 8000
+python scripts/build_traits_index.py  # optional fallback
+curl -s http://localhost:8000/api/traits/seal_flip_tiles | jq
+```
+
+UI:
+
+- Visit `/traits` to browse all tiles
+- If a tile has `unity_webgl.glow`, click the “Glow-Ready” link on a drop page (e.g., `/drops/eighth_seal`) to open `/three-glow-demo`.
+
+---
+
+If you need a PDF, export this `.mdx` with your preferred tool (e.g., `pandoc`, `md-to-pdf`, or MkDocs print plugin).

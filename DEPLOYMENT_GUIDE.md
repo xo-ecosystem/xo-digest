@@ -1,3 +1,52 @@
+## Agent on Fly.io (Dev)
+
+This guide prepares the XO Agent API (`xo_agents.api:app`) for Fly.io. Do not commit secrets.
+
+### fly.agent.toml
+
+Create `fly.agent.toml` in repo root:
+
+```toml
+app = "xo-agent"
+primary_region = "ams"
+
+[build]
+  builder = "paketobuildpacks/builder:base"
+
+[env]
+  XO_ENVIRONMENT = "production"
+  PORT = "8080"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 8080
+  processes = ["app"]
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+```
+
+### Deploy steps (manual)
+
+```bash
+flyctl apps create xo-agent || true
+flyctl secrets set XO_AGENT_SECRET=REDACTED
+flyctl deploy --config fly.agent.toml --app xo-agent
+flyctl status --app xo-agent
+flyctl logs --app xo-agent
+```
+
+Verify:
+
+```bash
+curl -sSf https://xo-agent.fly.dev/health
+```
+
 # 🚀 XO Core Multi-Chain Deployment Guide
 
 ## 🌟 Overview
