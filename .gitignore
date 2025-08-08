@@ -293,3 +293,12 @@ Thumbs.db
 /artifacts/
 /cache/
 /src/content/index.html
+
+scripts/dns_config.yml
+# never commit env/secrets
+.env*
+*.pem
+*.key
+*private*key*
+xo-secrets/
+vault/*.json
