@@ -311,3 +311,12 @@ vault/*.json
 *.pem
 *.private-key.pem
 
+# secrets (auto)
+.env
+.env.*
+.envrc
+.envrc.*
+*.pem
+*.private-key.pem
+*.key
+*.p8
