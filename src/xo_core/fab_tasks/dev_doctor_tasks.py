@@ -88,7 +88,7 @@ def load_rules():
     if not os.path.isdir(RULES_DIR):
         print(f"⚠️ Rules directory not found: {RULES_DIR}")
         return rules
-    
+
     for filename in os.listdir(RULES_DIR):
         if filename.endswith((".yml", ".yaml")):
             path = os.path.join(RULES_DIR, filename)
@@ -113,7 +113,7 @@ def load_rules():
                 print(f"⚠️ Error loading {filename}: {e}")
             except Exception as e:
                 print(f"⚠️ Unexpected error loading {filename}: {e}")
-    
+
     return rules
 
 def check_required_function(target_file, required_func):
@@ -121,25 +121,25 @@ def check_required_function(target_file, required_func):
     if not os.path.exists(target_file):
         print(f"❌ Target file not found: {target_file}")
         return False
-    
+
     try:
         with open(target_file, 'r', encoding='utf-8') as f:
             content = f.read()
-            
+
         # Check for function definition patterns
         patterns = [
             rf"def {re.escape(required_func)}\s*\(",  # Standard function def
             rf"async def {re.escape(required_func)}\s*\(",  # Async function def
             rf"class {re.escape(required_func)}\s*[\(:]",  # Class definition
         ]
-        
+
         for pattern in patterns:
             if re.search(pattern, content):
                 return True
-        
+
         print(f"❌ Function '{required_func}' not found in {target_file}")
         return False
-        
+
     except Exception as e:
         print(f"❌ Error reading {target_file}: {e}")
         return False
@@ -149,14 +149,14 @@ def check_required_import(target_file, import_statement, fix=False):
     if not os.path.exists(target_file):
         print(f"❌ Target file not found: {target_file}")
         return False
-    
+
     try:
         with open(target_file, 'r', encoding='utf-8') as f:
             content = f.read()
-            
+
         if import_statement in content:
             return True
-        
+
         print(f"❌ Import statement not found: {import_statement}")
         if fix:
             print(f"🛠️ Attempting to auto-fix: Adding '{import_statement}' to {target_file}")
@@ -178,7 +178,7 @@ def check_required_import(target_file, import_statement, fix=False):
             except Exception as e:
                 print(f"❌ Auto-fix failed: {e}")
         return False
-        
+
     except Exception as e:
         print(f"❌ Error reading {target_file}: {e}")
         return False
@@ -189,14 +189,14 @@ def apply_rule(filename, rule, fix=False):
     if 'id' in rule:
         rule_name = rule.get('id', filename)
         print(f"🔍 Checking rule: {rule_name}")
-        
+
         # Handle new format with 'checks' array
         if 'checks' in rule:
             target_file = rule.get('applies_to')
             if not target_file:
                 print(f"❌ Invalid rule: missing 'applies_to' field")
                 return False
-            
+
             all_checks_passed = True
             for check in rule['checks']:
                 check_type = check.get('type')
@@ -206,81 +206,81 @@ def apply_rule(filename, rule, fix=False):
                         print(f"❌ Invalid check: missing 'function' field")
                         all_checks_passed = False
                         continue
-                    
+
                     if not check_required_function(target_file, func_name):
                         all_checks_passed = False
-                
+
                 elif check_type == 'import_statement':
                     import_stmt = check.get('import_statement')
                     if not import_stmt:
                         print(f"❌ Invalid check: missing 'import_statement' field")
                         all_checks_passed = False
                         continue
-                    
+
                     if not check_required_import(target_file, import_stmt, fix=fix):
                         all_checks_passed = False
-            
+
             return all_checks_passed
-        
+
         # Handle new format with direct check_type
         check_type = rule.get('check_type')
         target_file = rule.get('target_file')
-        
+
         if check_type == 'import_statement':
             import_statement = rule.get('import_statement')
             if not target_file or not import_statement:
                 print(f"❌ Invalid rule: missing target_file or import_statement")
                 return False
             return check_required_import(target_file, import_statement, fix=fix)
-    
+
     # Handle old rule format
     else:
         rule_name = rule.get('name', filename)
         print(f"🔍 Checking rule: {rule_name}")
-        
+
         # Handle different rule types
         rule_type = rule.get('type', 'basic')
-        
+
         if rule_type == 'required_function':
             target_file = rule.get('target_file')
             required_func = rule.get('required_function')
-            
+
             if not target_file or not required_func:
                 print(f"❌ Invalid rule: missing target_file or required_function")
                 return False
-            
+
             return check_required_function(target_file, required_func)
-        
+
         elif rule_type == 'required_import':
             target_file = rule.get('target_file')
             import_statement = rule.get('import_statement')
-            
+
             if not target_file or not import_statement:
                 print(f"❌ Invalid rule: missing target_file or import_statement")
                 return False
-            
+
             return check_required_import(target_file, import_statement, fix=fix)
-        
+
         elif rule_type == 'file_exists':
             target_file = rule.get('target_file')
             if not target_file:
                 print(f"❌ Invalid rule: missing target_file")
                 return False
-            
+
             if os.path.exists(target_file):
                 print(f"✅ File exists: {target_file}")
                 return True
             else:
                 print(f"❌ Missing required file: {target_file}")
                 return False
-        
+
         else:
             # Legacy basic rule support
             target_file = rule.get('target_file')
             if target_file and not os.path.exists(target_file):
                 print(f"❌ Missing required file: {target_file}")
                 return False
-            
+
             print("✅ Rule passed")
             return True
 
@@ -289,22 +289,22 @@ def doctor(c, verbose=False, fix=False):
     """Run all dev_doctor rules to check code health."""
     print("🏥 Running XO Core Dev Doctor...")
     print(f"📁 Rules directory: {RULES_DIR}")
-    
+
     if fix:
         print("🛠️ Auto-fix mode enabled - will attempt to fix failed rules")
-    
+
     rules = load_rules()
     if not rules:
         print("⚠️ No rules found to check")
         return
-    
+
     print(f"📋 Found {len(rules)} rule(s) to check")
     print("-" * 50)
-    
+
     all_passed = True
     passed_count = 0
     failed_count = 0
-    
+
     for filename, rule in rules:
         try:
             if apply_rule(filename, rule, fix=fix):
@@ -319,13 +319,13 @@ def doctor(c, verbose=False, fix=False):
             failed_count += 1
             print(f"❌ {filename}: ERROR - {e}")
             all_passed = False
-        
+
         if verbose:
             print()
-    
+
     print("-" * 50)
     print(f"📊 Results: {passed_count} passed, {failed_count} failed")
-    
+
     if all_passed:
         print("🎉 All rules passed! Code health is good.")
     else:
@@ -339,12 +339,12 @@ def list_rules(c):
     """List all available dev_doctor rules."""
     print("📋 Available Dev Doctor Rules:")
     print("-" * 40)
-    
+
     rules = load_rules()
     if not rules:
         print("No rules found")
         return
-    
+
     for filename, rule in rules:
         if 'id' in rule:
             # New format
@@ -356,7 +356,7 @@ def list_rules(c):
             rule_name = rule.get('name', filename)
             rule_type = rule.get('type', 'basic')
             description = rule.get('description', 'No description')
-        
+
         print(f"📄 {filename}")
         print(f"   Name: {rule_name}")
         print(f"   Type: {rule_type}")
@@ -371,26 +371,26 @@ def create_rule(c, name, type="file_exists", target_file=None, required_function
         'type': type,
         'description': description
     }
-    
+
     if target_file:
         rule_data['target_file'] = target_file
-    
+
     if required_function:
         rule_data['required_function'] = required_function
-    
+
     if import_statement:
         rule_data['import_statement'] = import_statement
-    
+
     # Create rules directory if it doesn't exist
     os.makedirs(RULES_DIR, exist_ok=True)
-    
+
     # Generate filename
     filename = f"{name.lower().replace(' ', '_')}.yml"
     filepath = os.path.join(RULES_DIR, filename)
-    
+
     with open(filepath, 'w') as f:
         yaml.dump(rule_data, f, default_flow_style=False, sort_keys=False)
-    
+
     print(f"✅ Created rule: {filepath}")
     print(f"📄 Rule content:")
     print(yaml.dump(rule_data, default_flow_style=False, sort_keys=False))

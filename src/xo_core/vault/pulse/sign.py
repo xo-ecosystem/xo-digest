@@ -14,4 +14,4 @@ def verify_signature(pulse_data, signature):
     """Verify a pulse signature."""
     # Placeholder implementation
     print("🔍 Verifying signature...")
-    return True 
+    return True

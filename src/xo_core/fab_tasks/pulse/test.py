@@ -12,22 +12,22 @@ def test_pulse(c, slug="test_pulse"):
     🧪 Test a pulse by running basic validation checks.
     """
     print(f"🧪 Testing pulse: {slug}")
-    
+
     from pathlib import Path
-    
+
     # Check if pulse files exist
     pulse_dir = Path(f"content/pulses/{slug}")
     if not pulse_dir.exists():
         print(f"❌ Pulse directory not found: {pulse_dir}")
         return False
-    
+
     mdx_file = pulse_dir / f"{slug}.mdx"
     if not mdx_file.exists():
         print(f"❌ Pulse MDX file not found: {mdx_file}")
         return False
-    
+
     print(f"✅ Pulse files found: {mdx_file}")
-    
+
     # Basic content validation
     try:
         content = mdx_file.read_text()
@@ -38,7 +38,7 @@ def test_pulse(c, slug="test_pulse"):
     except Exception as e:
         print(f"❌ Error reading pulse content: {e}")
         return False
-    
+
     return True
 
 
@@ -48,14 +48,14 @@ def test_all(c):
     🧪 Test all pulses in the content/pulses directory.
     """
     print("🧪 Testing all pulses...")
-    
+
     from pathlib import Path
-    
+
     pulses_dir = Path("content/pulses")
     if not pulses_dir.exists():
         print("❌ No pulses directory found")
         return
-    
+
     results = []
     for pulse_dir in pulses_dir.iterdir():
         if pulse_dir.is_dir() and not pulse_dir.name.startswith('.'):
@@ -63,16 +63,16 @@ def test_all(c):
             print(f"\n🔍 Testing {slug}...")
             result = test_pulse(c, slug)
             results.append((slug, result))
-    
+
     # Summary
     print("\n📊 Test Results:")
     passed = sum(1 for _, result in results if result)
     total = len(results)
-    
+
     for slug, result in results:
         status = "✅ PASS" if result else "❌ FAIL"
         print(f"  {status} {slug}")
-    
+
     print(f"\n🎯 Overall: {passed}/{total} pulses passed")
     return passed == total
 

@@ -32,7 +32,7 @@ async function main() {
   // Deploy the token
   console.log("📦 Deploying Token21NGO contract...");
   const Token21NGO = await ethers.getContractFactory("Token21NGO");
-  
+
   const token = await Token21NGO.deploy(
     config.name,
     config.symbol,
@@ -107,4 +107,4 @@ main()
   .catch((error) => {
     console.error("❌ Deployment failed:", error);
     process.exit(1);
-  }); 
+  });

@@ -1,8 +1,8 @@
 Create a cosmic storyboard scene featuring: A mysterious bottle containing a scroll with ancient wisdom
-                
+
                 Style: cosmic, cinematic lighting, detailed character design
                 Mood: Mysterious and enchanting
                 Rarity: rare level
                 Format: Wide aspect ratio, storyboard panels
-                
+
                 --ar 16:9 --v 6 --q 2 --s 750

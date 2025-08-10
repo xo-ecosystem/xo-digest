@@ -161,7 +161,7 @@ def explore(c, drop_id, model="gpt-4.5"):
     if not seed_file.exists():
         seed_content = f"""# 📬 {metadata.get('status', {}).get('title', drop_id)} - Community Inbox
 
-Welcome to the conversation around this drop! 
+Welcome to the conversation around this drop!
 
 ## 🎯 What's This About?
 
@@ -312,7 +312,7 @@ def explore_drop(c, drop="message_bottle", model="gpt-4.5"):
     if not seed_file.exists():
         seed_content = f"""# 📬 {metadata.get('status', {}).get('title', drop)} - Community Inbox
 
-Welcome to the conversation around this drop! 
+Welcome to the conversation around this drop!
 
 ## 🎯 What's This About?
 
@@ -522,16 +522,16 @@ def dreamify(c, drop_id, style="surreal", model="midjourney"):
             # Create Midjourney/DALL-E style prompt
             if model == "midjourney":
                 prompt = f"""Create a {style} storyboard scene featuring: {description}
-                
+
                 Style: {style}, cinematic lighting, detailed character design
                 Mood: Mysterious and enchanting
                 Rarity: {rarity} level
                 Format: Wide aspect ratio, storyboard panels
-                
+
                 --ar 16:9 --v 6 --q 2 --s 750"""
             else:  # DALL-E style
                 prompt = f"""A {style} storyboard scene showing: {description}
-                
+
                 Style: {style}, cinematic composition, rich details
                 Mood: Mysterious and enchanting
                 Rarity: {rarity} level
@@ -614,7 +614,7 @@ def broadcast(c, drop_id, platforms="vault,discord", message=None):
         description = status.get("description", "A mysterious drop in the XO universe")
 
         message = f"""🌌 **XO Pulse: {title}**
-        
+
 {description}
 
 🔮 Explore the lore, traits, and community conversation around this drop.
@@ -719,7 +719,7 @@ def initiate(c, drop_id, template="community"):
     if template == "community":
         content = f"""# 📬 {status.get('title', drop_id)} - Community Inbox
 
-Welcome to the conversation around this drop! 
+Welcome to the conversation around this drop!
 
 ## 🎯 What's This About?
 
@@ -1140,37 +1140,37 @@ def constellation_link(c, drop_id, add_to_index=True):
 def drop_regen(c, drop_id, version="v2", evolution_type="fusion"):
     """
     Create an evolved drop version over time (e.g. message_bottle → message_bottle_v2).
-    
+
     Args:
         drop_id: The original drop ID to evolve
         version: Version suffix (v2, v3, evolved, etc.)
         evolution_type: Type of evolution (fusion, contrast, cosmic, remix)
     """
     print(f"🔄 Regenerating {drop_id} into {drop_id}_{version} with {evolution_type} evolution")
-    
+
     # Create new drop directory
     new_drop_id = f"{drop_id}_{version}"
     new_drop_path = Path("drops") / new_drop_id
     new_drop_path.mkdir(parents=True, exist_ok=True)
-    
+
     # Load original drop data
     original_path = Path("drops") / drop_id
     if not original_path.exists():
         print(f"❌ Original drop not found: {drop_id}")
         return False
-    
+
     # Copy and evolve traits
     original_traits_file = original_path / "hidden" / ".traits.yml"
     new_traits_file = new_drop_path / "hidden" / ".traits.yml"
     new_traits_file.parent.mkdir(parents=True, exist_ok=True)
-    
+
     if original_traits_file.exists():
         with open(original_traits_file, 'r') as f:
             original_traits = yaml.safe_load(f)
-        
+
         # Evolve traits based on evolution type
         evolved_traits = {}
-        
+
         if evolution_type == "fusion":
             # Combine traits into new hybrid forms
             trait_names = list(original_traits.keys())
@@ -1179,7 +1179,7 @@ def drop_regen(c, drop_id, version="v2", evolution_type="fusion"):
                     trait1 = trait_names[i]
                     trait2 = trait_names[i + 1]
                     fusion_name = f"{trait1}_{trait2}_fusion"
-                    
+
                     evolved_traits[fusion_name] = {
                         "description": f"Fusion of {original_traits[trait1].get('description', trait1)} and {original_traits[trait2].get('description', trait2)}",
                         "rarity": "epic",
@@ -1190,7 +1190,7 @@ def drop_regen(c, drop_id, version="v2", evolution_type="fusion"):
                             "minecraft": {"fusion_mining": 1.5}
                         }
                     }
-        
+
         elif evolution_type == "contrast":
             # Create contrasting versions
             for trait_name, trait_data in original_traits.items():
@@ -1205,7 +1205,7 @@ def drop_regen(c, drop_id, version="v2", evolution_type="fusion"):
                         "minecraft": {"contrast_jump": 2.0}
                     }
                 }
-        
+
         elif evolution_type == "cosmic":
             # Cosmic evolution with enhanced effects
             for trait_name, trait_data in original_traits.items():
@@ -1220,7 +1220,7 @@ def drop_regen(c, drop_id, version="v2", evolution_type="fusion"):
                         "minecraft": {"cosmic_vision": 600, "cosmic_finder": 100}
                     }
                 }
-        
+
         elif evolution_type == "remix":
             # Creative remix with new combinations
             trait_names = list(original_traits.keys())
@@ -1237,7 +1237,7 @@ def drop_regen(c, drop_id, version="v2", evolution_type="fusion"):
                         "minecraft": {"remix_speed": 1.3}
                     }
                 }
-        
+
         elif evolution_type == "legendary":
             # Legendary ascension with ultimate effects
             for trait_name, trait_data in original_traits.items():
@@ -1253,13 +1253,13 @@ def drop_regen(c, drop_id, version="v2", evolution_type="fusion"):
                         "minecraft": {"legendary_vision": 1000, "legendary_finder": 200, "legendary_mining": 3.0}
                     }
                 }
-        
+
         # Save evolved traits
         with open(new_traits_file, 'w') as f:
             yaml.dump(evolved_traits, f, default_flow_style=False, sort_keys=False)
-        
+
         print(f"✅ Created {len(evolved_traits)} evolved traits")
-    
+
     # Create evolved drop metadata
     evolution_data = {
         "drop_id": new_drop_id,
@@ -1270,12 +1270,12 @@ def drop_regen(c, drop_id, version="v2", evolution_type="fusion"):
         "evolution_description": f"Evolved version of {drop_id} using {evolution_type} evolution",
         "traits_evolved": len(evolved_traits) if 'evolved_traits' in locals() else 0
     }
-    
+
     # Save evolution metadata
     evolution_file = new_drop_path / f"{new_drop_id}.evolution.yml"
     with open(evolution_file, 'w') as f:
         yaml.dump(evolution_data, f, default_flow_style=False, sort_keys=False)
-    
+
     # Create evolved drop content
     content_file = new_drop_path / f"{new_drop_id}.mdx"
     content = f"""# {new_drop_id.title()}
@@ -1306,13 +1306,13 @@ This drop contains {evolution_data['traits_evolved']} evolved traits, each repre
 
 *Generated by XO Drop Regen System - {datetime.now().isoformat()}*
 *Part of the living XO universe evolution*"""
-    
+
     with open(content_file, 'w') as f:
         f.write(content)
-    
+
     print(f"✅ Created evolved drop: {new_drop_id}")
     print(f"📁 Location: {new_drop_path}")
-    
+
     return new_drop_id
 
 
@@ -1320,17 +1320,17 @@ This drop contains {evolution_data['traits_evolved']} evolved traits, each repre
 def vault_showcase(c, drop_id, showcase_type="full"):
     """
     Generate complete showcase content for a drop including visuals, broadcasts, and constellation links.
-    
+
     Args:
         drop_id: The drop ID to showcase
         showcase_type: Type of showcase (full, visual, social, constellation)
     """
     print(f"🎨 Creating {showcase_type} showcase for {drop_id}")
-    
+
     # Create showcase directory
     showcase_dir = Path("drops") / drop_id / "showcase"
     showcase_dir.mkdir(parents=True, exist_ok=True)
-    
+
     if showcase_type in ["full", "visual"]:
         # Generate visual content
         print("🌌 Generating visual content...")
@@ -1338,12 +1338,12 @@ def vault_showcase(c, drop_id, showcase_type="full"):
             sys.executable, "-m", "xo_core.fab_tasks.agent_tasks", "dreamify",
             "--drop-id", drop_id, "--style", "cosmic", "--model", "midjourney"
         ], capture_output=True, text=True)
-        
+
         if dreamify_result.returncode == 0:
             print("✅ Visual prompts generated")
         else:
             print("⚠️ Visual generation had issues")
-    
+
     if showcase_type in ["full", "social"]:
         # Generate social content
         print("📡 Generating social content...")
@@ -1351,12 +1351,12 @@ def vault_showcase(c, drop_id, showcase_type="full"):
             sys.executable, "-m", "xo_core.fab_tasks.agent_tasks", "broadcast",
             "--drop-id", drop_id, "--platforms", "vault,discord,twitter"
         ], capture_output=True, text=True)
-        
+
         if broadcast_result.returncode == 0:
             print("✅ Social content generated")
         else:
             print("⚠️ Social generation had issues")
-    
+
     if showcase_type in ["full", "constellation"]:
         # Link to constellation
         print("🗺️ Linking to constellation...")
@@ -1364,12 +1364,12 @@ def vault_showcase(c, drop_id, showcase_type="full"):
             sys.executable, "-m", "xo_core.fab_tasks.agent_tasks", "constellation-link",
             "--drop-id", drop_id
         ], capture_output=True, text=True)
-        
+
         if constellation_result.returncode == 0:
             print("✅ Constellation link created")
         else:
             print("⚠️ Constellation linking had issues")
-    
+
     # Create showcase index
     showcase_index = {
         "drop_id": drop_id,
@@ -1386,11 +1386,11 @@ def vault_showcase(c, drop_id, showcase_type="full"):
             "constellation": list(Path("constellation").glob(f"{drop_id}*")) if Path("constellation").exists() else []
         }
     }
-    
+
     index_file = showcase_dir / "showcase_index.yml"
     with open(index_file, 'w') as f:
         yaml.dump(showcase_index, f, default_flow_style=False, sort_keys=False)
-    
+
     # Create showcase README
     readme_content = f"""# {drop_id.title()} - XO Showcase
 
@@ -1423,11 +1423,11 @@ This showcase contains all generated content for **{drop_id}** in the XO univers
 
 *XO Showcase System - {datetime.now().isoformat()}*
 *Part of the living XO creative ecosystem*"""
-    
+
     readme_file = showcase_dir / "README.md"
     with open(readme_file, 'w') as f:
         f.write(readme_content)
-    
+
     print(f"✅ Created {showcase_type} showcase for {drop_id}")
     print(f"📁 Showcase location: {showcase_dir}")
     return True
@@ -1437,29 +1437,29 @@ This showcase contains all generated content for **{drop_id}** in the XO univers
 def react(c, drop_id, persona="vault_keeper", auto_reply=True):
     """
     React to inbox replies using personas.
-    
+
     Args:
         drop_id: The drop ID to react to
         persona: Persona to use for reactions
         auto_reply: Whether to generate automatic replies
     """
     print(f"🔁 Reacting to {drop_id} inbox with {persona} persona")
-    
+
     # Load inbox content
     inbox_dir = Path("drops") / drop_id / "inbox"
     if not inbox_dir.exists():
         print(f"❌ Inbox not found for: {drop_id}")
         return False
-    
+
     # Load persona data
     personas_dir = Path("drops") / drop_id / "personas"
     persona_file = personas_dir / f"{persona}.yml"
-    
+
     persona_data = {}
     if persona_file.exists():
         with open(persona_file, 'r') as f:
             persona_data = yaml.safe_load(f)
-    
+
     # Generate reaction content
     reaction_content = f"""# 🤖 {persona.title()} Reacts to {drop_id}
 
@@ -1488,12 +1488,12 @@ def react(c, drop_id, persona="vault_keeper", auto_reply=True):
 
 *Generated by XO Agent React System - {datetime.now().isoformat()}*
 *Persona: {persona}*"""
-    
+
     # Save reaction
     reaction_file = inbox_dir / f"reaction_{persona}.mdx"
     with open(reaction_file, 'w') as f:
         f.write(reaction_content)
-    
+
     print(f"✅ Generated reaction from {persona} persona")
     return True
 
@@ -1502,27 +1502,27 @@ def react(c, drop_id, persona="vault_keeper", auto_reply=True):
 def morph(c, drop_id, morph_type="trait", duration="timeline"):
     """
     Morph traits/images over time.
-    
+
     Args:
         drop_id: The drop ID to morph
         morph_type: Type of morphing (trait, image, lore)
         duration: Duration of morphing (timeline, instant, gradual)
     """
     print(f"🧬 Morphing {drop_id} with {morph_type} morphing over {duration}")
-    
+
     # Load trait data
     traits_file = Path("drops") / drop_id / "hidden" / ".traits.yml"
     if not traits_file.exists():
         print(f"❌ Traits not found for: {drop_id}")
         return False
-    
+
     with open(traits_file, 'r') as f:
         traits = yaml.safe_load(f)
-    
+
     # Create morphing directory
     morph_dir = Path("drops") / drop_id / "morph"
     morph_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Generate morphing timeline
     morph_timeline = {
         "drop_id": drop_id,
@@ -1531,7 +1531,7 @@ def morph(c, drop_id, morph_type="trait", duration="timeline"):
         "created_at": datetime.now().isoformat(),
         "timeline": []
     }
-    
+
     if morph_type == "trait":
         # Create trait evolution timeline
         for trait_name, trait_data in traits.items():
@@ -1564,17 +1564,17 @@ def morph(c, drop_id, morph_type="trait", duration="timeline"):
                         }
                     }
                 ]
-                
+
                 morph_timeline["timeline"].append({
                     "trait_name": trait_name,
                     "evolution_stages": evolution_stages
                 })
-    
+
     # Save morphing timeline
     timeline_file = morph_dir / f"morph_timeline_{morph_type}.yml"
     with open(timeline_file, 'w') as f:
         yaml.dump(morph_timeline, f, default_flow_style=False, sort_keys=False)
-    
+
     print(f"✅ Created {morph_type} morphing timeline")
     return True
 
@@ -1583,24 +1583,24 @@ def morph(c, drop_id, morph_type="trait", duration="timeline"):
 def autopilot(c, trigger="publish", action="deploy"):
     """
     Trigger automation on publish.
-    
+
     Args:
         trigger: Trigger event (publish, vault_update, inbox_reply)
         action: Action to take (deploy, broadcast, compile)
     """
     print(f"🔄 Autopilot triggered by {trigger}, executing {action}")
-    
+
     # Create autopilot log
     autopilot_dir = Path("autopilot")
     autopilot_dir.mkdir(parents=True, exist_ok=True)
-    
+
     log_entry = {
         "trigger": trigger,
         "action": action,
         "timestamp": datetime.now().isoformat(),
         "status": "executing"
     }
-    
+
     if trigger == "publish" and action == "deploy":
         # Simulate deployment automation
         log_entry["actions"] = [
@@ -1611,7 +1611,7 @@ def autopilot(c, trigger="publish", action="deploy"):
             "Broadcast to social platforms"
         ]
         log_entry["status"] = "completed"
-    
+
     elif trigger == "vault_update" and action == "broadcast":
         # Simulate broadcast automation
         log_entry["actions"] = [
@@ -1621,7 +1621,7 @@ def autopilot(c, trigger="publish", action="deploy"):
             "Send Vault pulse"
         ]
         log_entry["status"] = "completed"
-    
+
     elif trigger == "inbox_reply" and action == "compile":
         # Simulate compilation automation
         log_entry["actions"] = [
@@ -1631,12 +1631,12 @@ def autopilot(c, trigger="publish", action="deploy"):
             "Create community summary"
         ]
         log_entry["status"] = "completed"
-    
+
     # Save autopilot log
     log_file = autopilot_dir / f"autopilot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.yml"
     with open(log_file, 'w') as f:
         yaml.dump(log_entry, f, default_flow_style=False, sort_keys=False)
-    
+
     print(f"✅ Autopilot {action} completed for {trigger}")
     return True
 
@@ -1645,38 +1645,38 @@ def autopilot(c, trigger="publish", action="deploy"):
 def portal(c, drop_id, format="iframe"):
     """
     Generate iframe-compatible HTML for embedded drops.
-    
+
     Args:
         drop_id: The drop ID to create portal for
         format: Output format (iframe, embed, widget)
     """
     print(f"🌀 Creating {format} portal for {drop_id}")
-    
+
     # Load drop data
     drop_path = Path("drops") / drop_id
     if not drop_path.exists():
         print(f"❌ Drop not found: {drop_id}")
         return False
-    
+
     # Load content
     content_file = drop_path / f"{drop_id}.mdx"
     traits_file = drop_path / "hidden" / ".traits.yml"
-    
+
     content = ""
     traits = {}
-    
+
     if content_file.exists():
         with open(content_file, 'r') as f:
             content = f.read()
-    
+
     if traits_file.exists():
         with open(traits_file, 'r') as f:
             traits = yaml.safe_load(f)
-    
+
     # Create portal directory
     portal_dir = drop_path / "portal"
     portal_dir.mkdir(parents=True, exist_ok=True)
-    
+
     if format == "iframe":
         # Generate iframe-compatible HTML
         html_content = f"""<!DOCTYPE html>
@@ -1747,47 +1747,47 @@ def portal(c, drop_id, format="iframe"):
 <body>
     <div class="drop-container">
         <h1 class="drop-title">{drop_id.replace('_', ' ').title()}</h1>
-        
+
         <div class="drop-content">
             {content.replace('#', '<h2>').replace(chr(10) + chr(10), '</h2>' + chr(10) + chr(10))}
         </div>
-        
+
         <div class="traits-section">
             <h3>🧬 Traits</h3>
             {chr(10).join([f'<div class="trait-item"><div class="trait-name">{name}</div><div class="trait-description">{info.get("description", "No description")}</div></div>' for name, info in traits.items() if isinstance(info, dict)])}
         </div>
-        
+
         <div class="xo-brand">
             🌌 XO Universe Portal • Generated by XO Agent System
         </div>
     </div>
 </body>
 </html>"""
-        
+
         portal_file = portal_dir / f"{drop_id}_portal.html"
         with open(portal_file, 'w') as f:
             f.write(html_content)
-        
+
         print(f"✅ Created iframe portal: {portal_file}")
-    
+
     elif format == "embed":
         # Generate embed code
         embed_code = f"""<!-- XO Drop Embed: {drop_id} -->
-<iframe 
+<iframe
     src="https://xo-vault.com/drops/{drop_id}/portal/{drop_id}_portal.html"
-    width="100%" 
-    height="600" 
+    width="100%"
+    height="600"
     frameborder="0"
     style="border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
 </iframe>
 <!-- End XO Drop Embed -->"""
-        
+
         embed_file = portal_dir / f"{drop_id}_embed.html"
         with open(embed_file, 'w') as f:
             f.write(embed_code)
-        
+
         print(f"✅ Created embed code: {embed_file}")
-    
+
     return True
 
 
@@ -1795,41 +1795,41 @@ def portal(c, drop_id, format="iframe"):
 def enable_enhancements(c, target="all"):
     """
     Enable all agent enhancements.
-    
+
     Args:
         target: Target enhancements (all, react, morph, autopilot, portal)
     """
     print(f"🔧 Enabling {target} agent enhancements")
-    
+
     # Create enhancements directory
     enhancements_dir = Path("enhancements")
     enhancements_dir.mkdir(parents=True, exist_ok=True)
-    
+
     enhancements = {
         "react": "Inbox responder with persona-driven reactions",
         "morph": "Trait and content evolution over time",
         "autopilot": "Automated deployment and publishing",
         "portal": "Web-embeddable drop previews"
     }
-    
+
     enabled_features = []
-    
+
     if target == "all" or target == "react":
         enabled_features.append("react")
         print("✅ Enabled: Inbox responder")
-    
+
     if target == "all" or target == "morph":
         enabled_features.append("morph")
         print("✅ Enabled: Trait animator")
-    
+
     if target == "all" or target == "autopilot":
         enabled_features.append("autopilot")
         print("✅ Enabled: Auto-package deployer")
-    
+
     if target == "all" or target == "portal":
         enabled_features.append("portal")
         print("✅ Enabled: Web portal drop preview")
-    
+
     # Save enhancement status
     status_file = enhancements_dir / "enabled_features.yml"
     with open(status_file, 'w') as f:
@@ -1838,7 +1838,7 @@ def enable_enhancements(c, target="all"):
             "enabled_features": enabled_features,
             "feature_descriptions": enhancements
         }, f, default_flow_style=False, sort_keys=False)
-    
+
     print(f"🎉 Enabled {len(enabled_features)} agent enhancements")
     return True
 
@@ -1847,27 +1847,27 @@ def enable_enhancements(c, target="all"):
 def constellation_feed(c, output_dir="vault/daily"):
     """
     Generate daily lore digest from constellation-linked drops.
-    
+
     Args:
         output_dir: Directory to save daily digest
     """
     print(f"📰 Generating constellation feed for daily digest")
-    
+
     # Load constellation index
     constellation_dir = Path("constellation")
     index_file = constellation_dir / "index.yml"
-    
+
     if not index_file.exists():
         print(f"❌ Constellation index not found")
         return False
-    
+
     with open(index_file, 'r') as f:
         constellation_data = yaml.safe_load(f)
-    
+
     # Create daily digest directory
     daily_dir = Path(output_dir)
     daily_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Generate daily digest
     today = datetime.now().strftime("%Y-%m-%d")
     digest_content = f"""# 🌌 XO Daily Digest - {today}
@@ -1880,14 +1880,14 @@ def constellation_feed(c, output_dir="vault/daily"):
 ## 🗺️ Universe Connections
 
 """
-    
+
     # Add each drop to digest
     for drop in constellation_data.get('drops', []):
         drop_id = drop.get('drop_id', 'Unknown')
         title = drop.get('title', drop_id)
         description = drop.get('description', 'A drop in the XO universe')
         traits = drop.get('traits', [])
-        
+
         digest_content += f"""### 📦 {title}
 
 {description}
@@ -1897,7 +1897,7 @@ def constellation_feed(c, output_dir="vault/daily"):
 
 ---
 """
-    
+
     digest_content += f"""
 ## 🌟 Today's Highlights
 
@@ -1915,12 +1915,12 @@ def constellation_feed(c, output_dir="vault/daily"):
 
 *Generated by XO Constellation Feed - {datetime.now().isoformat()}*
 *Part of the living XO universe*"""
-    
+
     # Save daily digest
     digest_file = daily_dir / f"digest_{today}.mdx"
     with open(digest_file, 'w') as f:
         f.write(digest_content)
-    
+
     print(f"✅ Generated daily digest: {digest_file}")
     return True
 
@@ -1929,17 +1929,17 @@ def constellation_feed(c, output_dir="vault/daily"):
 def pulse_new(c, pulse_type="lore_update", content=None):
     """
     Create a new pulse for the XO universe.
-    
+
     Args:
         pulse_type: Type of pulse (lore_update, drop_evolution, community_highlight)
         content: Custom content for the pulse
     """
     print(f"📡 Creating new {pulse_type} pulse")
-    
+
     # Create pulses directory
     pulses_dir = Path("pulses")
     pulses_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Generate pulse content
     if not content:
         if pulse_type == "lore_update":
@@ -1958,7 +1958,7 @@ The XO universe continues to evolve with new connections and discoveries.
 - Create your own variations
 
 #XOVerse #LoreUpdate #CommunityDriven"""
-        
+
         elif pulse_type == "drop_evolution":
             content = f"""🔄 **Drop Evolution Alert**
 
@@ -1975,7 +1975,7 @@ A new evolution has occurred in the XO universe!
 - Create your own variations
 
 #XOVerse #DropEvolution #TraitBridges"""
-        
+
         elif pulse_type == "community_highlight":
             content = f"""🌟 **Community Highlight**
 
@@ -1992,11 +1992,11 @@ Amazing community activity in the XO universe!
 - Explore community inboxes
 
 #XOVerse #CommunityHighlight #CreativeCommons"""
-    
+
     # Create pulse file
     pulse_id = f"{pulse_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     pulse_file = pulses_dir / f"{pulse_id}.yml"
-    
+
     pulse_data = {
         "pulse_id": pulse_id,
         "type": pulse_type,
@@ -2004,10 +2004,10 @@ Amazing community activity in the XO universe!
         "created_at": datetime.now().isoformat(),
         "status": "active"
     }
-    
+
     with open(pulse_file, 'w') as f:
         yaml.dump(pulse_data, f, default_flow_style=False, sort_keys=False)
-    
+
     print(f"✅ Created pulse: {pulse_file}")
     return True
 
@@ -2016,18 +2016,18 @@ Amazing community activity in the XO universe!
 def pulse_sync(c, platforms="vault,discord"):
     """
     Sync pulses to various platforms.
-    
+
     Args:
         platforms: Comma-separated platforms to sync to
     """
     print(f"🔄 Syncing pulses to: {platforms}")
-    
+
     # Load pulses
     pulses_dir = Path("pulses")
     if not pulses_dir.exists():
         print(f"❌ No pulses directory found")
         return False
-    
+
     # Find active pulses
     active_pulses = []
     for pulse_file in pulses_dir.glob("*.yml"):
@@ -2035,24 +2035,24 @@ def pulse_sync(c, platforms="vault,discord"):
             pulse_data = yaml.safe_load(f)
             if pulse_data.get('status') == 'active':
                 active_pulses.append(pulse_data)
-    
+
     if not active_pulses:
         print(f"ℹ️ No active pulses found")
         return False
-    
+
     # Create sync directory
     sync_dir = Path("pulses/sync")
     sync_dir.mkdir(parents=True, exist_ok=True)
-    
+
     platforms_list = [p.strip() for p in platforms.split(",")]
-    
+
     for platform in platforms_list:
         platform_content = f"""# XO Pulse Sync - {platform.upper()}
 
 ## 📡 Active Pulses
 
 """
-        
+
         for pulse in active_pulses:
             platform_content += f"""### {pulse['type'].replace('_', ' ').title()}
 
@@ -2062,7 +2062,7 @@ def pulse_sync(c, platforms="vault,discord"):
 
 ---
 """
-        
+
         platform_content += f"""
 ## 🔗 Platform Links
 
@@ -2073,14 +2073,14 @@ def pulse_sync(c, platforms="vault,discord"):
 ---
 
 *XO Pulse Sync - {datetime.now().isoformat()}*"""
-        
+
         # Save platform-specific sync
         sync_file = sync_dir / f"sync_{platform}_{datetime.now().strftime('%Y%m%d')}.md"
         with open(sync_file, 'w') as f:
             f.write(platform_content)
-        
+
         print(f"✅ Synced to {platform}: {sync_file}")
-    
+
     print(f"🎉 Synced {len(active_pulses)} pulses to {len(platforms_list)} platforms")
     return True
 
@@ -2089,40 +2089,40 @@ def pulse_sync(c, platforms="vault,discord"):
 def deploy_drop_url(c, drop_id, target="public", domain="xo-vault.com"):
     """
     Deploy a drop to a public URL with full frontend integration.
-    
+
     Args:
         drop_id: The drop ID to deploy
         target: Deployment target (public, staging, preview)
         domain: Target domain for deployment
     """
     print(f"🚀 Deploying {drop_id} to {target} on {domain}")
-    
+
     # Load drop data
     drop_path = Path("drops") / drop_id
     if not drop_path.exists():
         print(f"❌ Drop not found: {drop_id}")
         return False
-    
+
     # Create deployment directory
     deploy_dir = Path("deploy") / target / drop_id
     deploy_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Load drop content
     content_file = drop_path / f"{drop_id}.mdx"
     traits_file = drop_path / "hidden" / ".traits.yml"
     portal_file = drop_path / "portal" / f"{drop_id}_portal.html"
-    
+
     content = ""
     traits = {}
-    
+
     if content_file.exists():
         with open(content_file, 'r') as f:
             content = f.read()
-    
+
     if traits_file.exists():
         with open(traits_file, 'r') as f:
             traits = yaml.safe_load(f)
-    
+
     # Generate deployment configuration
     deploy_config = {
         "drop_id": drop_id,
@@ -2136,12 +2136,12 @@ def deploy_drop_url(c, drop_id, target="public", domain="xo-vault.com"):
             "portal": str(portal_file) if portal_file.exists() else None
         }
     }
-    
+
     # Save deployment config
     config_file = deploy_dir / "deploy_config.yml"
     with open(config_file, 'w') as f:
         yaml.dump(deploy_config, f, default_flow_style=False, sort_keys=False)
-    
+
     # Generate public page HTML
     public_html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -2248,26 +2248,26 @@ def deploy_drop_url(c, drop_id, target="public", domain="xo-vault.com"):
             <h1 class="drop-title">{drop_id.replace('_', ' ').title()}</h1>
             <p class="drop-subtitle">A drop in the XO universe</p>
         </div>
-        
+
         <div class="drop-content">
             {content.replace('#', '<h2>').replace(chr(10) + chr(10), '</h2>' + chr(10) + chr(10))}
-            
+
             <div class="traits-grid">
                 {chr(10).join([f'<div class="trait-card"><div class="trait-name">{name}</div><div class="trait-description">{info.get("description", "No description")}</div><span class="trait-rarity">{info.get("rarity", "common")}</span></div>' for name, info in traits.items() if isinstance(info, dict)])}
             </div>
         </div>
-        
+
         <div class="mint-section">
             <h2>🌌 Mint This Drop</h2>
             <p>Join the XO universe and own a piece of this drop</p>
             <button class="mint-button" onclick="mintDrop()">Mint Drop</button>
         </div>
-        
+
         <div class="xo-brand">
             🌌 XO Universe • Generated by XO Agent System
         </div>
     </div>
-    
+
     <script>
         async function mintDrop() {{
             try {{
@@ -2285,16 +2285,16 @@ def deploy_drop_url(c, drop_id, target="public", domain="xo-vault.com"):
     </script>
 </body>
 </html>"""
-    
+
     # Save public page
     public_file = deploy_dir / "index.html"
     with open(public_file, 'w') as f:
         f.write(public_html)
-    
+
     print(f"✅ Deployed {drop_id} to {target}")
     print(f"📁 Public URL: https://{domain}/drops/{drop_id}")
     print(f"📁 Files: {deploy_dir}")
-    
+
     return True
 
 
@@ -2302,38 +2302,38 @@ def deploy_drop_url(c, drop_id, target="public", domain="xo-vault.com"):
 def drop_bundle(c, drop_id, template="mintable"):
     """
     Bundle a drop for minting with all necessary metadata and assets.
-    
+
     Args:
         drop_id: The drop ID to bundle
         template: Bundle template (mintable, community, legendary)
     """
     print(f"📦 Bundling {drop_id} with {template} template")
-    
+
     # Load drop data
     drop_path = Path("drops") / drop_id
     if not drop_path.exists():
         print(f"❌ Drop not found: {drop_id}")
         return False
-    
+
     # Create bundle directory
     bundle_dir = Path("bundles") / drop_id
     bundle_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Load traits and content
     traits_file = drop_path / "hidden" / ".traits.yml"
     content_file = drop_path / f"{drop_id}.mdx"
-    
+
     traits = {}
     content = ""
-    
+
     if traits_file.exists():
         with open(traits_file, 'r') as f:
             traits = yaml.safe_load(f)
-    
+
     if content_file.exists():
         with open(content_file, 'r') as f:
             content = f.read()
-    
+
     # Generate mint metadata
     mint_metadata = {
         "name": drop_id.replace('_', ' ').title(),
@@ -2342,7 +2342,7 @@ def drop_bundle(c, drop_id, template="mintable"):
         "external_url": f"https://xo-vault.com/drops/{drop_id}",
         "attributes": []
     }
-    
+
     # Add trait attributes
     for trait_name, trait_info in traits.items():
         if isinstance(trait_info, dict):
@@ -2351,7 +2351,7 @@ def drop_bundle(c, drop_id, template="mintable"):
                 "value": trait_name,
                 "rarity": trait_info.get("rarity", "common")
             })
-            
+
             # Add game effects as attributes
             if "game_effects" in trait_info:
                 for game, effects in trait_info["game_effects"].items():
@@ -2360,16 +2360,16 @@ def drop_bundle(c, drop_id, template="mintable"):
                             "trait_type": f"{game.title()} Effect",
                             "value": f"{effect}: {value}"
                         })
-    
+
     # Save mint metadata
     metadata_file = bundle_dir / "mint.metadata.json"
     with open(metadata_file, 'w') as f:
         json.dump(mint_metadata, f, indent=2)
-    
+
     # Generate unlockable content
     unlockable_dir = bundle_dir / "unlockable"
     unlockable_dir.mkdir(parents=True, exist_ok=True)
-    
+
     unlockable_content = f"""# 🔓 Unlockable Content: {drop_id}
 
 ## 📜 Hidden Scrolls
@@ -2384,7 +2384,7 @@ This drop contains hidden scrolls and lore that are revealed to holders.
 
 This drop's traits are compatible with:
 - MarioKart: Speed and power effects
-- Sims: Personality and skill enhancements  
+- Sims: Personality and skill enhancements
 - Minecraft: Resource gathering and exploration bonuses
 
 ### 🌌 Lore Connection
@@ -2395,11 +2395,11 @@ This drop's traits are compatible with:
 
 *Unlockable content for {drop_id} holders*
 *Part of the XO universe*"""
-    
+
     unlockable_file = unlockable_dir / "scrolls.md"
     with open(unlockable_file, 'w') as f:
         f.write(unlockable_content)
-    
+
     # Generate persona fusion
     persona_file = bundle_dir / "persona.json"
     persona_data = {
@@ -2416,10 +2416,10 @@ This drop's traits are compatible with:
         ],
         "created_at": datetime.now().isoformat()
     }
-    
+
     with open(persona_file, 'w') as f:
         json.dump(persona_data, f, indent=2)
-    
+
     # Generate QR landing page
     qr_html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -2471,11 +2471,11 @@ This drop's traits are compatible with:
     </script>
 </body>
 </html>"""
-    
+
     qr_file = bundle_dir / "qr_landing.html"
     with open(qr_file, 'w') as f:
         f.write(qr_html)
-    
+
     # Create bundle manifest
     manifest = {
         "drop_id": drop_id,
@@ -2493,16 +2493,16 @@ This drop's traits are compatible with:
             for trait_info in traits.values() if isinstance(trait_info, dict)
         }
     }
-    
+
     manifest_file = bundle_dir / "bundle.manifest.yml"
     with open(manifest_file, 'w') as f:
         yaml.dump(manifest, f, default_flow_style=False, sort_keys=False)
-    
+
     print(f"✅ Bundled {drop_id} for minting")
     print(f"📁 Bundle location: {bundle_dir}")
     print(f"📊 Traits: {len(traits)}")
     print(f"🎫 Ready for contract deployment")
-    
+
     return True
 
 
@@ -2510,18 +2510,18 @@ This drop's traits are compatible with:
 def deploy_with_dns(c, domains="xo-vault.com,xoseals.com,xoledger.com"):
     """
     Deploy with DNS configuration for multiple domains.
-    
+
     Args:
         domains: Comma-separated list of domains
     """
     print(f"🌐 Deploying with DNS for domains: {domains}")
-    
+
     # Create DNS configuration
     dns_dir = Path("deploy/dns")
     dns_dir.mkdir(parents=True, exist_ok=True)
-    
+
     domains_list = [d.strip() for d in domains.split(",")]
-    
+
     # Generate Cloudflare Pages configuration
     pages_config = {
         "name": "xo-universe",
@@ -2530,7 +2530,7 @@ def deploy_with_dns(c, domains="xo-vault.com,xoseals.com,xoledger.com"):
         "output_directory": "public",
         "routes": []
     }
-    
+
     # Add routes for each domain
     for domain in domains_list:
         pages_config["routes"].extend([
@@ -2547,12 +2547,12 @@ def deploy_with_dns(c, domains="xo-vault.com,xoseals.com,xoledger.com"):
                 "destination": "/vault/daily/[date]"
             }
         ])
-    
+
     # Save Cloudflare configuration
     cf_config_file = dns_dir / "cloudflare-pages.json"
     with open(cf_config_file, 'w') as f:
         json.dump(pages_config, f, indent=2)
-    
+
     # Generate redirect rules
     redirect_rules = []
     for domain in domains_list:
@@ -2576,15 +2576,15 @@ def deploy_with_dns(c, domains="xo-vault.com,xoseals.com,xoledger.com"):
                 }
             ]
         })
-    
+
     redirect_file = dns_dir / "redirect-rules.yml"
     with open(redirect_file, 'w') as f:
         yaml.dump(redirect_rules, f, default_flow_style=False, sort_keys=False)
-    
+
     print(f"✅ DNS configuration generated")
     print(f"📁 Configuration files: {dns_dir}")
     print(f"🌐 Domains configured: {', '.join(domains_list)}")
-    
+
     return True
 
 

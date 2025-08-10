@@ -13,4 +13,4 @@ def generate_digest(content, format="html"):
 def render_digest(content, template="default"):
     """Render digest with a specific template."""
     # Placeholder implementation
-    return f"<div class='digest-{template}'>{content}</div>" 
+    return f"<div class='digest-{template}'>{content}</div>"

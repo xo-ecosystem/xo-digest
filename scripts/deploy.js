@@ -2,26 +2,26 @@ const { ethers } = require("hardhat");
 
 async function main() {
     console.log("🚀 Deploying XO Season 1 Drop Contract...");
-    
+
     // Get the contract factory
     const XOSeason1Drop = await ethers.getContractFactory("XOSeason1Drop");
-    
+
     // Deploy the contract
     const xoDrop = await XOSeason1Drop.deploy();
     await xoDrop.waitForDeployment();
-    
+
     const address = await xoDrop.getAddress();
     console.log("✅ XO Season 1 Drop deployed to:", address);
-    
+
     // Create initial drops
     console.log("📦 Creating initial drops...");
-    
+
     // Drop 1: message_bottle_v3 (Legendary Evolution)
     const messageBottleV3Traits = [
         "message_bottle_legendary",
         "cosmic_resonance_legendary"
     ];
-    
+
     await xoDrop.createDrop(
         "Message Bottle V3 - Legendary Evolution",
         "Legendary ascension of the original message bottle - achieving ultimate form with transcendent powers",
@@ -31,15 +31,15 @@ async function main() {
         ethers.parseEther("0.021"), // Price: 0.021 ETH
         messageBottleV3Traits
     );
-    
+
     console.log("✅ Created drop: message_bottle_v3");
-    
+
     // Drop 2: seal_flame
     const sealFlameTraits = [
         "eternal_flame",
         "seal_breaker"
     ];
-    
+
     await xoDrop.createDrop(
         "Seal Flame",
         "An eternal flame that never extinguishes, representing the unbreakable spirit with the power to break ancient seals",
@@ -49,9 +49,9 @@ async function main() {
         ethers.parseEther("0.021"), // Price: 0.021 ETH
         sealFlameTraits
     );
-    
+
     console.log("✅ Created drop: seal_flame");
-    
+
     // Add trait metadata for message_bottle_v3
     await xoDrop.addTrait(1, "message_bottle_legendary", JSON.stringify({
         "description": "Legendary ascension of A mysterious bottle containing a scroll with ancient wisdom - achieving ultimate form",
@@ -74,7 +74,7 @@ async function main() {
             }
         }
     }));
-    
+
     await xoDrop.addTrait(1, "cosmic_resonance_legendary", JSON.stringify({
         "description": "Legendary ascension of Enhanced connection to the cosmic forces - achieving ultimate form",
         "rarity": "legendary",
@@ -96,7 +96,7 @@ async function main() {
             }
         }
     }));
-    
+
     // Add trait metadata for seal_flame
     await xoDrop.addTrait(2, "eternal_flame", JSON.stringify({
         "description": "An eternal flame that never extinguishes, representing the unbreakable spirit",
@@ -116,7 +116,7 @@ async function main() {
             }
         }
     }));
-    
+
     await xoDrop.addTrait(2, "seal_breaker", JSON.stringify({
         "description": "The power to break ancient seals and unlock hidden knowledge",
         "rarity": "epic",
@@ -135,9 +135,9 @@ async function main() {
             }
         }
     }));
-    
+
     console.log("✅ Added trait metadata for all drops");
-    
+
     // Save deployment info
     const deploymentInfo = {
         contractAddress: address,
@@ -160,19 +160,19 @@ async function main() {
             }
         }
     };
-    
+
     console.log("📋 Deployment Summary:");
     console.log("Contract Address:", deploymentInfo.contractAddress);
     console.log("Network:", deploymentInfo.network);
     console.log("Drops Created:", Object.keys(deploymentInfo.drops).length);
-    
+
     // Save to file
     const fs = require("fs");
     fs.writeFileSync(
         "deployment-info.json",
         JSON.stringify(deploymentInfo, null, 2)
     );
-    
+
     console.log("💾 Deployment info saved to deployment-info.json");
     console.log("🎉 XO Season 1 Drop deployment complete!");
 }

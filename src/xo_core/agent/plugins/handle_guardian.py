@@ -149,7 +149,7 @@ Generated: {datetime.utcnow().isoformat()}
 
 Handle availability checks completed for all platforms:
 - Twitter
-- GitHub  
+- GitHub
 - ENS
 - Farcaster
 - Discord

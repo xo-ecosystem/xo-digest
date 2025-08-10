@@ -29,14 +29,14 @@ def drop_audit(c, bundle):
     """
     drop_path = Path("drops") / bundle
     required_files = ["drop_main.webp", "drop.preview.yml", "drop.status.json", ".traits.yml"]
-    
+
     print(f"🔍 Auditing drop: {bundle}")
     print(f"📁 Path: {drop_path}")
-    
+
     if not drop_path.exists():
         print(f"❌ Drop directory not found: {drop_path}")
         return False
-    
+
     # Check required files
     missing = []
     present = []
@@ -46,14 +46,14 @@ def drop_audit(c, bundle):
             present.append(file)
         else:
             missing.append(file)
-    
+
     if missing:
         print(f"⚠️ Missing files: {', '.join(missing)}")
     else:
         print(f"✅ All required drop files present")
-    
+
     print(f"📋 Present: {', '.join(present)}")
-    
+
     # Validate drop.status.json
     status_path = drop_path / "drop.status.json"
     if status_path.exists():
@@ -61,7 +61,7 @@ def drop_audit(c, bundle):
             with open(status_path, 'r') as f:
                 status = json.load(f)
             print(f"✅ drop.status.json is valid JSON")
-            
+
             # Check for required fields
             required_fields = ["drop", "title", "status", "description"]
             missing_fields = [field for field in required_fields if field not in status]
@@ -69,10 +69,10 @@ def drop_audit(c, bundle):
                 print(f"⚠️ Missing status fields: {', '.join(missing_fields)}")
             else:
                 print(f"✅ All required status fields present")
-                
+
         except json.JSONDecodeError as e:
             print(f"❌ Invalid JSON in drop.status.json: {e}")
-    
+
     # Validate .traits.yml
     traits_path = drop_path / ".traits.yml"
     if traits_path.exists():
@@ -80,7 +80,7 @@ def drop_audit(c, bundle):
             with open(traits_path, 'r') as f:
                 traits = yaml.safe_load(f)
             print(f"✅ .traits.yml is valid YAML")
-            
+
             if isinstance(traits, list):
                 print(f"📊 Found {len(traits)} traits")
                 for trait in traits:
@@ -90,10 +90,10 @@ def drop_audit(c, bundle):
                         print(f"  - {trait_id}: {trait_name}")
             else:
                 print(f"⚠️ .traits.yml should contain a list of traits")
-                
+
         except yaml.YAMLError as e:
             print(f"❌ Invalid YAML in .traits.yml: {e}")
-    
+
     # Check for IPFS placeholders
     if traits_path.exists():
         with open(traits_path, 'r') as f:
@@ -102,7 +102,7 @@ def drop_audit(c, bundle):
                 print(f"⚠️ Found IPFS placeholders in .traits.yml - needs CID patching")
             else:
                 print(f"✅ No IPFS placeholders found")
-    
+
     return len(missing) == 0
 
 
@@ -114,14 +114,14 @@ def vault_publish(c, bundle):
     """
     drop_path = Path("drops") / bundle
     traits_path = drop_path / ".traits.yml"
-    
+
     print(f"🚀 Publishing drop: {bundle}")
     print(f"📁 Path: {drop_path}")
-    
+
     if not drop_path.exists():
         print(f"❌ Drop directory not found: {drop_path}")
         return False
-    
+
     # Upload main drop file
     main_file = drop_path / "drop_main.webp"
     if main_file.exists():
@@ -134,21 +134,21 @@ def vault_publish(c, bundle):
             return False
     else:
         print(f"⚠️ Main drop file not found: {main_file}")
-    
+
     # Upload and patch traits
     if traits_path.exists():
         try:
             with open(traits_path, 'r') as f:
                 traits = yaml.safe_load(f) or []
-            
+
             print(f"📊 Processing {len(traits)} traits...")
-            
+
             for trait in traits:
                 if isinstance(trait, dict):
                     trait_id = trait.get('id', 'unknown')
                     trait_name = trait.get('name', 'unnamed')
                     file_name = trait.get('file')
-                    
+
                     if file_name:
                         file_path = drop_path / file_name
                         if file_path.exists():
@@ -157,7 +157,7 @@ def vault_publish(c, bundle):
                             if isinstance(result, dict) and "cid" in result:
                                 cid = result['cid']
                                 print(f"✅ {trait_name} uploaded: ipfs://{cid}")
-                                
+
                                 # Patch the trait with CID
                                 if 'media' in trait:
                                     if 'image' in trait['media'] and 'ipfs://<insert>' in trait['media']['image']:
@@ -168,26 +168,26 @@ def vault_publish(c, bundle):
                                 print(f"❌ Failed to upload {file_name}")
                         else:
                             print(f"⚠️ Trait file not found: {file_path}")
-            
+
             # Save patched traits
             with open(traits_path, 'w') as f:
                 yaml.dump(traits, f, sort_keys=False, default_flow_style=False)
             print(f"🧩 Patched .traits.yml with IPFS CIDs")
-            
+
         except yaml.YAMLError as e:
             print(f"❌ Error processing .traits.yml: {e}")
             return False
     else:
         print(f"ℹ️ No .traits.yml found")
-    
+
     # Create deployment log
     log_path = Path("vault/logbook")
     log_path.mkdir(parents=True, exist_ok=True)
-    
+
     from datetime import datetime
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file = log_path / f"deploy_{bundle}_{timestamp}.md"
-    
+
     with open(log_file, 'w') as f:
         f.write(f"# Drop Deployment Log: {bundle}\n\n")
         f.write(f"**Deployed:** {datetime.now().isoformat()}\n\n")
@@ -200,10 +200,10 @@ def vault_publish(c, bundle):
         f.write("1. Verify all IPFS links are accessible\n")
         f.write("2. Test mint functionality\n")
         f.write("3. Update drop.status.json with final metadata\n")
-    
+
     print(f"📝 Deployment log saved: {log_file}")
     print(f"🎉 Drop '{bundle}' published successfully!")
-    
+
     return True
 
 

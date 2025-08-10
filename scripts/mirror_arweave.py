@@ -8,7 +8,7 @@ def mirror_to_arweave(file_path, wallet_path=None):
     wallet_path = wallet_path or os.getenv("ARWEAVE_WALLET_JSON", "secrets/arweave_wallet.json")
     if not os.path.exists(wallet_path):
         raise FileNotFoundError(f"Arweave wallet not found: {wallet_path}")
-    
+
     with open(wallet_path, 'r') as f:
         keyfile = json.load(f)
 

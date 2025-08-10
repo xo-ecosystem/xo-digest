@@ -4,7 +4,9 @@ import os
 
 def hook_webhook(persona, payload=None):
     """Webhook plugin hook for persona dispatches"""
-    url = os.getenv("XO_AGENT_WEBHOOK_URL", "https://webhook.site/placeholder-url")
+    url = os.getenv("XO_AGENT_WEBHOOK_URL")
+    if not url:
+        raise RuntimeError("XO_AGENT_WEBHOOK_URL is required but not set")
     message = {
         "persona": persona,
         "event": "dispatch_triggered",

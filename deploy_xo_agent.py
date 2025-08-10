@@ -70,12 +70,10 @@ def trigger_webhook_deployment(env_vars):
     print("🔐 Vault Keeper: Triggering webhook deployment...")
 
     # Get webhook URL from environment
-    webhook_url = env_vars.get(
-        "XO_AGENT_WEBHOOK_URL", "https://agent0.21xo.com/agent/webhook"
-    )
+    webhook_url = env_vars.get("XO_AGENT_WEBHOOK_URL")
     agent_secret = env_vars.get("XO_AGENT_SECRET")
 
-    if not agent_secret:
+    if not agent_secret or not webhook_url:
         print("⚠️ XO_AGENT_SECRET not found in .env.production")
         return False
 
@@ -125,7 +123,7 @@ def trigger_github_workflow(env_vars):
             "task": "cosmic.align",
             "args": ["false"],  # dry_run=false
             "webhook_url": env_vars.get(
-                "XO_AGENT_WEBHOOK_URL", "https://vault.21xo.com/agent/webhook"
+                "XO_AGENT_WEBHOOK_URL", "https://example.invalid/webhook"
             ),
         },
     }

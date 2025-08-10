@@ -159,21 +159,21 @@ async def advanced_signature(request: AdvancedSignatureRequest):
         client = get_vault_client()
         if client is None:
             raise HTTPException(status_code=503, detail="HashiCorp Vault not available")
-        
+
         # Create signer instance
         signer = XOVaultSigner(algorithm=request.algorithm)
-        
+
         # Generate key name based on content type and timestamp
         from datetime import datetime
         key_name = f"{request.content_type}-signing-key-{datetime.now().strftime('%Y%m')}"
-        
+
         # Ensure key exists
         try:
             signer.generate_key_pair(key_name, request.algorithm)
         except:
             # Key might already exist, continue
             pass
-        
+
         # Sign the content
         signed_document = signer.sign_content(
             content=request.content,
@@ -181,14 +181,14 @@ async def advanced_signature(request: AdvancedSignatureRequest):
             content_type=request.content_type,
             metadata=request.metadata
         )
-        
+
         return {
             "status": "signed",
             "signed_document": signed_document,
             "algorithm": request.algorithm,
             "key_name": key_name
         }
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Advanced signing failed: {str(e)}"
@@ -203,7 +203,7 @@ async def dispatch_signature(request: SignatureRequest):
         client = get_vault_client()
         if client is None:
             raise HTTPException(status_code=503, detail="HashiCorp Vault not available")
-        
+
         # Use advanced signing for legacy requests
         advanced_request = AdvancedSignatureRequest(
             content=f"legacy_content_{request.content_id}",
@@ -211,9 +211,9 @@ async def dispatch_signature(request: SignatureRequest):
             algorithm="ed25519",
             metadata={"legacy_request": True, "requester": request.requester}
         )
-        
+
         result = await advanced_signature(advanced_request)
-        
+
         return {
             "content_type": request.content_type,
             "content_id": request.content_id,
@@ -251,28 +251,28 @@ async def manage_keys(request: KeyManagementRequest):
         client = get_vault_client()
         if client is None:
             raise HTTPException(status_code=503, detail="HashiCorp Vault not available")
-        
+
         signer = XOVaultSigner(algorithm=request.algorithm)
-        
+
         if request.action == "create":
             result = signer.generate_key_pair(request.key_name, request.algorithm)
             return {"status": "key_created", "result": result}
-            
+
         elif request.action == "rotate":
             result = signer.rotate_key(request.key_name)
             return {"status": "key_rotated", "result": result}
-            
+
         elif request.action == "list":
             keys = signer.list_keys()
             return {"status": "keys_listed", "keys": keys}
-            
+
         elif request.action == "export":
             public_key = signer.export_public_key(request.key_name)
             return {"status": "key_exported", "public_key": public_key}
-            
+
         else:
             raise HTTPException(status_code=400, detail=f"Unknown action: {request.action}")
-            
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Key management failed: {str(e)}")
 
@@ -285,13 +285,13 @@ async def verify_signature(signed_document: Dict[str, Any]):
         client = get_vault_client()
         if client is None:
             raise HTTPException(status_code=503, detail="HashiCorp Vault not available")
-        
+
         result = verify_signed_content(signed_document)
         return {
             "status": "verified",
             "verification_result": result
         }
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Signature verification failed: {str(e)}")
 
@@ -304,20 +304,20 @@ async def sign_pulse_endpoint(pulse_data: Dict[str, Any]):
         client = get_vault_client()
         if client is None:
             raise HTTPException(status_code=503, detail="HashiCorp Vault not available")
-        
+
         content = pulse_data.get("content", "")
         slug = pulse_data.get("slug", "")
         metadata = pulse_data.get("metadata", {})
-        
+
         if not content or not slug:
             raise HTTPException(status_code=400, detail="Content and slug are required")
-        
+
         signed_pulse = sign_pulse(content, slug, metadata)
         return {
             "status": "pulse_signed",
             "signed_pulse": signed_pulse
         }
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Pulse signing failed: {str(e)}")
 
@@ -330,19 +330,19 @@ async def sign_drop_endpoint(drop_data: Dict[str, Any]):
         client = get_vault_client()
         if client is None:
             raise HTTPException(status_code=503, detail="HashiCorp Vault not available")
-        
+
         metadata = drop_data.get("metadata", {})
         slug = drop_data.get("slug", "")
-        
+
         if not metadata or not slug:
             raise HTTPException(status_code=400, detail="Metadata and slug are required")
-        
+
         signed_drop = sign_drop(metadata, slug)
         return {
             "status": "drop_signed",
             "signed_drop": signed_drop
         }
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Drop signing failed: {str(e)}")
 

@@ -77,5 +77,3 @@ export const ThreeGlowDemo: React.FC<Props> = ({ dropId }) => {
 };
 
 export default ThreeGlowDemo;
-
-

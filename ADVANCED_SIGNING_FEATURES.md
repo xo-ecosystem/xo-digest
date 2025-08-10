@@ -45,7 +45,7 @@ The XO Vault system now includes advanced cryptographic signing capabilities usi
 ```python
 SUPPORTED_ALGORITHMS = {
     "ed25519": "Ed25519 digital signature",
-    "rsa": "RSA digital signature", 
+    "rsa": "RSA digital signature",
     "ecdsa": "ECDSA digital signature",
     "sha256": "SHA-256 hash verification"
 }
@@ -341,4 +341,4 @@ fab vault.rotate-keys:pulse-signing-key
 
 ---
 
-*The advanced signing features provide enterprise-grade cryptographic security for the XO Vault system, enabling truly immutable and verifiable content publishing.* 
+*The advanced signing features provide enterprise-grade cryptographic security for the XO Vault system, enabling truly immutable and verifiable content publishing.*

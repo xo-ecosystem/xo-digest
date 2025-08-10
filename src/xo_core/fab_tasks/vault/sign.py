@@ -6,7 +6,7 @@ def sign_all(c):
     from xo_core.vault.sign_pulse import sign_pulse
     from xo_core.vault.ipfs_utils import log_status
     from xo_core.vault.preview_generator import render_signed_preview
-    
+
     print("🔏 Signing all vault entries...")
 
     pulses = load_all_pulses()
@@ -17,7 +17,7 @@ def sign_all(c):
     for pulse in pulses:
         result = sign_pulse(pulse)
         log_status(f"✅ Pulse signed and pinned: {result.get('ipfs_hash')}")
-        
+
         # 🎨 Render preview file
         pulse["ipfs_hash"] = result.get("ipfs_hash")
         render_signed_preview(

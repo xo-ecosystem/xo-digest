@@ -51,4 +51,3 @@ def ensure_dns(c, dry_run=False):
             print(f"✅ Created CNAME: {fqdn} -> {target}")
         else:
             print(f"❌ Failed to create CNAME: {create_resp.text}")
-

@@ -85,14 +85,14 @@ export const VaultDashboard: React.FC = () => {
 
   const runVaultTask = async (task: string, params: Record<string, any> = {}) => {
     console.log(`Running vault task: ${task}`, params);
-    
+
     // Show loading state
     setLoading(true);
-    
+
     try {
       // Use real API with fallback to mock
       const response = await vaultAPI.executeTask(task, params);
-      
+
       if (response.success) {
         console.log(`Task ${task} completed:`, response.message);
         // Refresh status after task completion
@@ -310,4 +310,4 @@ export const VaultDashboard: React.FC = () => {
       </main>
     </div>
   );
-}; 
+};

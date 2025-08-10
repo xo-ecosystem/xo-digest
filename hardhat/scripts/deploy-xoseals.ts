@@ -96,4 +96,4 @@ New deployment of \`XOSealsDrop\` executed on branch \`${branch}\`.
 main().catch((error) => {
   console.error(error);
   process.exit(1);
-}); 
+});

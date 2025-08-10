@@ -53,7 +53,7 @@ The XO Vault system implements a complete architecture for immutable, decentrali
 
 **Features**:
 - ✅ Pulse preview generator
-- ✅ Inbox comment router  
+- ✅ Inbox comment router
 - ✅ Drop metadata server
 - ✅ Signature dispatcher (using HashiCorp Vault secrets)
 - ✅ Health check endpoint
@@ -118,7 +118,7 @@ The XO Vault system implements a complete architecture for immutable, decentrali
 
 **Services**:
 - `xo-vault-api` (port 8801)
-- `vault` (port 8200) 
+- `vault` (port 8200)
 - `xo-node` (port 8080)
 - `redis` (port 6379)
 
@@ -209,4 +209,4 @@ fab vault-check           # Validate vault system
 
 ---
 
-*The XO Vault Architecture is now fully implemented and ready for production use. The system provides a complete foundation for immutable, decentralized publishing with proper secrets management.* 
+*The XO Vault Architecture is now fully implemented and ready for production use. The system provides a complete foundation for immutable, decentralized publishing with proper secrets management.*

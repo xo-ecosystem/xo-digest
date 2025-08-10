@@ -20,5 +20,3 @@ export type Trait = {
   attributes?: Array<Record<string, unknown>>;
   game_effects?: GameEffects;
 };
-
-

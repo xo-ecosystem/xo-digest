@@ -32,7 +32,7 @@ def scan_bundle_assets(drop_id: str, bundle_name: str) -> Dict[str, Any]:
     bundle_path = VAULT_DROPS_PATH / drop_id / bundle_name
     metadata_path = bundle_path / "metadata"
     webp_path = bundle_path / "webp"
-    
+
     bundle_info = {
         "name": bundle_name,
         "assets": [],
@@ -41,13 +41,13 @@ def scan_bundle_assets(drop_id: str, bundle_name: str) -> Dict[str, Any]:
         "preview_file": None,
         "errors": []
     }
-    
+
     # Scan webp files
     if webp_path.exists():
         bundle_info["webp_files"] = [
             f.name for f in webp_path.glob("*.webp")
         ]
-    
+
     # Load drop.status.json
     status_file = metadata_path / "drop.status.json"
     if status_file.exists():
@@ -55,7 +55,7 @@ def scan_bundle_assets(drop_id: str, bundle_name: str) -> Dict[str, Any]:
             with open(status_file, 'r') as f:
                 status_data = json.load(f)
                 bundle_info["status_file"] = status_data
-                
+
                 # Extract assets from status
                 if "assets" in status_data:
                     for asset in status_data["assets"]:
@@ -65,23 +65,23 @@ def scan_bundle_assets(drop_id: str, bundle_name: str) -> Dict[str, Any]:
                             "file": asset.get("file", ""),
                             "exists": False
                         }
-                        
+
                         # Check if asset file exists
                         if asset_info["file"]:
                             asset_path = webp_path / asset_info["file"]
                             asset_info["exists"] = asset_path.exists()
-                            
+
                             if not asset_info["exists"]:
                                 bundle_info["errors"].append(
                                     f"Missing asset file: {asset_info['file']}"
                                 )
-                        
+
                         bundle_info["assets"].append(asset_info)
         except Exception as e:
             bundle_info["errors"].append(f"Error loading status file: {e}")
     else:
         bundle_info["errors"].append("Missing drop.status.json")
-    
+
     # Load drop.preview.yml
     preview_file = metadata_path / "drop.preview.yml"
     if preview_file.exists():
@@ -90,7 +90,7 @@ def scan_bundle_assets(drop_id: str, bundle_name: str) -> Dict[str, Any]:
                 bundle_info["preview_file"] = yaml.safe_load(f)
         except Exception as e:
             bundle_info["errors"].append(f"Error loading preview file: {e}")
-    
+
     return bundle_info
 
 def validate_drop_meta(drop_id: str) -> Dict[str, Any]:
@@ -98,7 +98,7 @@ def validate_drop_meta(drop_id: str) -> Dict[str, Any]:
     drop_path = CONTENT_DROPS_PATH / drop_id
     meta_file = drop_path / "drop.meta.json"
     vault_drop_path = VAULT_DROPS_PATH / drop_id
-    
+
     validation = {
         "drop_id": drop_id,
         "meta_exists": meta_file.exists(),
@@ -107,7 +107,7 @@ def validate_drop_meta(drop_id: str) -> Dict[str, Any]:
         "warnings": [],
         "patches": []
     }
-    
+
     # Load existing meta if it exists
     existing_meta = {}
     if meta_file.exists():
@@ -117,22 +117,22 @@ def validate_drop_meta(drop_id: str) -> Dict[str, Any]:
         except Exception as e:
             validation["errors"].append(f"Error loading drop.meta.json: {e}")
             return validation
-    
+
     # Scan bundles in vault
     if not vault_drop_path.exists():
         validation["errors"].append(f"Vault drop path not found: {vault_drop_path}")
         return validation
-    
+
     bundle_dirs = [d for d in vault_drop_path.iterdir() if d.is_dir() and not d.name.startswith('.')]
-    
+
     for bundle_dir in bundle_dirs:
         bundle_name = bundle_dir.name
         bundle_info = scan_bundle_assets(drop_id, bundle_name)
         validation["bundles"].append(bundle_info)
-        
+
         if bundle_info["errors"]:
             validation["warnings"].extend(bundle_info["errors"])
-    
+
     # Generate enhanced metadata
     shared_meta = load_shared_meta()
     enhanced_meta = {
@@ -154,14 +154,14 @@ def validate_drop_meta(drop_id: str) -> Dict[str, Any]:
         "created_at": existing_meta.get("created_at", "2025-07-21T00:00:00Z"),
         "updated_at": "2025-07-21T00:00:00Z"
     }
-    
+
     # Merge with shared metadata
     if drop_id in shared_meta:
         for key, value in shared_meta[drop_id].items():
             if key not in existing_meta:  # Don't overwrite existing values
                 enhanced_meta[key] = value
                 validation["patches"].append(f"Added {key} from shared meta")
-    
+
     # Collect all assets from bundles
     all_assets = []
     for bundle in validation["bundles"]:
@@ -174,23 +174,23 @@ def validate_drop_meta(drop_id: str) -> Dict[str, Any]:
                 "exists": asset["exists"]
             }
             all_assets.append(asset_info)
-    
+
     enhanced_meta["assets"] = all_assets
-    
+
     # Update variants based on webp files
     all_webp_files = set()
     for bundle in validation["bundles"]:
         all_webp_files.update(bundle["webp_files"])
-    
+
     if all_webp_files:
         enhanced_meta["variants"] = sorted(list(all_webp_files))
         validation["patches"].append(f"Updated variants from {len(all_webp_files)} webp files")
-    
+
     # Save enhanced metadata
     meta_file.parent.mkdir(parents=True, exist_ok=True)
     with open(meta_file, 'w') as f:
         json.dump(enhanced_meta, f, indent=2)
-    
+
     validation["enhanced_meta"] = enhanced_meta
     return validation
 
@@ -204,7 +204,7 @@ def sync_meta(c, drop=None, list=False, validate_only=False, verbose=False):
     """Sync drop.meta.json with bundle metadata."""
     print("🔁 XO Drop Meta Sync System")
     print("-" * 40)
-    
+
     if list:
         print("📋 Available drops:")
         if CONTENT_DROPS_PATH.exists():
@@ -216,17 +216,17 @@ def sync_meta(c, drop=None, list=False, validate_only=False, verbose=False):
         else:
             print("  No content drops directory found")
         return
-    
+
     if not drop:
         print("❌ Please specify a drop ID with --drop=<id>")
         print("   Use --list to see available drops")
         return
-    
+
     print(f"🎯 Syncing meta for drop: {drop}")
-    
+
     # Validate and patch
     validation = validate_drop_meta(drop)
-    
+
     if verbose:
         print(f"\n📊 Validation Results:")
         print(f"  Drop ID: {validation['drop_id']}")
@@ -235,38 +235,38 @@ def sync_meta(c, drop=None, list=False, validate_only=False, verbose=False):
         print(f"  Errors: {len(validation['errors'])}")
         print(f"  Warnings: {len(validation['warnings'])}")
         print(f"  Patches applied: {len(validation['patches'])}")
-    
+
     # Show bundle details
     print(f"\n📦 Bundle Analysis:")
     for bundle in validation["bundles"]:
         status = "✅" if not bundle["errors"] else "⚠️"
         print(f"  {status} {bundle['name']}: {len(bundle['assets'])} assets, {len(bundle['webp_files'])} webp files")
-        
+
         if bundle["errors"] and verbose:
             for error in bundle["errors"]:
                 print(f"    ⚠️ {error}")
-    
+
     # Show patches
     if validation["patches"]:
         print(f"\n🔧 Patches Applied:")
         for patch in validation["patches"]:
             print(f"  ✅ {patch}")
-    
+
     # Show errors
     if validation["errors"]:
         print(f"\n❌ Errors:")
         for error in validation["errors"]:
             print(f"  ❌ {error}")
-    
+
     # Show warnings
     if validation["warnings"]:
         print(f"\n⚠️ Warnings:")
         for warning in validation["warnings"]:
             print(f"  ⚠️ {warning}")
-    
+
     if not validation["errors"]:
         print(f"\n🎉 Drop '{drop}' meta sync completed successfully!")
-        
+
         # Show summary
         enhanced_meta = validation.get("enhanced_meta", {})
         print(f"\n📊 Summary for {drop}:")
@@ -282,36 +282,36 @@ def sync_meta(c, drop=None, list=False, validate_only=False, verbose=False):
 def sync_all(c, verbose=False):
     """Sync meta for all available drops."""
     print("🔄 Syncing meta for all drops...")
-    
+
     if not CONTENT_DROPS_PATH.exists():
         print("❌ Content drops directory not found")
         return
-    
+
     success_count = 0
     total_count = 0
-    
+
     for drop_dir in CONTENT_DROPS_PATH.iterdir():
         if drop_dir.is_dir():
             drop_id = drop_dir.name
             total_count += 1
-            
+
             print(f"\n🎯 Processing {drop_id}...")
-            
+
             try:
                 validation = validate_drop_meta(drop_id)
-                
+
                 if not validation["errors"]:
                     print(f"✅ {drop_id} synced successfully")
                     success_count += 1
                 else:
                     print(f"❌ {drop_id} failed: {len(validation['errors'])} errors")
-                    
+
                     if verbose:
                         for error in validation["errors"]:
                             print(f"  ❌ {error}")
             except Exception as e:
                 print(f"❌ Error syncing {drop_id}: {e}")
-    
+
     print(f"\n🎉 Meta sync complete: {success_count}/{total_count} drops processed")
 
 @task
@@ -319,18 +319,18 @@ def validate_structure(c, drop=None):
     """Validate drop structure and show detailed analysis."""
     print("🔍 Drop Structure Validation")
     print("-" * 40)
-    
+
     if not drop:
         print("❌ Please specify a drop ID with --drop=<id>")
         return
-    
+
     validation = validate_drop_meta(drop)
-    
+
     print(f"\n📁 Structure Analysis for '{drop}':")
     print(f"  Content path: {CONTENT_DROPS_PATH / drop}")
     print(f"  Vault path: {VAULT_DROPS_PATH / drop}")
     print(f"  Meta file: {'✅' if validation['meta_exists'] else '❌'}")
-    
+
     print(f"\n📦 Bundle Details:")
     for bundle in validation["bundles"]:
         print(f"\n  🗂️ {bundle['name']}:")
@@ -338,13 +338,13 @@ def validate_structure(c, drop=None):
         print(f"    WebP files: {len(bundle['webp_files'])}")
         print(f"    Status file: {'✅' if bundle['status_file'] else '❌'}")
         print(f"    Preview file: {'✅' if bundle['preview_file'] else '❌'}")
-        
+
         if bundle["assets"]:
             print(f"    Asset list:")
             for asset in bundle["assets"]:
                 status = "✅" if asset["exists"] else "❌"
                 print(f"      {status} {asset['id']}: {asset['file']}")
-        
+
         if bundle["errors"]:
             print(f"    Errors:")
             for error in bundle["errors"]:
@@ -356,4 +356,4 @@ ns.add_task(sync_meta, name="sync")
 ns.add_task(sync_all, name="sync-all")
 ns.add_task(validate_structure, name="validate")
 
-__all__ = ["ns"] 
+__all__ = ["ns"]

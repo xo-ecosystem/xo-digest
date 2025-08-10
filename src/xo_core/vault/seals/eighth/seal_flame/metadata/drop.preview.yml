@@ -6,14 +6,14 @@ preview:
   image: "seal_flame_core.webp"
   animation: "flame_essence.webp"
   background: "burning_seal.webp"
-  
+
 display:
   theme: "fire"
   colors:
     primary: "#ff4400"
     secondary: "#ff8800"
     accent: "#ffcc00"
-  
+
 effects:
   - type: "particle"
     source: "flame_essence.webp"
@@ -21,4 +21,4 @@ effects:
   - type: "glow"
     source: "seal_flame_core.webp"
     color: "#ff4400"
-    radius: 20 
+    radius: 20

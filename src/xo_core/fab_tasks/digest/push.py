@@ -7,4 +7,4 @@ def push_digest(c):
     # TODO: Implement actual digest push logic
     # - Upload to Arweave
     # - Pin to IPFS
-    # - Send notifications 
+    # - Send notifications

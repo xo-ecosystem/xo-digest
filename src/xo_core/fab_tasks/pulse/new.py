@@ -10,7 +10,7 @@ def _lazy_generate_test_pulse(c, slug):
         from pathlib import Path
         sys.path.insert(0, str(Path(__file__).parent))
         from _shared_data import generate_test_pulse as _generate
-    
+
     result = _generate(c, slug)
     print(f"🧪 Generated test pulse: {result.get('slug', slug)}")
     return result
@@ -37,7 +37,7 @@ def new_pulse(c, slug=None):
         return
 
     print(f"🔧 Creating new pulse for slug: {slug}")
-    
+
     if slug == "test_pulse":
         _lazy_generate_test_pulse(c, slug)
 

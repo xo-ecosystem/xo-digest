@@ -5,20 +5,20 @@ next refactor pass.
 
 ## 🔧 Fixes
 
-1. **Vault circular import**  
-   • Added lazy accessor `get_community_tasks` in `src/xo_core/vault/__init__.py`.  
+1. **Vault circular import**
+   • Added lazy accessor `get_community_tasks` in `src/xo_core/vault/__init__.py`.
    • No more top-level imports of `unseal`/`bootstrap`.
 
-2. **Loader boot order**  
-   • Removed premature `ns = fix_loader.load_all()` call in `fabfile.py`.  
+2. **Loader boot order**
+   • Removed premature `ns = fix_loader.load_all()` call in `fabfile.py`.
    • Root `Collection()` is now the single source of truth.
 
-3. **Docs task exposure**  
+3. **Docs task exposure**
    • Added `from xo_core.fab_tasks.docs import ns as docs_ns` import and
-   `ns.add_collection(docs_ns)` registration in `fabfile.py`.  
+   `ns.add_collection(docs_ns)` registration in `fabfile.py`.
    • Stripped self-registration from `dynamic_loader.py`.
 
-4. **Vault tasks cleanup**  
+4. **Vault tasks cleanup**
    • Removed duplicate/early namespace instantiation in
    `src/xo_core/fab_tasks/vault_tasks.py`.
 

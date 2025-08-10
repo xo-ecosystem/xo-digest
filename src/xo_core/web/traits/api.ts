@@ -36,5 +36,3 @@ export async function getDropTraits(dropId: string): Promise<Trait[]> {
     return all[dropId] || [];
   }
 }
-
-

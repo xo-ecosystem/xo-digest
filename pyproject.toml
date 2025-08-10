@@ -44,7 +44,7 @@ where = ["src"]
 legacy_tox_ini = """
 [testenv]
 package = editable
-deps = 
+deps =
     pytest
     coverage
     invoke==2.2.0
@@ -52,7 +52,7 @@ deps =
     pre-commit==3.7.0
     commitizen==3.17.0
     requests>=2.31.0
-commands = 
+commands =
     pytest {posargs}
 
 [tool.poetry.dev-dependencies]
@@ -60,10 +60,10 @@ pytest-html = "^4.1.1"
 
 [testenv:lint]
 package = editable
-deps = 
+deps =
     flake8
     pre-commit==3.7.0
-commands = 
+commands =
     pre-commit run --all-files --show-diff-on-failure
 
 [testenv:cz-lint]
@@ -72,7 +72,7 @@ deps =
     coverage
     pytest-cov
     invoke==2.2.0
-commands = 
+commands =
     invoke cz-lint
 """
 [tool.poetry.group.dev.dependencies]

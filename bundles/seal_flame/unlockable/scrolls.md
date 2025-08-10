@@ -13,7 +13,7 @@ This drop contains hidden scrolls and lore that are revealed to holders.
 
 This drop's traits are compatible with:
 - MarioKart: Speed and power effects
-- Sims: Personality and skill enhancements  
+- Sims: Personality and skill enhancements
 - Minecraft: Resource gathering and exploration bonuses
 
 ### 🌌 Lore Connection

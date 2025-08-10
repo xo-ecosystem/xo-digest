@@ -216,4 +216,4 @@ When adding new rules:
 --------------------------------------------------
 📊 Results: 3 passed, 0 failed
 🎉 All rules passed! Code health is good.
-``` 
+```

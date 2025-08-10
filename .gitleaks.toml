@@ -1,0 +1,10 @@
+# .gitleaks.toml
+[allowlist]
+description = "Allow sample envs and config"
+paths = [
+  "env/.env.example",
+  "env/.env.local.sample",
+  ".gitleaks.toml",
+  ".secrets.baseline"
+]
+stopwords = ["__REPLACE_ME__", "DUMMY", "EXAMPLE", "TEST_TOKEN"]

@@ -12,28 +12,28 @@ from invoke import task, Collection
 def switch(c, mode="xo", apply=False):
     """Switch .envrc.link to different environment configurations"""
     print(f"🔄 Switching environment mode to: {mode}")
-    
+
     # Define target files
     targets = {
         "xo": ".envrc",
-        "fab2": ".envrc.fab2", 
+        "fab2": ".envrc.fab2",
         "link": ".envrc.link"
     }
-    
+
     if mode not in targets:
         print(f"❌ Invalid mode: {mode}. Valid modes: {', '.join(targets.keys())}")
         return False
-    
+
     target = targets[mode]
-    
+
     # Check if target exists
     if not Path(target).exists():
         print(f"❌ Target file {target} does not exist")
         return False
-    
+
     # Clean up broken symlinks
     cleanup_broken_links()
-    
+
     # Create symlink
     try:
         link_path = Path(".envrc.link")
@@ -53,18 +53,18 @@ def switch(c, mode="xo", apply=False):
     except Exception as e:
         print(f"❌ Failed to create symlink: {e}")
         return False
-    
+
     # Apply changes if requested
     if apply:
         return apply_envrc(c)
-    
+
     return True
 
 @task
 def relink(c):
     """Recreate .envrc.link if broken or stale"""
     print("🔗 Relinking .envrc.link...")
-    
+
     # Check if .envrc.link exists and is valid
     link_path = Path(".envrc.link")
     if link_path.exists() and link_path.is_symlink():
@@ -75,7 +75,7 @@ def relink(c):
                 return True
         except:
             pass
-    
+
     # Try to relink to default
     if Path(".envrc").exists():
         return switch(c, mode="xo", apply=False)
@@ -89,7 +89,7 @@ def relink(c):
 def git_switch(c, apply=False):
     """Git-aware .envrc switching based on current branch/tag"""
     print("🌿 Git-aware environment switching...")
-    
+
     # Get current Git branch
     try:
         result = subprocess.run(
@@ -104,10 +104,10 @@ def git_switch(c, apply=False):
     except FileNotFoundError:
         print("❌ Git not found in PATH")
         return False
-    
+
     # Determine target based on branch patterns
     target_mode = determine_git_target(branch)
-    
+
     if target_mode:
         print(f"🎯 Switching to {target_mode} mode for branch '{branch}'")
         return switch(c, mode=target_mode, apply=apply)
@@ -121,7 +121,7 @@ def status(c):
     """Show current .envrc.link status and Git context"""
     print("📊 Environment Status")
     print("-" * 40)
-    
+
     # Check .envrc.link
     link_path = Path(".envrc.link")
     if link_path.exists() and link_path.is_symlink():
@@ -136,7 +136,7 @@ def status(c):
             print("❌ Broken symlink")
     else:
         print("❌ .envrc.link not found")
-    
+
     # Check .envrc
     envrc_path = Path(".envrc")
     if envrc_path.exists():
@@ -150,7 +150,7 @@ def status(c):
             print("📄 .envrc is regular file")
     else:
         print("❌ .envrc not found")
-    
+
     # Git context
     try:
         result = subprocess.run(
@@ -159,7 +159,7 @@ def status(c):
         )
         branch = result.stdout.strip()
         print(f"🌿 Git branch: {branch}")
-        
+
         target_mode = determine_git_target(branch)
         if target_mode:
             print(f"🎯 Git-aware target: {target_mode}")
@@ -172,10 +172,10 @@ def status(c):
 def git_watch(c, config=".xo.envrc.json"):
     """Watch for Git changes and auto-switch environments"""
     print("👀 Git watch mode - monitoring for branch changes...")
-    
+
     # Load configuration
     config_data = load_git_config(config)
-    
+
     # Get initial branch
     try:
         result = subprocess.run(
@@ -187,11 +187,11 @@ def git_watch(c, config=".xo.envrc.json"):
     except:
         print("❌ Failed to get current branch")
         return False
-    
+
     # Monitor for changes (simplified - in real implementation would use file watching)
     print("💡 Git watch would monitor for branch changes and auto-switch")
     print("💡 Use 'git checkout <branch>' to test switching")
-    
+
     return True
 
 def cleanup_broken_links():
@@ -215,7 +215,7 @@ def apply_envrc(c):
         if not Path(".envrc").exists():
             Path(".envrc").symlink_to(".envrc.link")
             print("✅ Created .envrc → .envrc.link")
-        
+
         # Run direnv allow
         result = subprocess.run(["direnv", "allow"], capture_output=True, text=True)
         if result.returncode == 0:
@@ -237,29 +237,29 @@ def determine_git_target(branch):
     modern_patterns = ["main", "master", "xo", "dev/xo", "feature/xo"]
     if branch in modern_patterns or branch.startswith("xo/"):
         return "xo"
-    
+
     # Legacy patterns
     legacy_patterns = ["legacy", "fab2", "stable", "v1", "v2"]
     if branch in legacy_patterns or branch.startswith("legacy/"):
         return "fab2"
-    
+
     # Check for .envrc.link.default fallback
     if Path(".envrc.link.default").exists():
         return "link"
-    
+
     return None
 
 def load_git_config(config_path):
     """Load Git-aware environment configuration"""
     import json
-    
+
     if Path(config_path).exists():
         try:
             with open(config_path, 'r') as f:
                 return json.load(f)
         except:
             pass
-    
+
     # Default configuration
     return {
         "patterns": {

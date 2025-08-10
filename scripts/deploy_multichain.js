@@ -5,9 +5,9 @@ const path = require("path");
 async function main() {
   const network = await ethers.provider.getNetwork();
   const networkName = network.name === "unknown" ? "localhost" : network.name;
-  
+
   console.log(`🚀 Deploying XO Contracts to ${networkName} (Chain ID: ${network.chainId})`);
-  
+
   // Deploy XO Season 1 Drop
   console.log("\n📦 Deploying XO Season 1 Drop Contract...");
   const XOSeason1Drop = await ethers.getContractFactory("XOSeason1Drop");
@@ -15,7 +15,7 @@ async function main() {
   await xoDrop.waitForDeployment();
   const xoDropAddress = await xoDrop.getAddress();
   console.log("✅ XO Season 1 Drop deployed to:", xoDropAddress);
-  
+
   // Deploy Scent Drop
   console.log("\n👃 Deploying XO Scent Drop Contract...");
   const ScentDrop = await ethers.getContractFactory("ScentDrop");
@@ -23,7 +23,7 @@ async function main() {
   await scentDrop.waitForDeployment();
   const scentDropAddress = await scentDrop.getAddress();
   console.log("✅ XO Scent Drop deployed to:", scentDropAddress);
-  
+
   // Deploy NGO Token
   console.log("\n🌍 Deploying XO NGO Token Contract...");
   const NGOToken = await ethers.getContractFactory("NGOToken");
@@ -31,10 +31,10 @@ async function main() {
   await ngoToken.waitForDeployment();
   const ngoTokenAddress = await ngoToken.getAddress();
   console.log("✅ XO NGO Token deployed to:", ngoTokenAddress);
-  
+
   // Create drops in XO Season 1 Drop
   console.log("\n🎨 Creating drops in XO Season 1 Drop...");
-  
+
   // Create first_flip_teaser drop
   const firstFlipTeaserTx = await xoDrop.createDrop(
     "First Flip Teaser",
@@ -45,7 +45,7 @@ async function main() {
   );
   await firstFlipTeaserTx.wait();
   console.log("✅ Created first_flip_teaser drop (ID: 1)");
-  
+
   // Create brie_edition drop
   const brieEditionTx = await xoDrop.createDrop(
     "Brie's Scroll-Bearing Unicorn",
@@ -56,7 +56,7 @@ async function main() {
   );
   await brieEditionTx.wait();
   console.log("✅ Created brie_edition drop (ID: 2)");
-  
+
   // Create eighth_seal_3d drop
   const eighthSeal3dTx = await xoDrop.createDrop(
     "Eighth Seal 3D",
@@ -67,7 +67,7 @@ async function main() {
   );
   await eighthSeal3dTx.wait();
   console.log("✅ Created eighth_seal_3d drop (ID: 3)");
-  
+
   // Add trait metadata for first_flip_teaser
   console.log("\n🧩 Adding trait metadata...");
   const traits1 = [
@@ -77,12 +77,12 @@ async function main() {
     { trait: "Trait Evolution", metadata: "Legendary trait for living evolution" },
     { trait: "Lore Weaving", metadata: "Epic trait for community storytelling" }
   ];
-  
+
   for (const trait of traits1) {
     await xoDrop.addTrait(1, trait.trait, trait.metadata);
   }
   console.log("✅ Added traits for first_flip_teaser");
-  
+
   // Add trait metadata for brie_edition
   const traits2 = [
     { trait: "Brie Unicorn", metadata: "Legendary 1/1 scroll-bearing unicorn" },
@@ -90,12 +90,12 @@ async function main() {
     { trait: "Sentimental Core", metadata: "Legendary trait for emotional connection" },
     { trait: "First Edition", metadata: "Legendary trait for historical significance" }
   ];
-  
+
   for (const trait of traits2) {
     await xoDrop.addTrait(2, trait.trait, trait.metadata);
   }
   console.log("✅ Added traits for brie_edition");
-  
+
   // Add trait metadata for eighth_seal_3d
   const traits3 = [
     { trait: "Scrollbearer Puppet", metadata: "Legendary 3D printable character" },
@@ -103,15 +103,15 @@ async function main() {
     { trait: "Physical Manifestation", metadata: "Legendary digital to physical bridge" },
     { trait: "Printable Magic", metadata: "Epic cross-realm magic" }
   ];
-  
+
   for (const trait of traits3) {
     await xoDrop.addTrait(3, trait.trait, trait.metadata);
   }
   console.log("✅ Added traits for eighth_seal_3d");
-  
+
   // Create scents in Scent Drop
   console.log("\n🌸 Creating scents in Scent Drop...");
-  
+
   const scents = [
     {
       name: "Eternal Flame",
@@ -138,7 +138,7 @@ async function main() {
       season: "ancient"
     }
   ];
-  
+
   for (let i = 0; i < scents.length; i++) {
     const scent = scents[i];
     const tx = await scentDrop.createScent(
@@ -153,39 +153,39 @@ async function main() {
     await tx.wait();
     console.log(`✅ Created scent: ${scent.name} (ID: ${i + 1})`);
   }
-  
+
   // Add olfactory notes for scents
   console.log("\n👃 Adding olfactory notes...");
-  
+
   const olfactoryNotes = [
     // Eternal Flame
     { scentId: 1, note: "Smoke", metadata: "Rich, warm smoke with hints of cedar" },
     { scentId: 1, note: "Ash", metadata: "Fine, powdery ash with mineral notes" },
     { scentId: 1, note: "Heat", metadata: "Radiant warmth with spicy undertones" },
-    
+
     // Cosmic Resonance
     { scentId: 2, note: "Stardust", metadata: "Sparkling, ethereal dust with ozone notes" },
     { scentId: 2, note: "Nebula", metadata: "Mysterious, swirling cosmic energy" },
     { scentId: 2, note: "Void", metadata: "Deep, infinite space with cold notes" },
-    
+
     // Seal Breaker
     { scentId: 3, note: "Ancient", metadata: "Time-worn, mysterious ancient power" },
     { scentId: 3, note: "Breaking", metadata: "Sharp, decisive breaking energy" },
     { scentId: 3, note: "Freedom", metadata: "Liberating, expansive freedom scent" }
   ];
-  
+
   for (const note of olfactoryNotes) {
     await scentDrop.addOlfactoryNote(note.scentId, note.note, note.metadata);
   }
   console.log("✅ Added olfactory notes for all scents");
-  
+
   // Configure NGO Token
   console.log("\n🌍 Configuring NGO Token...");
-  
+
   // Enable trading
   await ngoToken.setTradingEnabled(true);
   console.log("✅ Trading enabled");
-  
+
   // Set tax exclusions for common addresses
   const [deployer] = await ethers.getSigners();
   const commonAddresses = [
@@ -194,15 +194,15 @@ async function main() {
     scentDropAddress,
     "0x0000000000000000000000000000000000000000" // Zero address
   ];
-  
+
   await ngoToken.batchSetTaxExclusion(commonAddresses, true);
   console.log("✅ Tax exclusions set");
-  
+
   // Mint initial supply
   const initialMint = ethers.parseEther("1000000"); // 1M tokens
   await ngoToken.mint(deployer.address, initialMint);
   console.log("✅ Initial supply minted");
-  
+
   // Save deployment info
   const deploymentInfo = {
     network: networkName,
@@ -233,11 +233,11 @@ async function main() {
     },
     deployer: deployer.address
   };
-  
+
   const filename = `deployment-${networkName}-${Date.now()}.json`;
   fs.writeFileSync(filename, JSON.stringify(deploymentInfo, null, 2));
   console.log(`\n💾 Deployment info saved to ${filename}`);
-  
+
   console.log("\n🎉 Multi-chain deployment completed successfully!");
   console.log(`\n📊 Summary for ${networkName}:`);
   console.log(`- XO Season 1 Drop: ${xoDropAddress}`);

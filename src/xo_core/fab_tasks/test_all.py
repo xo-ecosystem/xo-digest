@@ -28,4 +28,4 @@ def test_all(c):
     return passed == len(results)
 
 ns = Collection("test_all")
-ns.add_task(test_all) 
+ns.add_task(test_all)

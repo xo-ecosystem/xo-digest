@@ -25,4 +25,4 @@ def help_card(c):
 
 # Register namespace
 ns = Collection("help_card")
-ns.add_task(help_card) 
+ns.add_task(help_card)

@@ -8,17 +8,17 @@ contract Token21NGO is ERC20, Ownable {
     // Tax configuration
     uint256 public constant SELL_TAX_PERCENT = 21;
     uint256 public constant TAX_DENOMINATOR = 100;
-    
+
     // Treasury address to receive tax
     address public treasuryAddress;
-    
+
     // Anti-bot measures
     mapping(address => bool) public isExcludedFromTax;
     mapping(address => bool) public isExcludedFromMaxTx;
-    
+
     // Max transaction limit (2% of total supply)
     uint256 public maxTxAmount;
-    
+
     // Events
     event TreasuryAddressUpdated(address indexed oldTreasury, address indexed newTreasury);
     event TaxCollected(address indexed from, uint256 amount, address indexed treasury);
@@ -35,7 +35,7 @@ contract Token21NGO is ERC20, Ownable {
         _mint(initialOwner, initialSupply * 10**decimals());
         treasuryAddress = _treasuryAddress;
         maxTxAmount = totalSupply() * 2 / 100; // 2% of total supply
-        
+
         // Exclude owner and treasury from tax
         isExcludedFromTax[initialOwner] = true;
         isExcludedFromTax[_treasuryAddress] = true;
@@ -82,7 +82,7 @@ contract Token21NGO is ERC20, Ownable {
 
         // Transfer the remaining amount
         super._transfer(from, to, transferAmount);
-        
+
         return true;
     }
 
@@ -91,13 +91,13 @@ contract Token21NGO is ERC20, Ownable {
         require(_treasuryAddress != address(0), "Treasury address cannot be zero");
         address oldTreasury = treasuryAddress;
         treasuryAddress = _treasuryAddress;
-        
+
         // Update exclusions
         isExcludedFromTax[oldTreasury] = false;
         isExcludedFromTax[_treasuryAddress] = true;
         isExcludedFromMaxTx[oldTreasury] = false;
         isExcludedFromMaxTx[_treasuryAddress] = true;
-        
+
         emit TreasuryAddressUpdated(oldTreasury, _treasuryAddress);
     }
 
@@ -124,4 +124,4 @@ contract Token21NGO is ERC20, Ownable {
     function getTransferAmount(uint256 amount) external pure returns (uint256) {
         return amount - (amount * SELL_TAX_PERCENT / TAX_DENOMINATOR);
     }
-} 
+}

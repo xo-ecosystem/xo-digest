@@ -1,0 +1,31 @@
+name: Security Checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_LICENSE: ""
+        with:
+          args: detect --redact --verbose --exit-code 1
+
+      - name: Detect-Secrets
+        run: |
+          pipx install detect-secrets
+          detect-secrets scan > scan.out
+          if [ -f .secrets.baseline ]; then
+            detect-secrets audit --fail-on-live scan.out
+          else
+            echo "No baseline yet; failing to force setup."
+            exit 1
+          fi

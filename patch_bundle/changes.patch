@@ -41,7 +41,7 @@ index 86aa1ab..00960c9 100644
 +	@fab deploy.health --service=inbox
 +	@fab deploy.health --service=preview
 +	@fab deploy.health --service=agent0
- 
+
  patch-review:
  	@echo "🩹 Launching local patch review UI..."
 diff --git a/docker-compose.yml b/docker-compose.yml
@@ -282,13 +282,13 @@ index 7b7af6a..b9526f4 100644
 +        f'rsync -av --exclude ".git" --exclude ".env*" --exclude "__pycache__" {dev_path}/ {prod_path}/'
 +    )
 +    print("✅ Sync complete.")
- 
- 
+
+
  @task
 @@ -27,9 +63,108 @@ def wire_hooks(c):
      print("📬 Wiring Inbox plugin → persona dispatch handler")
- 
- 
+
+
 +@task
 +def cosmic_align(c, dry_run=False):
 +    """
@@ -353,7 +353,7 @@ index 7b7af6a..b9526f4 100644
  agent_ns = Collection("agent")
  agent_ns.add_task(dispatch_persona_cli, "dispatch")
  agent_ns.add_task(wire_hooks, "wire_hooks")
- 
+
 +dns_ns = Collection("dns")
 +dns_ns.add_task(check_dns, "check")
 +dns_ns.add_task(validate_all_subdomains, "validate")
@@ -406,7 +406,7 @@ index 1444231..a6f1a41 100644
 -@@ -28,9 +28,13 @@ typecheck:
 - 	@echo "🧠 Running mypy type checks..."
 - 	@mypy .
-- 
+-
 -+validate:
 -+	@echo "✅ Validating all Fabric task modules..."
 -+	@xo-fab validate-tasks || echo '⚠️ Task validation failed.'
@@ -416,7 +416,7 @@ index 1444231..a6f1a41 100644
 --	@make lint && make test && make typecheck
 -+	@echo "✅ Running full CI suite (lint + test + typecheck + validate)..."
 -+	@make lint && make test && make typecheck && make validate
-- 
+-
 - doctor:
 - 	@echo "🩺 Running code cleanup and format checks..."
 -@@ -55,4 +59,17 @@ prepare-commit:
@@ -447,7 +447,7 @@ index 1444231..a6f1a41 100644
 -@@ -3,9 +3,6 @@
 - import sys
 - from pathlib import Path
-- 
+-
 --# src/xo_core/fabfile.py
 --from xo_core.fab_tasks.pulse_namespace import pulse_ns
 --
@@ -455,9 +455,9 @@ index 1444231..a6f1a41 100644
 - if "__file__" in globals():
 -     sys.path.insert(0, str(Path(__file__).parent / "src"))
 -@@ -13,10 +10,6 @@ if "__file__" in globals():
-- 
+-
 - from invoke import Collection
-- 
+-
 --from xo_core.commitizen_tasks import cz_lint
 --from xo_core.fab_tasks import pulse_tasks, vault_tasks
 --from xo_core.fab_tasks.validate_tasks import validate_tasks
@@ -466,7 +466,7 @@ index 1444231..a6f1a41 100644
 - if "__file__" in globals():
 -     PROJECT_ROOT = Path(__file__).resolve().parent
 -@@ -25,6 +18,7 @@ else:
-- 
+-
 - # Ensure project root is on PYTHONPATH
 - sys.path.insert(0, str(PROJECT_ROOT))
 -+
@@ -474,9 +474,9 @@ index 1444231..a6f1a41 100644
 - # Cleanup: remove heavy objects so Invoke won't mis-treat them
 - # as config values during its second pass.
 -@@ -59,47 +53,16 @@ Root‑level convenience aliases:
-- 
+-
 - ns = Collection()
-- 
+-
 --# Add mandatory namespaces
 --ns.add_collection(Collection.from_module(pulse_tasks), name="pulse")
 --ns.add_collection(Collection.from_module(vault_tasks), name="vault")
@@ -520,7 +520,7 @@ index 1444231..a6f1a41 100644
 -+except ImportError as e:
 -+    print(f"❌ Failed to import dynamic loader: {e}")
 -+    raise
-- 
+-
 - # ------------------------------------------------------------------
 - # Final cleanup so Invoke's runtime config loader sees only picklable
 - # objects in the module namespace.
@@ -534,17 +534,17 @@ index 1444231..a6f1a41 100644
 -+++ b/src/xo_core/fab_tasks/README.md
 -@@ -13,7 +13,7 @@ This directory contains all automation tasks for the XO project, organized by na
 - # XO fab_tasks Onboarding Guide
-- 
+-
 - Welcome to the XO automation core!
 --This folder contains all Fabric tasks for automating and orchestrating XO’s infrastructure, content, and agent flows.
 -+This folder contains all Fabric tasks for automating and orchestrating XO's infrastructure, content, and agent flows.
-- 
+-
 - ## Structure
-- 
+-
 -@@ -40,7 +40,7 @@ This folder contains all Fabric tasks for automating and orchestrating XO’s in
-- 
+-
 - ## Onboarding notes
-- 
+-
 --- All optional imports (e.g. arweave, boto3) are wrapped so missing dependencies won’t break the CLI.
 -+- All optional imports (e.g. arweave, boto3) are wrapped so missing dependencies won't break the CLI.
 - - If a task fails due to a missing package, install it in your venv:
@@ -552,7 +552,7 @@ index 1444231..a6f1a41 100644
 -   pip install <package>
 -@@ -94,3 +94,221 @@ Welcome to XO — contribute, fork, and automate!
 - ---
-- 
+-
 - Happy automating! 🎛️
 -+
 -+# Fabric Tasks
@@ -781,10 +781,10 @@ index 1444231..a6f1a41 100644
 --Fabric tasks validation module.
 --"""
 -+"""Root Fabric tasks collection and validation setup."""
-- 
+-
 --from invoke import Collection, Context, task
 -+from invoke import Collection
-- 
+-
 -+# Import and add summary tasks to the main collection
 -+def add_summary_tasks():
 -+    from .summary_tasks import ns as summary_ns
@@ -793,11 +793,11 @@ index 1444231..a6f1a41 100644
 -+# Import sub-namespaces and default tasks
 - from .pulse_namespace import pulse_ns
 - from .validate_tasks import validate_tasks as _validate_tasks_task
-- 
+-
 -@@ -15,9 +19,10 @@ validate_tasks = Collection("validate_tasks")
 - # resolves to the same callable.  This matches what the unit‑tests expect.
 - validate_tasks.add_task(_validate_tasks_task, name="validate-tasks", default=True)
-- 
+-
 --# ------------------------------------------------------------------
 --# Root collection that aggregates all fab sub‑namespaces and tasks.
 --# ------------------------------------------------------------------
@@ -813,9 +813,9 @@ index 1444231..a6f1a41 100644
 ---- a/src/xo_core/fab_tasks/pulse_namespace.py
 -+++ b/src/xo_core/fab_tasks/pulse_namespace.py
 -@@ -3,6 +3,17 @@ from invoke import Collection
-- 
+-
 - from . import pulse_tasks
-- 
+-
 -+"""
 -+📦 Pulse Namespace
 -+
@@ -887,11 +887,11 @@ index 1444231..a6f1a41 100644
 -+import shlex
 -+import sys
 -+import argparse
-- 
+-
 --from invoke import task
 -+from invoke import task, Context
-- 
-- 
+-
+-
 - def validate_all_tasks(verbose=False):
 -@@ -22,7 +25,6 @@ def validate_all_tasks(verbose=False):
 -         except Exception as e:
@@ -913,8 +913,8 @@ index 1444231..a6f1a41 100644
 -     verbose = "--verbose" in args
 -@@ -56,29 +55,7 @@ def validate_tasks(c, flags=None):
 -         print("✅ Task validation completed.")
-- 
-- 
+-
+-
 --try:
 --    from invoke import task
 --except ImportError:
@@ -965,10 +965,10 @@ index 1444231..a6f1a41 100644
 -+++ b/src/xo_core/fabfile.py
 -@@ -1,6 +1,5 @@
 - from invoke import Collection
-- 
+-
 --from xo_core.fab_tasks import drop_tasks
 - from xo_core.pulse_tasks import ns as pulse_ns
-- 
+-
 - root = Collection()
 -diff --git a/task_summary_2025-06-22.md+ b/task_summary_2025-06-22.md+
 -deleted file mode 100644
@@ -995,20 +995,20 @@ index 1444231..a6f1a41 100644
 --- **`pulse.new`**: 📦 Create a new pulse entry.
 --- **`pulse.sync`**: 🔄 Sync pulses.
 --- **`pulse.archive-all`**: 🗃️ Archive all pulses.
---- **`vault.sign`**: 
---- **`vault.sign-all`**: 
---- **`vault.verify-all`**: 
---- **`vault.explorer-deploy`**: 
---- **`vault.digest-generate`**: 
---- **`vault.render-daily`**: 
---- **`vault.publish-digest`**: 
---- **`vault.unlock-memethic-path`**: 
---- **`vault.archive-all`**: 
+--- **`vault.sign`**:
+--- **`vault.sign-all`**:
+--- **`vault.verify-all`**:
+--- **`vault.explorer-deploy`**:
+--- **`vault.digest-generate`**:
+--- **`vault.render-daily`**:
+--- **`vault.publish-digest`**:
+--- **`vault.unlock-memethic-path`**:
+--- **`vault.archive-all`**:
 --- **`collections.default`**: Default no-op task to satisfy Fabric validation.
 --- **`collections.summary`**: 📄 Show all registered Fabric tasks grouped by namespace.
 --- **`collections.ci.publish`**: 🚀 CI: Publish artifacts and log summary to Vault
---- **`collections.vault.sign-all`**: 
---- **`collections.vault.verify-all`**: 
+--- **`collections.vault.sign-all`**:
+--- **`collections.vault.verify-all`**:
 --- **`collections.pulse.sync`**: 🔄 Sync pulses.
 --- **`collections.core.core.validate-tasks`**: 🔍 Validate syntax of all Fabric task modules under fab_tasks/
 --- **`collections.validate.validate`**: 🔍 Validate import of all Fabric task modules in fab_tasks/
@@ -1019,18 +1019,18 @@ index 1444231..a6f1a41 100644
 --- **`drop.generate`**: Scaffold a new drop variant inside xo-drops.
 --- **`xo-agent.deploy-persona`**: Deploy a persona.
 --- **`xo-agent.reload-all`**: Reload all personas.
---- **`xo-agent.list-personas`**: 
---- **`xo-agent.test-dialog`**: 
---- **`xo-agent.seed-personas-from-vault`**: 
---- **`xo-agent.generate-mdx`**: 
+--- **`xo-agent.list-personas`**:
+--- **`xo-agent.test-dialog`**:
+--- **`xo-agent.seed-personas-from-vault`**:
+--- **`xo-agent.generate-mdx`**:
 --- **`xo.deploy-persona`**: Deploy a persona.
 --- **`xo.reload-all`**: Reload all personas.
---- **`xo.list-personas`**: 
---- **`xo.test-dialog`**: 
---- **`xo.seed-personas-from-vault`**: 
---- **`xo.generate-mdx`**: 
+--- **`xo.list-personas`**:
+--- **`xo.test-dialog`**:
+--- **`xo.seed-personas-from-vault`**:
+--- **`xo.generate-mdx`**:
 --- **`agent0.start`**: 🧠 Start Agent0 runtime
---- **`agent0.generate-mdx`**: 
+--- **`agent0.generate-mdx`**:
 -\ No newline at end of file
 diff --git a/public/xo-exchange b/public/xo-exchange
 --- a/public/xo-exchange

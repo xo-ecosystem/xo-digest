@@ -6,4 +6,4 @@
 .venv/** binary
 venv/** binary
 vault/.keys.enc binary
-vault/.keys 
+vault/.keys

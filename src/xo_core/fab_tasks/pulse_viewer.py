@@ -14,24 +14,24 @@ def view_pulse(c, slug=None, format="text"):
         "vault/.signed/**/*.signed",
         "vault/.txid/**/*.txid",
     ]
-    
+
     found_files = set()
     for pat in patterns:
         found_files.update(Path(".").glob(pat))
-    
+
     if slug:
         found_files = {f for f in found_files if slug in str(f)}
-    
+
     if not found_files:
         print("⚠️ No pulses found.")
         return
-    
+
     pulses_data = []
-    
+
     for file_path in sorted(found_files):
         pulse_slug = file_path.stem
         print(f"\n🔍 Analyzing: {pulse_slug}")
-        
+
         pulse_info = {
             "slug": pulse_slug,
             "file": str(file_path),
@@ -43,7 +43,7 @@ def view_pulse(c, slug=None, format="text"):
             "arweave_link": None,
             "gateway_link": None
         }
-        
+
         # Check for signed date
         signed_file = Path(f"vault/.signed/{pulse_slug}.signed")
         if signed_file.exists():
@@ -55,32 +55,32 @@ def view_pulse(c, slug=None, format="text"):
                         print(f"  📅 Signed: {signed_data['timestamp']}")
             except:
                 pass
-        
+
         # Check for pin metadata
         pin_meta_file = file_path.with_suffix(file_path.suffix + ".pin_meta")
         if pin_meta_file.exists():
             try:
                 with open(pin_meta_file, 'r') as f:
                     pin_meta = json.load(f)
-                
+
                 # Handle both old and new pin metadata formats
                 cid = pin_meta.get('cid') or pin_meta.get('ipfs_cid')
                 pinned_at = pin_meta.get('pinned_at')
                 gateway = pin_meta.get('gateway') or pin_meta.get('ipfs_gateway')
                 arweave_txid = pin_meta.get('arweave_txid')
-                
+
                 if cid and pinned_at:
                     pulse_info["pin_status"] = "✅ Pinned"
                     pulse_info["pinned_date"] = pinned_at
                     pulse_info["ipfs_link"] = f"ipfs://{cid}"
                     pulse_info["gateway_link"] = gateway
-                    
+
                     print(f"  📌 Pin Status: ✅ Pinned")
                     print(f"  📅 Pinned: {pinned_at}")
                     print(f"  🔗 IPFS: ipfs://{cid}")
                     if gateway:
                         print(f"  🌐 Gateway: {gateway}")
-                    
+
                     # Show Arweave TXID if available
                     if arweave_txid:
                         pulse_info["arweave_link"] = f"https://arweave.net/{arweave_txid}"
@@ -93,7 +93,7 @@ def view_pulse(c, slug=None, format="text"):
                 print(f"  📌 Pin Status: ❌ Pin metadata error: {e}")
         else:
             print(f"  📌 Pin Status: ❌ Not pinned")
-        
+
         # Check for Arweave transaction (legacy .txid files)
         txid_file = Path(f"vault/.txid/{pulse_slug}.txid")
         if txid_file.exists():
@@ -106,9 +106,9 @@ def view_pulse(c, slug=None, format="text"):
                         print(f"  🔗 Arweave (legacy): https://arweave.net/{txid}")
             except:
                 pass
-        
+
         pulses_data.append(pulse_info)
-    
+
     # Output in requested format
     if format == "json":
         print(json.dumps(pulses_data, indent=2))
@@ -124,12 +124,12 @@ def print_summary(pulses_data):
     print("-" * 80)
     print(f"{'Slug':<20} {'Type':<8} {'Pin':<8} {'Signed':<12} {'Pinned':<12}")
     print("-" * 80)
-    
+
     for pulse in pulses_data:
         signed_date = pulse["signed_date"][:10] if pulse["signed_date"] else "N/A"
         pinned_date = pulse["pinned_date"][:10] if pulse["pinned_date"] else "N/A"
         pin_icon = "✅" if "✅" in pulse["pin_status"] else "❌"
-        
+
         print(f"{pulse['slug']:<20} {pulse['type']:<8} {pin_icon:<8} {signed_date:<12} {pinned_date:<12}")
 
 
@@ -154,7 +154,7 @@ def generate_html_view(pulses_data):
     <body>
         <h1>XO Pulse Viewer</h1>
     """
-    
+
     for pulse in pulses_data:
         status_class = "pinned" if "✅" in pulse["pin_status"] else "unpinned"
         html += f"""
@@ -162,26 +162,26 @@ def generate_html_view(pulses_data):
             <h3>{pulse['slug']} <span class="status {status_class}">{pulse['pin_status']}</span></h3>
             <p><strong>Type:</strong> {pulse['type']}</p>
         """
-        
+
         if pulse["signed_date"]:
             html += f'<p class="date"><strong>Signed:</strong> {pulse["signed_date"]}</p>'
-        
+
         if pulse["pinned_date"]:
             html += f'<p class="date"><strong>Pinned:</strong> {pulse["pinned_date"]}</p>'
-        
+
         if pulse["ipfs_link"]:
             html += f'<p><strong>IPFS:</strong> <a href="{pulse["gateway_link"]}" class="link" target="_blank">{pulse["ipfs_link"]}</a></p>'
-        
+
         if pulse["arweave_link"]:
             html += f'<p><strong>Arweave:</strong> <a href="{pulse["arweave_link"]}" class="link" target="_blank">{pulse["arweave_link"]}</a></p>'
-        
+
         html += "</div>"
-    
+
     html += """
     </body>
     </html>
     """
-    
+
     return html
 
 
@@ -191,21 +191,21 @@ def export_html(c, slug=None):
     📄 Export pulse viewer as HTML file
     """
     html_content = generate_html_view([])  # Will be populated by view_pulse
-    
+
     # Get pulses data
     patterns = [
         "content/pulses/**/*.mdx",
         "vault/.signed/**/*.signed",
         "vault/.txid/**/*.txid",
     ]
-    
+
     found_files = set()
     for pat in patterns:
         found_files.update(Path(".").glob(pat))
-    
+
     if slug:
         found_files = {f for f in found_files if slug in str(f)}
-    
+
     pulses_data = []
     for file_path in sorted(found_files):
         # Simplified data collection for HTML export
@@ -220,7 +220,7 @@ def export_html(c, slug=None):
             "arweave_link": None,
             "gateway_link": None
         }
-        
+
         # Add pin metadata if available
         pin_meta_file = file_path.with_suffix(file_path.suffix + ".pin_meta")
         if pin_meta_file.exists():
@@ -230,7 +230,7 @@ def export_html(c, slug=None):
                 cid = pin_meta.get('cid')
                 pinned_at = pin_meta.get('pinned_at')
                 gateway = pin_meta.get('gateway')
-                
+
                 if cid and pinned_at:
                     pulse_info["pin_status"] = "✅ Pinned"
                     pulse_info["pinned_date"] = pinned_at
@@ -238,18 +238,18 @@ def export_html(c, slug=None):
                     pulse_info["gateway_link"] = gateway
             except:
                 pass
-        
+
         pulses_data.append(pulse_info)
-    
+
     html_content = generate_html_view(pulses_data)
-    
+
     output_file = f"pulse_viewer_{slug or 'all'}.html"
     with open(output_file, 'w') as f:
         f.write(html_content)
-    
+
     print(f"📄 HTML viewer exported to: {output_file}")
 
 
 ns = Collection("pulse-viewer")
 ns.add_task(view_pulse, name="view")
-ns.add_task(export_html, name="export-html") 
+ns.add_task(export_html, name="export-html")

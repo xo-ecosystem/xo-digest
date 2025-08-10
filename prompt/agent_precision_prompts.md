@@ -235,4 +235,4 @@ Let me start with the audit...
 - Use the structured task commands
 - Provide clear success/failure criteria
 - Generate actionable recommendations
-- Log all actions and results 
+- Log all actions and results

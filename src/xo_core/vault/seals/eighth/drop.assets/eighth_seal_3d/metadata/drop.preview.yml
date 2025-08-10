@@ -6,14 +6,14 @@ preview:
   image: "drop_main.webp"
   animation: "unicorn_scroll_01.webp"
   background: "unicorn_scroll_02.webp"
-  
+
 display:
   theme: "3d_mystical"
   colors:
     primary: "#8B4513"
     secondary: "#DAA520"
     accent: "#FFD700"
-  
+
 effects:
   - type: "particle"
     source: "drop_main.webp"
@@ -24,4 +24,4 @@ effects:
     radius: 25
   - type: "shimmer"
     source: "unicorn_scroll_02.webp"
-    frequency: 0.5 
+    frequency: 0.5

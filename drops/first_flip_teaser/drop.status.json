@@ -23,7 +23,7 @@
   ],
   "traits": [
     "vault_immutability",
-    "inbox_mastery", 
+    "inbox_mastery",
     "digest_compiler",
     "trait_evolution",
     "lore_weaving"
@@ -35,7 +35,7 @@
   },
   "game_compatibility": [
     "mario_kart",
-    "sims", 
+    "sims",
     "minecraft"
   ],
   "constellation_links": [

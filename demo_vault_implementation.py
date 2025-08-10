@@ -71,120 +71,120 @@ def main():
     print("🚀 XO Vault Implementation Live Demonstration")
     print("=" * 60)
     print(f"📅 Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    
+
     # Test basic fabfile functionality
     print("\n📋 Phase 1: Basic Fabfile Functionality")
     print("-" * 40)
-    
+
     success_count = 0
     total_tests = 0
-    
+
     # Test 1: Basic fabfile test
     total_tests += 1
     if run_command("python -m invoke -c fabfile test", "Basic fabfile test"):
         success_count += 1
-    
+
     # Test 2: List all tasks
     total_tests += 1
     if run_command("python -m invoke -c fabfile --list", "List all available tasks"):
         success_count += 1
-    
+
     # Test 3: Environment status
     total_tests += 1
     if run_command("python -m invoke -c fabfile env.status", "Environment status check"):
         success_count += 1
-    
+
     print("\n📋 Phase 2: Core Vault Functionality")
     print("-" * 40)
-    
+
     # Test 4: Vault agent status
     total_tests += 1
     if run_command("python -m invoke -c fabfile cosmos.vault-agent-status", "Vault agent status"):
         success_count += 1
-    
+
     # Test 5: Storage status
     total_tests += 1
     if run_command("python -m invoke -c fabfile storage.status", "Storage status check"):
         success_count += 1
-    
+
     # Test 6: Backend health
     total_tests += 1
     if run_command("python -m invoke -c fabfile backend.check-health", "Backend health check"):
         success_count += 1
-    
+
     print("\n📋 Phase 3: Vault Operations")
     print("-" * 40)
-    
+
     # Test 7: Create backup
     total_tests += 1
     if run_command("python -m invoke -c fabfile storage.backup-all", "Create comprehensive backup"):
         success_count += 1
-    
+
     # Test 8: Create seal
     total_tests += 1
     if run_command("python -m invoke -c fabfile seal.now", "Create immediate seal"):
         success_count += 1
-    
+
     # Test 9: Verify signatures
     total_tests += 1
     if run_command("python -m invoke -c fabfile sign.verify-all", "Verify all signatures"):
         success_count += 1
-    
+
     print("\n📋 Phase 4: API Integration")
     print("-" * 40)
-    
+
     # Test 10: API root endpoint
     total_tests += 1
     if test_api_endpoint("http://localhost:8000/", "API root endpoint"):
         success_count += 1
-    
+
     # Test 11: Vault status API
     total_tests += 1
     if test_api_endpoint("http://localhost:8000/api/vault/status", "Vault status API"):
         success_count += 1
-    
+
     # Test 12: Storage status API
     total_tests += 1
     if test_api_endpoint("http://localhost:8000/api/vault/storage", "Storage status API"):
         success_count += 1
-    
+
     # Test 13: Backend health API
     total_tests += 1
     if test_api_endpoint("http://localhost:8000/api/vault/health", "Backend health API"):
         success_count += 1
-    
+
     # Test 14: Agent mesh API
     total_tests += 1
     if test_api_endpoint("http://localhost:8000/api/vault/mesh", "Agent mesh API"):
         success_count += 1
-    
+
     print("\n📋 Phase 5: Advanced API Operations")
     print("-" * 40)
-    
+
     # Test 15: Execute task via API
     total_tests += 1
-    if test_api_post("http://localhost:8000/api/vault/execute", 
-                    {"task": "env.status"}, 
+    if test_api_post("http://localhost:8000/api/vault/execute",
+                    {"task": "env.status"},
                     "Execute task via API"):
         success_count += 1
-    
+
     # Test 16: Create snapshot via API
     total_tests += 1
-    if test_api_post("http://localhost:8000/api/vault/snapshot", 
-                    {}, 
+    if test_api_post("http://localhost:8000/api/vault/snapshot",
+                    {},
                     "Create snapshot via API"):
         success_count += 1
-    
+
     # Test 17: Setup agent via API
     total_tests += 1
-    if test_api_post("http://localhost:8000/api/vault/setup?keys=3", 
-                    {}, 
+    if test_api_post("http://localhost:8000/api/vault/setup?keys=3",
+                    {},
                     "Setup agent via API"):
         success_count += 1
-    
+
     print("\n📋 Phase 6: Frontend Integration")
     print("-" * 40)
-    
+
     # Test 18: Check if frontend is running
     total_tests += 1
     try:
@@ -198,7 +198,7 @@ def main():
     except:
         print("   ⚠️ Frontend not accessible (may not be running)")
         success_count += 1
-    
+
     # Summary
     print("\n" + "=" * 60)
     print("📊 DEMONSTRATION SUMMARY")
@@ -206,19 +206,19 @@ def main():
     print(f"✅ Successful tests: {success_count}/{total_tests}")
     print(f"📈 Success rate: {(success_count/total_tests)*100:.1f}%")
     print(f"📅 Completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    
+
     if success_count == total_tests:
         print("\n🎉 ALL TESTS PASSED! XO Vault implementation is working perfectly!")
     elif success_count >= total_tests * 0.8:
         print("\n✅ MOST TESTS PASSED! XO Vault implementation is working well!")
     else:
         print("\n⚠️ Some tests failed. Please check the implementation.")
-    
+
     print("\n🔗 Available Services:")
     print("   • Frontend: http://localhost:5173/")
     print("   • API Docs: http://localhost:8000/docs")
     print("   • API Root: http://localhost:8000/")
-    
+
     print("\n📋 Available Tasks:")
     print("   • python -m invoke -c fabfile --list")
     print("   • python -m invoke -c fabfile cosmos.vault-agent-status")
@@ -226,4 +226,4 @@ def main():
     print("   • python -m invoke -c fabfile backend.check-health")
 
 if __name__ == "__main__":
-    main() 
+    main()

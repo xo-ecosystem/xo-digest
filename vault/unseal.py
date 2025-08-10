@@ -12,7 +12,7 @@ from vault.bootstrap import (
 🔐 XO Vault Unseal Task
 
 This script is used to automatically unseal a HashiCorp-compatible Vault instance using
-unseal keys from various sources. It is meant to be Fab-compatible and works silently 
+unseal keys from various sources. It is meant to be Fab-compatible and works silently
 behind the scenes.
 
 Typically called via:

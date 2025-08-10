@@ -189,4 +189,4 @@ export class VaultAPI {
 }
 
 // Export singleton instance
-export const vaultAPI = new VaultAPI(); 
+export const vaultAPI = new VaultAPI();

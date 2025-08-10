@@ -20,4 +20,4 @@ except ImportError as e:
     print(f"❌ Preview namespace not loaded: {e}")
 
 # Define the default namespace
-namespace = ns 
+namespace = ns

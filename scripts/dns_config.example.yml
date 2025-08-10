@@ -1,0 +1,16 @@
+meta:
+  github_user: xo-verses
+  pages_host: xo-verses.github.io
+  workers_host: workers.dev
+  # tunnel_host: "<TUNNEL_UUID>.cfargotunnel.com"
+
+domains:
+  - name: example.com
+    registrar: namecheap
+    nameservers: { auto_cf: true }
+    records:
+      - { type: CNAME, name: "@",   content: "{{ pages_host }}",  proxied: false }
+      - { type: CNAME, name: "www", content: "{{ pages_host }}",  proxied: false }
+      - { type: CNAME, name: "docs", content: "{{ pages_host }}", proxied: false }
+      - { type: CNAME, name: "digest", content: "{{ workers_host }}", proxied: true }
+      # - { type: CNAME, name: "agent-dev", content: "{{ tunnel_host }}", proxied: true }

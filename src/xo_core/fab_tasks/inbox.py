@@ -6,7 +6,7 @@ def render(ctx):
     """Render all inbox messages to HTML"""
     html_output = render_all_inbox_html()
     print(html_output)
-    
+
 @task
 def ping(c):
     print("📬 Inbox task module is active.")

@@ -7,4 +7,4 @@ def trigger_digest_webhook(c):
     # TODO: Implement actual webhook logic
     # - Send Discord notification
     # - Send Telegram notification
-    # - Trigger external integrations 
+    # - Trigger external integrations

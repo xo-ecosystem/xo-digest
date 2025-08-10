@@ -51,5 +51,3 @@ export const GameTraitsViewer: React.FC<Props> = ({ traits }) => {
 };
 
 export default GameTraitsViewer;
-
-

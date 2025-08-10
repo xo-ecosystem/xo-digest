@@ -9,44 +9,44 @@ from pathlib import Path
 def deploy_token(c, network="sepolia", dry_run=False, verify=False):
     """
     Deploy the 21NGO token to the specified network.
-    
+
     Args:
         network (str): Target network (sepolia, base, ethereum)
         dry_run (bool): Show what would be done without deploying
         verify (bool): Verify contract on explorer after deployment
     """
     print(f"🚀 Deploying 21NGO Token to {network}")
-    
+
     if dry_run:
         print("🔍 DRY RUN - Would deploy token with current config")
         return
-    
+
     # Change to hardhat directory
     hardhat_dir = Path("hardhat")
     if not hardhat_dir.exists():
         print("❌ Hardhat directory not found")
         return
-    
+
     os.chdir(hardhat_dir)
-    
+
     try:
         # Compile contracts
         print("📦 Compiling contracts...")
         subprocess.run(["npx", "hardhat", "compile"], check=True)
-        
+
         # Deploy token
         print(f"🚀 Deploying to {network}...")
         cmd = ["npx", "hardhat", "run", "scripts/deploy-21ngo.ts", "--network", network]
         subprocess.run(cmd, check=True)
-        
+
         # Verify if requested
         if verify:
             print("🔍 Verifying contract...")
             # This would require additional setup with etherscan API keys
             print("⚠️  Manual verification required - check deployment output for links")
-        
+
         print("✅ Token deployment complete!")
-        
+
     except subprocess.CalledProcessError as e:
         print(f"❌ Deployment failed: {e}")
     finally:
@@ -58,35 +58,35 @@ def deploy_token(c, network="sepolia", dry_run=False, verify=False):
 def init_token(c, treasury_address=None, owner_address=None):
     """
     Initialize token configuration with addresses.
-    
+
     Args:
         treasury_address (str): Treasury wallet address
         owner_address (str): Owner wallet address
     """
     print("⚙️  Initializing 21NGO token configuration...")
-    
+
     config_path = Path("hardhat/contracts/token_config.json")
     if not config_path.exists():
         print("❌ Token config not found")
         return
-    
+
     # Load current config
     with open(config_path, 'r') as f:
         config = json.load(f)
-    
+
     # Update addresses if provided
     if treasury_address:
         config["deployment"]["treasuryAddress"] = treasury_address
         print(f"📝 Treasury address set to: {treasury_address}")
-    
+
     if owner_address:
         config["deployment"]["ownerAddress"] = owner_address
         print(f"📝 Owner address set to: {owner_address}")
-    
+
     # Save updated config
     with open(config_path, 'w') as f:
         json.dump(config, f, indent=2)
-    
+
     print("✅ Token configuration updated!")
 
 
@@ -97,24 +97,24 @@ def token_status(c):
     """
     print("📊 21NGO Token Status")
     print("=" * 40)
-    
+
     # Check if deployment file exists
     deployment_path = Path("hardhat/deployments/21ngo-deployment.json")
     if deployment_path.exists():
         with open(deployment_path, 'r') as f:
             deployment = json.load(f)
-        
+
         print(f"🌐 Network: {deployment['network']} (Chain ID: {deployment['chainId']})")
         print(f"📦 Contract: {deployment['contractAddress']}")
         print(f"👤 Owner: {deployment['verification']['owner']}")
         print(f"💰 Treasury: {deployment['verification']['treasuryAddress']}")
         print(f"📅 Deployed: {deployment['deploymentTime']}")
-        
+
         # Get explorer URL
         network = deployment['network']
         explorer_url = deployment['config']['networks'].get(network, {}).get('explorer', 'https://etherscan.io')
         print(f"🔗 Explorer: {explorer_url}/address/{deployment['contractAddress']}")
-        
+
     else:
         print("❌ No deployment found")
         print("   Run: fab dao.deploy-token to deploy the token")
@@ -124,12 +124,12 @@ def token_status(c):
 def update_landing(c, contract_address=None):
     """
     Update the landing page with the deployed token contract address.
-    
+
     Args:
         contract_address (str): Contract address to update (auto-detected if not provided)
     """
     print("🌐 Updating landing page with token info...")
-    
+
     # Get contract address
     if not contract_address:
         deployment_path = Path("hardhat/deployments/21ngo-deployment.json")
@@ -140,30 +140,30 @@ def update_landing(c, contract_address=None):
         else:
             print("❌ No deployment found and no address provided")
             return
-    
+
     # Update landing page
     landing_path = Path("public/21xo/index.html")
     if not landing_path.exists():
         print("❌ Landing page not found")
         return
-    
+
     with open(landing_path, 'r') as f:
         content = f.read()
-    
+
     # Update Uniswap link with contract address
     # This is a simple replacement - in production you'd want more sophisticated templating
     network = "base"  # Default to Base network
     uniswap_url = f"https://app.uniswap.org/#/swap?outputCurrency={contract_address}&chain=base"
-    
+
     # Simple replacement of the Uniswap link
     content = content.replace(
         'href="https://uniswap.org"',
         f'href="{uniswap_url}"'
     )
-    
+
     with open(landing_path, 'w') as f:
         f.write(content)
-    
+
     print(f"✅ Landing page updated with contract: {contract_address}")
     print(f"🔗 Uniswap link: {uniswap_url}")
 
@@ -174,20 +174,20 @@ def create_vault_proposal(c):
     Create a Vault proposal for the token launch.
     """
     print("📋 Creating Vault proposal for 21NGO token launch...")
-    
+
     # Get deployment info
     deployment_path = Path("hardhat/deployments/21ngo-deployment.json")
     if not deployment_path.exists():
         print("❌ No deployment found - deploy token first")
         return
-    
+
     with open(deployment_path, 'r') as f:
         deployment = json.load(f)
-    
+
     # Create proposal directory
     proposal_dir = Path("vault/proposals/21ngo_launch")
     proposal_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Create proposal content
     proposal_content = f"""# 21NGO Token Launch Proposal
 
@@ -227,12 +227,12 @@ The 21NGO token has been successfully deployed to {deployment['network']} networ
 ---
 *Proposal created automatically by fab dao.create-vault-proposal*
 """
-    
+
     # Write proposal
     proposal_file = proposal_dir / "proposal.md"
     with open(proposal_file, 'w') as f:
         f.write(proposal_content)
-    
+
     print(f"✅ Vault proposal created: {proposal_file}")
     print("📝 Review and sign the proposal to make it official")
 
@@ -243,4 +243,4 @@ ns.add_task(deploy_token, "deploy-token")
 ns.add_task(init_token, "init-token")
 ns.add_task(token_status, "token-status")
 ns.add_task(update_landing, "update-landing")
-ns.add_task(create_vault_proposal, "create-vault-proposal") 
+ns.add_task(create_vault_proposal, "create-vault-proposal")

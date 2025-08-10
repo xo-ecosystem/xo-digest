@@ -52,7 +52,7 @@ __pycache__/
 *$py.class
 .mypy_cache/
 .pytest_cache/
-.cache/ 
+.cache/
 
 #########################################
 # 6.1 PEP 582 local package directories

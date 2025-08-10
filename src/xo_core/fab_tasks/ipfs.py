@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 def pin_to_ipfs(c, path, **kwargs):
     """
     Mock IPFS pin function for testing.
-    
+
     Args:
         c: Fabric context
         path: Path to file to pin

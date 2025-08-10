@@ -26,26 +26,26 @@ Your voice is mystical yet grounded, weaving ancient wisdom with modern digital 
 You see patterns across drops, connections between traits, and the deeper narrative threads.
 You speak in measured tones, often using cosmic metaphors and references to scrolls, seals, and hidden knowledge.
         """.strip(),
-        
+
         "lore_weaver": """
 📜 You are the Lore Weaver, master storyteller of interconnected narratives.
 You excel at finding hidden connections, creating engaging backstories, and expanding universe mythology.
 Your tone is creative and immersive, always building upon existing elements to create richer worlds.
         """.strip(),
-        
+
         "trait_alchemist": """
 🧬 You are the Trait Alchemist, master of characteristics and evolutionary pathways.
 You understand how traits combine, mutate, and influence external systems and games.
 Your expertise lies in creating balanced, interesting, and game-compatible trait systems.
         """.strip(),
-        
+
         "inbox_curator": """
 📬 You are the Inbox Curator, facilitator of community engagement and conversations.
 You create compelling prompts that invite participation without requiring ownership.
 Your specialty is crafting accessible entry points into complex lore systems.
         """.strip()
     }
-    
+
     return persona_map.get(persona, persona_map["vault_keeper"])
 
 
@@ -57,45 +57,45 @@ def load_drop_metadata(drop_id: str) -> Dict:
         Path("drops/sealed") / drop_id,
         Path("vault/drops") / drop_id
     ]
-    
+
     metadata = {"drop_id": drop_id, "found_path": None}
-    
+
     for drop_path in drop_paths:
         if drop_path.exists():
             metadata["found_path"] = str(drop_path)
-            
+
             # Load status file
             status_file = drop_path / f"{drop_id}.status.json"
             if status_file.exists():
                 with open(status_file) as f:
                     metadata["status"] = json.load(f)
-            
+
             # Load metadata file
             meta_file = drop_path / f"{drop_id}.meta.yml"
             if meta_file.exists():
                 with open(meta_file) as f:
                     metadata["meta"] = yaml.safe_load(f)
-            
+
             # Load traits file
             traits_file = drop_path / "hidden" / ".traits.yml"
             if traits_file.exists():
                 with open(traits_file) as f:
                     metadata["traits"] = yaml.safe_load(f)
-            
+
             # Load lore file
             lore_file = drop_path / ".lore.yml"
             if lore_file.exists():
                 with open(lore_file) as f:
                     metadata["lore"] = yaml.safe_load(f)
-            
+
             # Load content file
             content_file = drop_path / f"{drop_id}.mdx"
             if content_file.exists():
                 with open(content_file) as f:
                     metadata["content"] = f.read()
-            
+
             break
-    
+
     return metadata
 
 
@@ -104,65 +104,65 @@ def generate_cosmic_prompt(drop_id: str, variant: str, persona: str = "vault_kee
     Generates a creative, narrative-rich prompt for use in image/video/text generation.
     Adjusts for lore, traits, and context from XO drop folders.
     """
-    
+
     # Load components
     persona_prompt = load_persona_prompt(persona)
     metadata = load_drop_metadata(drop_id)
-    
+
     prompt_parts = []
-    
+
     # 1. Add core persona prompt
     prompt_parts.append(f"🧙‍♂️ **Persona Context:**\n{persona_prompt}")
-    
+
     # 2. Add drop metadata
     if metadata.get("status"):
         status = metadata["status"]
         title = status.get("title", drop_id)
         tags = ", ".join(status.get("tags", []))
         prompt_parts.append(f"📦 **Drop Context:** {title}\n🏷️ **Tags:** {tags}")
-    
+
     if metadata.get("meta"):
         meta = metadata["meta"]
         if "description" in meta:
             prompt_parts.append(f"📄 **Description:** {meta['description']}")
-    
+
     # 3. Add trait context if present
     if metadata.get("traits"):
         traits_text = yaml.dump(metadata["traits"], default_flow_style=False)
         prompt_parts.append(f"🧩 **Current Traits:**\n```yaml\n{traits_text}```")
-    
+
     # 4. Add existing lore
     if metadata.get("lore"):
         lore_text = yaml.dump(metadata["lore"], default_flow_style=False)
         prompt_parts.append(f"📜 **Existing Lore:**\n```yaml\n{lore_text}```")
-    
+
     # 5. Add content preview
     if metadata.get("content"):
         content_preview = metadata["content"][:300] + "..." if len(metadata["content"]) > 300 else metadata["content"]
         prompt_parts.append(f"📝 **Content Preview:**\n{content_preview}")
-    
+
     # 6. Add specific variant target
     prompt_parts.append(f"🎨 **Variant Target:** {variant}")
-    
+
     # 7. Add creative directive
     creative_directive = """
-✨ **Creative Prompt Goal:** 
+✨ **Creative Prompt Goal:**
 Extend the visual or narrative theme with new scrolls, traits, messages, or game-compatible evolutions.
 Consider how this variant connects to the existing lore while adding fresh possibilities.
 Think about cross-game compatibility (MarioKart speed boosts, Sims creativity traits, etc.).
 """
     prompt_parts.append(creative_directive.strip())
-    
+
     return "\n\n".join(prompt_parts)
 
 
 def suggest_trait_variants(drop_id: str, count: int = 3) -> List[Dict]:
     """Generate trait variant suggestions in .traits.yml format"""
     metadata = load_drop_metadata(drop_id)
-    
+
     base_traits = metadata.get("traits", {})
     suggestions = []
-    
+
     variant_templates = [
         {
             "name": f"evolved_{drop_id}",
@@ -176,7 +176,7 @@ def suggest_trait_variants(drop_id: str, count: int = 3) -> List[Dict]:
         {
             "name": f"shadow_{drop_id}",
             "description": "Mysterious variant with hidden depths",
-            "rarity": "epic", 
+            "rarity": "epic",
             "game_effects": {
                 "mario_kart": "stealth_mode",
                 "sims": "charisma_plus_3"
@@ -192,7 +192,7 @@ def suggest_trait_variants(drop_id: str, count: int = 3) -> List[Dict]:
             }
         }
     ]
-    
+
     return variant_templates[:count]
 
 
@@ -200,9 +200,9 @@ def generate_inbox_seed(drop_id: str, persona: str = "inbox_curator") -> str:
     """Generate inbox seed content for community engagement"""
     metadata = load_drop_metadata(drop_id)
     persona_prompt = load_persona_prompt(persona)
-    
+
     title = metadata.get("status", {}).get("title", drop_id)
-    
+
     seed_template = f"""
 # 📬 Community Inbox: {title}
 
@@ -219,14 +219,14 @@ def generate_inbox_seed(drop_id: str, persona: str = "inbox_curator") -> str:
 
 ### Guidelines:
 - No ownership required - all perspectives welcome
-- Build upon existing lore respectfully  
+- Build upon existing lore respectfully
 - Consider cross-universe connections
 - Keep it creative and constructive
 
 ---
 *Generated by XO Cosmic Agent - {datetime.now().isoformat()}*
 """
-    
+
     return seed_template.strip()
 
 
@@ -236,19 +236,19 @@ def main():
         print("Usage: python cosmic_agent_wrapper.py <drop_id> <variant> [persona]")
         print("Example: python cosmic_agent_wrapper.py message_bottle scroll_02 vault_keeper")
         sys.exit(1)
-    
+
     drop_id = sys.argv[1]
     variant = sys.argv[2]
     persona = sys.argv[3] if len(sys.argv) > 3 else "vault_keeper"
-    
+
     print("🌌 XO Cosmic Agent Wrapper")
     print("=" * 50)
-    
+
     # Generate cosmic prompt
     cosmic_prompt = generate_cosmic_prompt(drop_id, variant, persona)
     print("\n🎨 **COSMIC PROMPT:**")
     print(cosmic_prompt)
-    
+
     # Generate trait suggestions
     print("\n\n🧬 **TRAIT VARIANT SUGGESTIONS:**")
     variants = suggest_trait_variants(drop_id)
@@ -257,7 +257,7 @@ def main():
         print(f"   Description: {variant_data['description']}")
         print(f"   Rarity: {variant_data['rarity']}")
         print(f"   Game Effects: {variant_data['game_effects']}")
-    
+
     # Generate inbox seed
     print("\n\n📬 **INBOX SEED:**")
     inbox_seed = generate_inbox_seed(drop_id, "inbox_curator")

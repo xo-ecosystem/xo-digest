@@ -101,7 +101,7 @@ const DeployStatus = () => {
           </li>
         ))}
       </ul>
-      
+
       <button
         onClick={() => {
           const blob = new Blob([JSON.stringify(filtered, null, 2)], { type: 'application/json' });
@@ -119,4 +119,4 @@ const DeployStatus = () => {
   );
 };
 
-export default DeployStatus; 
+export default DeployStatus;

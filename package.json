@@ -6,25 +6,20 @@
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
-    
     "deploy:local": "hardhat run scripts/deploy.js --network localhost",
     "mint:test": "hardhat run scripts/mint.js --network localhost",
     "node": "hardhat node",
-    
     "deploy:polygon": "hardhat run scripts/deploy.js --network polygon",
     "deploy:arbitrum": "hardhat run scripts/deploy.js --network arbitrum",
     "deploy:optimism": "hardhat run scripts/deploy.js --network optimism",
     "deploy:base": "hardhat run scripts/deploy.js --network base",
-    
     "deploy:mumbai": "hardhat run scripts/deploy.js --network polygonMumbai",
     "deploy:arbitrum-goerli": "hardhat run scripts/deploy.js --network arbitrumGoerli",
     "deploy:optimism-goerli": "hardhat run scripts/deploy.js --network optimismGoerli",
     "deploy:base-goerli": "hardhat run scripts/deploy.js --network baseGoerli",
     "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
-    
     "deploy:all-mainnet": "npm run deploy:polygon && npm run deploy:arbitrum && npm run deploy:optimism && npm run deploy:base",
     "deploy:all-testnet": "npm run deploy:mumbai && npm run deploy:arbitrum-goerli && npm run deploy:optimism-goerli && npm run deploy:base-goerli && npm run deploy:sepolia",
-    
     "verify:polygon": "hardhat verify --network polygon",
     "verify:arbitrum": "hardhat verify --network arbitrum",
     "verify:optimism": "hardhat verify --network optimism",
@@ -48,5 +43,18 @@
     "ethereum"
   ],
   "author": "XO Ecosystem",
-  "license": "MIT"
+  "license": "MIT",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xo-ecosystem/xo-core.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/xo-ecosystem/xo-core/issues"
+  },
+  "homepage": "https://github.com/xo-ecosystem/xo-core#readme"
 }

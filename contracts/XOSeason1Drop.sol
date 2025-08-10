@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
  */
 contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
     using Strings for uint256;
-    
+
     // Drop information
     struct Drop {
         string name;
@@ -25,26 +25,26 @@ contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
         bool isActive;
         string[] traits;
     }
-    
+
     // Mapping from drop ID to drop info
     mapping(uint256 => Drop) public drops;
-    
+
     // Mapping from drop ID to trait metadata
     mapping(uint256 => mapping(string => string)) public traitMetadata;
-    
+
     // Events
     event DropCreated(uint256 indexed dropId, string name, uint256 maxSupply, uint256 price);
     event DropMinted(uint256 indexed dropId, address indexed to, uint256 amount);
     event TraitAdded(uint256 indexed dropId, string trait, string metadata);
-    
+
     // Constants
     uint256 public constant MINT_FEE = 0.021 ether;
     uint256 public nextDropId = 1;
-    
+
     constructor() ERC1155("") {
         // Initialize with empty base URI
     }
-    
+
     /**
      * @dev Create a new drop
      */
@@ -59,9 +59,9 @@ contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
     ) external onlyOwner {
         require(_maxSupply > 0, "Max supply must be greater than 0");
         require(_price >= MINT_FEE, "Price must be at least mint fee");
-        
+
         uint256 dropId = nextDropId++;
-        
+
         drops[dropId] = Drop({
             name: _name,
             description: _description,
@@ -73,10 +73,10 @@ contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
             isActive: true,
             traits: _traits
         });
-        
+
         emit DropCreated(dropId, _name, _maxSupply, _price);
     }
-    
+
     /**
      * @dev Mint a drop
      */
@@ -85,19 +85,19 @@ contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
         require(drop.isActive, "Drop is not active");
         require(drop.currentSupply < drop.maxSupply, "Drop is sold out");
         require(msg.value >= drop.price, "Insufficient payment");
-        
+
         // Mint the token
         _mint(msg.sender, _dropId, 1, "");
         drop.currentSupply++;
-        
+
         // Refund excess payment
         if (msg.value > drop.price) {
             payable(msg.sender).transfer(msg.value - drop.price);
         }
-        
+
         emit DropMinted(_dropId, msg.sender, 1);
     }
-    
+
     /**
      * @dev Add trait metadata to a drop
      */
@@ -106,7 +106,7 @@ contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
         traitMetadata[_dropId][_trait] = _metadata;
         emit TraitAdded(_dropId, _trait, _metadata);
     }
-    
+
     /**
      * @dev Get drop information
      */
@@ -134,21 +134,21 @@ contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
             drop.traits
         );
     }
-    
+
     /**
      * @dev Get trait metadata
      */
     function getTraitMetadata(uint256 _dropId, string memory _trait) external view returns (string memory) {
         return traitMetadata[_dropId][_trait];
     }
-    
+
     /**
      * @dev Toggle drop active status
      */
     function toggleDrop(uint256 _dropId) external onlyOwner {
         drops[_dropId].isActive = !drops[_dropId].isActive;
     }
-    
+
     /**
      * @dev Update drop price
      */
@@ -156,7 +156,7 @@ contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
         require(_newPrice >= MINT_FEE, "Price must be at least mint fee");
         drops[_dropId].price = _newPrice;
     }
-    
+
     /**
      * @dev Withdraw contract balance
      */
@@ -165,7 +165,7 @@ contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
         require(balance > 0, "No balance to withdraw");
         payable(owner()).transfer(balance);
     }
-    
+
     /**
      * @dev Get token URI for metadata
      */
@@ -173,21 +173,21 @@ contract XOSeason1Drop is ERC1155, Ownable, ReentrancyGuard {
         require(drops[_tokenId].isActive, "Drop does not exist");
         return drops[_tokenId].imageURI;
     }
-    
+
     /**
      * @dev Get total supply of a drop
      */
     function totalSupply(uint256 _dropId) external view returns (uint256) {
         return drops[_dropId].currentSupply;
     }
-    
+
     /**
      * @dev Check if drop is sold out
      */
     function isSoldOut(uint256 _dropId) external view returns (bool) {
         return drops[_dropId].currentSupply >= drops[_dropId].maxSupply;
     }
-    
+
     /**
      * @dev Get all traits for a drop
      */

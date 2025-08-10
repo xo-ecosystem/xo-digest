@@ -20,14 +20,14 @@ preview:
     - "transparent_scroll_8.webp"
     - "transparent_scroll_9.webp"
     - "transparent_scroll_10.webp"
-  
+
 display:
   theme: "mystical_ocean"
   colors:
     primary: "#1E3A8A"
     secondary: "#3B82F6"
     accent: "#60A5FA"
-  
+
 effects:
   - type: "wave"
     source: "drop_main.webp"

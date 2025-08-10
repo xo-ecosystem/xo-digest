@@ -57,7 +57,7 @@ __pycache__/
 *$py.class
 .mypy_cache/
 .pytest_cache/
-.cache/ 
+.cache/
 
 #########################################
 # 6.1 PEP 582 local package directories
@@ -89,6 +89,15 @@ reports/
 
 ###########################
 # 10. OS / backup artefacts
+.env
+.env.*
+.envrc
+.envrc.*
+*.pem
+*.key
+*.p12
+xo-secrets/
+
 ###########################
 .DS_Store
 Thumbs.db
@@ -283,6 +292,57 @@ Thumbs.db
 *.rej
 *.un~
 
+# =========================
+# Hardened ignore (security)
+# =========================
+
+# secrets / env
+.env
+.env.*
+!.env.example
+!.env.sample
+.envrc
+.envrc.*
+!.envrc.sample
+*.pem
+*.key
+*keyfile.json
+*.p12
+*.keystore
+*.jks
+*.pfx
+*.der
+*.crt
+*.csr
+*.ovpn
+*.kubeconfig
+id_rsa
+id_ecdsa
+id_ed25519
+*.age
+*.gpg
+*.asc
+
+# app-specific
+xo-secrets/
+secrets/
+**/keyfile.json
+**/*wallet*.json
+**/*arweave*key*.json
+**/*unseal*key*.txt
+
+# build artifacts, caches
+node_modules/
+.dist/
+build/
+coverage/
+.cache/
+*.log
+
+# allow tracked templates inside ignored env dir
+!env/.env.example
+!env/.env.local.sample
+
 # 💡 Misc
 *.sqlite3
 *.db
@@ -320,3 +380,6 @@ vault/*.json
 *.private-key.pem
 *.key
 *.p8
+.env.local
+env/.env
+env/.env.local

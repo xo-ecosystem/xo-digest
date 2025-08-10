@@ -4,4 +4,4 @@ export default {
     port: 5173,
     open: true
   }
-} 
+}

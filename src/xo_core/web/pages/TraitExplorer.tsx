@@ -70,5 +70,3 @@ export const TraitExplorer: React.FC = () => {
 };
 
 export default TraitExplorer;
-
-

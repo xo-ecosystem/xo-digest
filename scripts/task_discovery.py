@@ -18,7 +18,7 @@ def load_tasks_json() -> Dict:
     if not tasks_path.exists():
         print("❌ .cursor/tasks.json not found. Run scripts/generate_tasks_json.py first.")
         sys.exit(1)
-    
+
     with open(tasks_path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
@@ -27,7 +27,7 @@ def search_tasks(tasks_data: Dict, query: str) -> List[Dict]:
     """Search for tasks matching the query."""
     results = []
     query_lower = query.lower()
-    
+
     for namespace, namespace_data in tasks_data["tasks"].items():
         if query_lower in namespace.lower():
             results.append({
@@ -36,9 +36,9 @@ def search_tasks(tasks_data: Dict, query: str) -> List[Dict]:
                 "description": namespace_data["description"],
                 "subtasks": list(namespace_data["subtasks"].keys())
             })
-        
+
         for task_name, task_data in namespace_data["subtasks"].items():
-            if (query_lower in task_name.lower() or 
+            if (query_lower in task_name.lower() or
                 query_lower in task_data["description"].lower() or
                 query_lower in task_data["suggestion"].lower()):
                 results.append({
@@ -48,7 +48,7 @@ def search_tasks(tasks_data: Dict, query: str) -> List[Dict]:
                     "suggestion": task_data["suggestion"],
                     "category": task_data["category"]
                 })
-    
+
     return results
 
 
@@ -61,31 +61,31 @@ def show_task_details(tasks_data: Dict, task_name: str) -> None:
             print(f"📝 Description: {task_data['description']}")
             print(f"💡 Suggestion: {task_data['suggestion']}")
             print(f"🏷️ Category: {task_data['category']}")
-            
+
             # Show related workflows
             related_workflows = []
             for workflow_name, workflow_steps in tasks_data["workflows"].items():
                 if task_name in workflow_steps:
                     related_workflows.append(workflow_name)
-            
+
             if related_workflows:
                 print(f"🔄 Related workflows: {', '.join(related_workflows)}")
             return
-    
+
     print(f"❌ Task '{task_name}' not found.")
 
 
 def list_by_category(tasks_data: Dict, category: Optional[str] = None) -> None:
     """List tasks by category."""
     categories = {}
-    
+
     for namespace, namespace_data in tasks_data["tasks"].items():
         for task_name, task_data in namespace_data["subtasks"].items():
             cat = task_data["category"]
             if cat not in categories:
                 categories[cat] = []
             categories[cat].append(task_name)
-    
+
     if category:
         if category in categories:
             print(f"\n📂 Category: {category}")
@@ -153,14 +153,14 @@ def main():
         print("  python scripts/task_discovery.py namespace [namespace-name]")
         print("  python scripts/task_discovery.py summary")
         return
-    
+
     tasks_data = load_tasks_json()
     command = sys.argv[1]
-    
+
     if command == "search" and len(sys.argv) >= 3:
         query = sys.argv[2]
         results = search_tasks(tasks_data, query)
-        
+
         if results:
             print(f"\n🔍 Search results for '{query}':")
             for result in results:
@@ -173,44 +173,44 @@ def main():
                     print(f"   Category: {result['category']}")
         else:
             print(f"❌ No results found for '{query}'")
-    
+
     elif command == "task" and len(sys.argv) >= 3:
         task_name = sys.argv[2]
         show_task_details(tasks_data, task_name)
-    
+
     elif command == "category":
         category = sys.argv[2] if len(sys.argv) >= 3 else None
         list_by_category(tasks_data, category)
-    
+
     elif command == "workflow":
         workflow = sys.argv[2] if len(sys.argv) >= 3 else None
         show_workflows(tasks_data, workflow)
-    
+
     elif command == "namespace":
         namespace = sys.argv[2] if len(sys.argv) >= 3 else None
         show_namespace_summary(tasks_data, namespace)
-    
+
     elif command == "summary":
         total_tasks = sum(len(ns['subtasks']) for ns in tasks_data["tasks"].values())
         total_namespaces = len(tasks_data["tasks"])
         total_workflows = len(tasks_data["workflows"])
-        
+
         print(f"\n📊 XO Fabric Task Summary:")
         print(f"📦 Namespaces: {total_namespaces}")
         print(f"📋 Total Tasks: {total_tasks}")
         print(f"🔄 Workflows: {total_workflows}")
         print(f"🏷️ Categories: {len(tasks_data['categories'])}")
-        
+
         print(f"\n📦 Top Namespaces:")
         namespace_counts = [(ns, len(data['subtasks'])) for ns, data in tasks_data["tasks"].items()]
         namespace_counts.sort(key=lambda x: x[1], reverse=True)
-        
+
         for ns, count in namespace_counts[:5]:
             print(f"  - {ns}: {count} tasks")
-    
+
     else:
         print("❌ Invalid command. Use 'python scripts/task_discovery.py' for help.")
 
 
 if __name__ == "__main__":
-    main() 
+    main()

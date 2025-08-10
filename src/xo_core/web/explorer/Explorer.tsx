@@ -74,7 +74,7 @@ export const Explorer: React.FC = () => {
           <p className="text-sm text-gray-500">
             Slug: <code className="bg-gray-100 px-2 py-1 rounded">{slug}</code>
           </p>
-          <button 
+          <button
             onClick={() => window.history.back()}
             className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
           >
@@ -102,7 +102,7 @@ export const Explorer: React.FC = () => {
           {data.title && (
             <h1 className="text-3xl font-bold text-gray-900 mb-6">{data.title}</h1>
           )}
-          
+
           {data.metadata && (
             <div className="bg-gray-100 p-4 rounded-lg mb-6">
               <h2 className="text-lg font-semibold mb-2">Metadata</h2>
@@ -111,8 +111,8 @@ export const Explorer: React.FC = () => {
               </pre>
             </div>
           )}
-          
-          <div 
+
+          <div
             className="prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: data.content }}
           />
@@ -120,4 +120,4 @@ export const Explorer: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};

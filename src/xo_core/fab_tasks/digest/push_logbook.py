@@ -35,7 +35,7 @@ def push_logbook(c):
             logger.info(f"Pushed {log_file.name} to IPFS: {ipfs_hash}")
         except Exception as e:
             logger.error(f"Failed to pin {log_file.name}: {e}")
-        
+
         # Replacing upload_to_arweave with subprocess to arweave-deploy
         import subprocess
         if shutil.which("arweave-deploy"):

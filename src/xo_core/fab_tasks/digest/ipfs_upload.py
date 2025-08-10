@@ -7,4 +7,4 @@ def pin_digest_to_ipfs(c):
     # TODO: Implement actual IPFS/Arweave pinning logic
     # - Upload to IPFS via Lighthouse
     # - Upload to Arweave
-    # - Store CIDs and transaction IDs 
+    # - Store CIDs and transaction IDs

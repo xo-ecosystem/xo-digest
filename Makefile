@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+SHELL := /bin/bash
+
 .PHONY: help lint test doctor vault-status vault-unseal vault-check agent-health secure detox version
 
 help:
@@ -18,7 +20,12 @@ help:
 	@echo "  test           Run tests (non-blocking)"
 	@echo "  doctor         Run combined checks (non-blocking)"
 	@echo "  secure         Keep .env.local safe and ignored"
+	@echo "  secure-move    Move env files to ~/.config and symlink back"
 	@echo "  version        Show tool versions"
+	@echo ""
+	@echo "🛡️  Security:"
+	@echo "  scan           Run local secret scans (gitleaks + detect-secrets with excludes)"
+	@echo "  prepush        Run all pre-commit hooks"
 
 lint:
 	@echo "🔍 Running linting checks..."
@@ -58,58 +65,70 @@ agent-health:
 	@python scripts/agent_health_check.py || echo "⚠️  Agent health check script missing (non-blocking)"
 
 secure:
-	@echo "🔐 Ensuring .env.local is ignored and preserved..."
-	@grep -qxF '.env.local' .gitignore || echo '.env.local' >> .gitignore
-	@git update-index --assume-unchanged .env.local 2>/dev/null || true
-	@git update-index --skip-worktree .env.local 2>/dev/null || true
-	@echo "✅ .env.local protected."
+	@echo "🔐 Ensuring env files are ignored and untracked..."
+	@mkdir -p env
+	@# Ensure ignore rules for all common env locations
+	@for p in '.env' '.env.local' 'env/.env' 'env/.env.local'; do \
+	  grep -qxF "$${p}" .gitignore || echo "$${p}" >> .gitignore; \
+	done
+	@# If any of these are already tracked, untrack them (but keep local copies)
+	@for p in '.env' '.env.local' 'env/.env' 'env/.env.local'; do \
+	  git ls-files --error-unmatch "$${p}" >/dev/null 2>&1 && git rm --cached -q "$${p}" || true; \
+	done
+	@# Tell git to leave local copies alone going forward
+	@for p in '.env' '.env.local' 'env/.env' 'env/.env.local'; do \
+	  git update-index --skip-worktree "$${p}" 2>/dev/null || true; \
+	done
+	@echo "✅ env files protected (ignored + untracked)."
+
+# Default secret store outside the repo
+SECRET_STORE ?= $(HOME)/.config/xo-core/env
+
+# Move local env files outside the repo and symlink back
+.PHONY: secure-move
+secure-move:
+	@echo "🔐 Moving env files to $(SECRET_STORE) and creating symlinks…"
+	@mkdir -p $(SECRET_STORE) env
+	# Move any present env files out of the repo (preserve existing ones)
+	@[ -f .env ] && mv .env $(SECRET_STORE)/.env 2>/dev/null || true
+	@[ -f .env.local ] && mv .env.local $(SECRET_STORE)/.env.local 2>/dev/null || true
+	@[ -f env/.env ] && mv env/.env $(SECRET_STORE)/.env 2>/dev/null || true
+	@[ -f env/.env.local ] && mv env/.env.local $(SECRET_STORE)/.env.local 2>/dev/null || true
+	# Recreate symlink back into env/
+	@[ -f $(SECRET_STORE)/.env.local ] && ln -snf $(SECRET_STORE)/.env.local env/.env.local || true
+	@[ -f $(SECRET_STORE)/.env ] && ln -snf $(SECRET_STORE)/.env env/.env || true
+	# Ensure ignore rules and untrack from git index
+	@$(MAKE) secure
+	@git rm --cached -f .env .env.local env/.env env/.env.local 2>/dev/null || true
+	@git update-index --skip-worktree .env .env.local env/.env env/.env.local 2>/dev/null || true
+	@echo "✅ Env files moved to $(SECRET_STORE) and symlinked (env/.env*, ignored & untracked)."
 
 version:
 	@echo "📦 XO Core"
 	@echo "🐍 Python: $$(python --version 2>/dev/null || echo 'n/a')"
 	@echo "📦 Fabric: $$(fab --version 2>/dev/null || echo 'n/a')"
-"""
-xo_core.vault
-Lazy import facade to avoid circular imports between vault submodules
-when tests/tasks import from xo_core.vault.* during collection.
 
-Do NOT perform any eager intra-package imports at module import time.
-"""
+# --- Security hardening tasks ---
+.PHONY: bootstrap scan scan-history prepush
 
-from typing import Any
+bootstrap:
+	python -m pip install --upgrade pip || true
+	pip install pre-commit detect-secrets || true
+	pre-commit install || true
 
-__all__ = [
-    # modules exposed lazily
-    "unseal",
-    "bootstrap",
-    "api",
-    "utils",
-    # function passthroughs commonly imported from package root
-    "sign_all",
-    "get_vault_client",
-]
+scan:
+	@echo "🔎 Running gitleaks (working tree)…"
+	@{ command -v gitleaks >/dev/null 2>&1 && gitleaks protect --config .gitleaks.toml --source . --redact --verbose; } || echo "gitleaks not installed; skipping"
+	@echo "🔎 Running detect-secrets (repo, with excludes)…"
+	@detect-secrets scan --all-files --exclude-files='(^\.env|^env/\.env(\.local)?|\.png|\.jpg|\.jpeg|\.webp|\.pdf|\.zip|\.lock|\.md|\.yml|\.yaml)$$' --exclude-lines='secrets: inherit' > .secrets.scan.json || true
+	@detect-secrets audit --json .secrets.scan.json || true
+	@rm -f .secrets.scan.json
+	@echo "✅ scan complete"
 
-def __getattr__(name: str) -> Any:
-    if name == "unseal":
-        from . import unseal as m
-        return m
-    if name == "bootstrap":
-        from . import bootstrap as m
-        return m
-    if name == "api":
-        from . import api as m
-        return m
-    if name == "utils":
-        from . import utils as m
-        return m
-    raise AttributeError(f"module 'xo_core.vault' has no attribute {name!r}")
+scan-history:
+	@echo "🕰️ Running gitleaks (full history)…"
+	@{ command -v gitleaks >/dev/null 2>&1 && gitleaks detect --source . --redact --verbose --report-format sarif --report-path security-history.sarif; } || echo "gitleaks not installed; skipping"
+	@echo "📄 SARIF report (if generated): security-history.sarif"
 
-def sign_all(*args, **kwargs):
-    # Defer to implementation in .api (or update if moved)
-    from .api import sign_all as _sign_all  # type: ignore
-    return _sign_all(*args, **kwargs)
-
-def get_vault_client(*args, **kwargs):
-    # Defer to implementation in .bootstrap (or update if moved)
-    from .bootstrap import get_vault_client as _get_vault_client  # type: ignore
-    return _get_vault_client(*args, **kwargs)
+prepush:
+	@pre-commit run --all-files

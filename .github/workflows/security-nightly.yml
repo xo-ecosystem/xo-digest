@@ -1,0 +1,51 @@
+name: Nightly Secret Scan
+on:
+  schedule:
+    - cron: "17 2 * * *"   # daily at 02:17 UTC
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  baseline-guard:
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fail if .secrets.baseline changed (unless explicitly allowed)
+        run: |
+          set -e
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          if git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep -qx '.secrets.baseline'; then
+            if echo "${{ github.event.pull_request.title }} ${{ github.event.pull_request.body }}" | grep -qi '\[baseline-update\]'; then
+              echo "Baseline change detected, but override tag present."
+              exit 0
+            fi
+            echo "::error::Changes to .secrets.baseline detected. Add [baseline-update] to PR title/body if intentional."
+            exit 1
+          fi
+          echo "No baseline changes."
+
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: fetch-depth: 0
+      - name: Install tools
+        run: |
+          pipx install detect-secrets
+          curl -sSL https://raw.githubusercontent.com/gitleaks/gitleaks/master/install.sh | bash -s -- -b /usr/local/bin
+      - name: detect-secrets (repo)
+        run: detect-secrets scan --exclude-files '(\.png|\.jpg|\.webp|\.lock|\.md|\.yml|\.yaml)$' \
+                                 --exclude-lines 'secrets: inherit' \
+                                 --all-files | detect-secrets audit --json || true
+      - name: gitleaks (repo)
+        run: gitleaks detect --source . --redact --verbose --report-format sarif --report-path gitleaks.sarif || true
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks.sarif

@@ -1,7 +1,7 @@
 # No changes to README.md, so output it as is:
 
 # 🌍 XO Pulse Onboarding Guide
-> 📁 This README documents the **XO Pulse Automation Module** in `xo_core.fab_tasks.pulse`.  
+> 📁 This README documents the **XO Pulse Automation Module** in `xo_core.fab_tasks.pulse`.
 > For project-wide documentation, see the root `README.md`.
 
 Welcome to **XO Pulse** — your gateway to publishing time-locked, immutable, and community-powered updates in the XO ecosystem.

@@ -1,4 +1,52 @@
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+
+  - repo: local
+    hooks:
+      - id: ensure-detect-secrets-baseline
+        name: Ensure detect-secrets baseline exists
+        entry: >
+          bash -lc 'if [ -s .secrets.baseline ] && python -c "import json,sys; json.load(open(\".secrets.baseline\"))" >/dev/null 2>&1; then :; else echo "[ensure-baseline] (re)generating baseline"; detect-secrets scan --exclude-files '\''(\.png|\.jpg|\.webp|\.lock|\.md|\.yml|\.yaml)$'\'' --exclude-lines '\''secrets: inherit'\'' > .secrets.baseline; git add .secrets.baseline || true; fi; exit 0'
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args:
+          - '--baseline'
+          - '.secrets.baseline'
+          - '--exclude-files'
+          - '(\.png|\.jpg|\.webp|\.lock|\.md|\.yml|\.yaml)$'
+          - '--exclude-lines'
+          - 'secrets: inherit'
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
+        args:
+          - "protect"          # use protect subcommand for pre-commit
+          - "--verbose"
+          - "--redact"
+          - "--config"
+          - ".gitleaks.toml"
+          - "--source"
+          - "."
+          # (optional) enable just certain rules:
+          # - "--enable-rule=atlassian-api-token"
+          # - "--enable-rule=slack-access-token"
+        pass_filenames: false
+
   - repo: local
     hooks:
       - id: dev-cleanup

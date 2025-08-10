@@ -1,8 +1,8 @@
 Create a cosmic storyboard scene featuring: Enhanced connection to the cosmic forces
-                
+
                 Style: cosmic, cinematic lighting, detailed character design
                 Mood: Mysterious and enchanting
                 Rarity: epic level
                 Format: Wide aspect ratio, storyboard panels
-                
+
                 --ar 16:9 --v 6 --q 2 --s 750

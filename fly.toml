@@ -11,17 +11,17 @@ primary_region = "iad"
   # 🔐 Vault Keeper: Environment configuration
   XO_ENV = "production"
   XO_DEPLOYMENT = "fly.io"
-  
+
   # Optional: DNS and deployment configuration
   CLOUDFLARE_API_TOKEN = ""
   CLOUDFLARE_ZONE_ID = ""
-  
+
   # Service URLs for cosmic alignment
   XO_VAULT_URL = "https://vault.21xo.com"
   XO_INBOX_URL = "https://inbox.21xo.com"
   XO_PREVIEW_URL = "https://preview.21xo.com"
   XO_AGENT0_URL = "https://agent0.21xo.com"
-  
+
   # Logging and monitoring
   LOG_LEVEL = "INFO"
   PORT = "8080"

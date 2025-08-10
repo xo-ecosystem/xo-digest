@@ -16,7 +16,7 @@ from .bootstrap import get_vault_client, get_vault_unseal_keys, write_vault_boot
 def vault_unseal():
     """Unseal HashiCorp Vault using keys from various sources with clear progress logging."""
     print("🔐 Starting HashiCorp Vault unseal process...")
-    
+
     # Get unseal keys with fallback logic
     unseal_keys = get_vault_unseal_keys()
     if not unseal_keys:
@@ -25,13 +25,13 @@ def vault_unseal():
         print("   - vault/.keys.enc exists with valid keys")
         print("   - VAULT_UNSEAL_KEY_1, VAULT_UNSEAL_KEY_2, VAULT_UNSEAL_KEY_3 environment variables")
         return False
-    
+
     # Get vault client
     client = get_vault_client()
     if client is None:
         print("❌ Could not initialize vault client")
         return False
-    
+
     # Check if vault is already unsealed
     try:
         if not client.sys.is_sealed():
@@ -40,15 +40,15 @@ def vault_unseal():
     except Exception as e:
         print(f"⚠️ Could not check vault status: {e}")
         # Continue with unseal attempt anyway
-    
+
     # Unseal with progress tracking
     print(f"🔐 Attempting to unseal with {len(unseal_keys)} keys...")
-    
+
     for i, key in enumerate(unseal_keys, 1):
         if not key:
             print(f"⚠️ Skipping empty key {i}")
             continue
-            
+
         try:
             # Use hvac client if available, fallback to requests
             if hasattr(client, "sys") and hasattr(client.sys, "submit_unseal_key"):
@@ -70,10 +70,10 @@ def vault_unseal():
                     print("✅ HashiCorp Vault unsealed successfully!")
                     write_vault_bootstrap_log()
                     return True
-                    
+
         except Exception as e:
             print(f"❌ Error unsealing with key {i}: {e}")
-    
+
     print("❌ Failed to unseal HashiCorp Vault with provided keys")
     return False
 
@@ -84,4 +84,4 @@ def unseal_vault(c):
         print("✅ HashiCorp Vault unseal task completed successfully")
     else:
         print("❌ HashiCorp Vault unseal task failed")
-        exit(1) 
+        exit(1)

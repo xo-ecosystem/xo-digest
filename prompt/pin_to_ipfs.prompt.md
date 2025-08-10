@@ -30,7 +30,7 @@ IPFS_PROVIDER=nftstorage  # or: pinata, local
 # For Pinata
 PINATA_API_KEY=your_pinata_jwt_token
 
-# For nft.storage  
+# For nft.storage
 NFT_STORAGE_TOKEN=your_nft_storage_api_token
 ```
 
@@ -93,7 +93,7 @@ except IPFSBackendError as e:
 def sign_pulse(c, slug):
     # ... signing logic ...
     signed_file = f"vault/signed/{slug}.mdx"
-    
+
     # Auto-pin to IPFS
     try:
         cid = pin_to_ipfs(signed_file)
@@ -149,4 +149,4 @@ IPFSBackendError: Pinata API error: 429 - Rate limit exceeded
 2. **Use environment variables** for configuration
 3. **Test your setup** with `test_ipfs_connection()`
 4. **Log operations** for debugging and monitoring
-5. **Have fallback providers** configured for redundancy 
+5. **Have fallback providers** configured for redundancy

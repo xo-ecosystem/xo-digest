@@ -6,14 +6,14 @@ preview:
   image: "drop_main.webp"
   animation: "bottle_scroll_01.webp"
   background: "bottle_scroll_02.webp"
-  
+
 display:
   theme: "mystical_ocean"
   colors:
     primary: "#1E3A8A"
     secondary: "#3B82F6"
     accent: "#60A5FA"
-  
+
 effects:
   - type: "wave"
     source: "drop_main.webp"

@@ -34,7 +34,7 @@ module.exports = {
       url: "http://127.0.0.1:8545",
       chainId: 31337
     },
-    
+
     // Mainnet Networks
     polygon: {
       url: POLYGON_RPC_URL || "https://polygon-rpc.com",
@@ -60,7 +60,7 @@ module.exports = {
       chainId: 8453,
       gasPrice: 1000000000 // 1 gwei
     },
-    
+
     // Testnet Networks
     polygonMumbai: {
       url: MUMBAI_RPC_URL || "https://rpc-mumbai.maticvigil.com",
@@ -95,7 +95,7 @@ module.exports = {
       arbitrumOne: ARBISCAN_API_KEY,
       optimisticEthereum: OPTIMISM_API_KEY,
       base: BASESCAN_API_KEY,
-      
+
       // Testnet APIs
       polygonMumbai: POLYGONSCAN_API_KEY,
       arbitrumGoerli: ARBISCAN_API_KEY,

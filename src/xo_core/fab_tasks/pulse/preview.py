@@ -212,28 +212,28 @@ def ensure_pulse_exists(slug):
     """Ensure pulse directory and MDX file exist, create stub if missing."""
     pulse_dir = Path("content/pulses") / slug
     index_path = pulse_dir / "index.mdx"
-    
+
     if not pulse_dir.exists():
         pulse_dir.mkdir(parents=True, exist_ok=True)
         rich.print(f"[yellow]📁 Created pulse directory:[/yellow] {pulse_dir}")
-    
+
     if not index_path.exists():
         stub_content = DEFAULT_MDX_STUB.format(slug=slug)
         index_path.write_text(stub_content, encoding="utf-8")
         rich.print(f"[yellow]📝 Created stub MDX file:[/yellow] {index_path}")
         rich.print(f"[blue]💡 Edit the file to add your content![/blue]")
-    
+
     return index_path
 
 
 def get_pulse_content(slug):
     """Get pulse content, ensuring file exists."""
     index_path = ensure_pulse_exists(slug)
-    
+
     if not index_path.exists():
         rich.print(f"[red]❌ Pulse not found:[/red] {index_path}")
         return None
-    
+
     return index_path.read_text(encoding="utf-8")
 
 
@@ -244,7 +244,7 @@ def get_pulse_content(slug):
 def preview_pulse(c, slug, html=False):
     """
     👀 Preview a pulse as raw Markdown or HTML render with live reload.
-    
+
     Examples:
         fab pulse.preview --slug prose_test
         fab pulse.preview --slug prose_test --html
@@ -282,12 +282,12 @@ def preview_pulse(c, slug, html=False):
             server.watch(f"content/pulses/{slug}/", rebuild)
             server.watch("tailwind.config.js", rebuild)
             rebuild()  # initial render
-            
+
             rich.print(f"[blue]👀 Watching:[/blue] content/pulses/{slug}/ and tailwind.config.js")
             rich.print(f"[green]🔄 Live server started on http://localhost:5500[/green]")
             rich.print(f"[cyan]🌐 Opening browser...[/cyan]")
             webbrowser.open(f"file://{tmp_path}")
-            
+
             try:
                 server.serve(root=Path(tmp_path).parent.as_posix(), port=5500)
             except KeyboardInterrupt:
@@ -310,7 +310,7 @@ def preview_pulse(c, slug, html=False):
 def export_html(c, slug):
     """
     💾 Export pulse as standalone HTML into public/pulses/<slug>.html
-    
+
     Examples:
         fab pulse.export-html --slug prose_test
     """
@@ -320,7 +320,7 @@ def export_html(c, slug):
 
     # Convert markdown to HTML with shortcode support
     html_content = markdown.markdown(parse_shortcodes(content))
-    
+
     # Create full HTML document
     html_output = EXPORT_HTML_TEMPLATE.format(
         slug=slug,
@@ -330,7 +330,7 @@ def export_html(c, slug):
     # Ensure output directory exists
     output_dir = Path("public/pulses")
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Write HTML file
     output_path = output_dir / f"{slug}.html"
     output_path.write_text(html_output, encoding="utf-8")
@@ -345,14 +345,14 @@ def export_html(c, slug):
 def edit_pulse(c, slug):
     """
     ✍️ Open the pulse .mdx in VSCode.
-    
+
     Examples:
         fab pulse.edit --slug prose_test
     """
     index_path = ensure_pulse_exists(slug)
     if not index_path.exists():
         return
-    
+
     rich.print(f"[blue]📝 Opening in VSCode:[/blue] {index_path}")
     c.run(f"code '{index_path}'", pty=True)
 

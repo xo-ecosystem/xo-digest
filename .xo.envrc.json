@@ -2,7 +2,7 @@
   "patterns": {
     "modern": [
       "main",
-      "master", 
+      "master",
       "xo",
       "dev/xo",
       "feature/xo",
@@ -11,7 +11,7 @@
     ],
     "legacy": [
       "legacy",
-      "fab2", 
+      "fab2",
       "stable",
       "v1",
       "v2",
@@ -36,4 +36,4 @@
     "pre_switch": null,
     "post_switch": "direnv allow"
   }
-} 
+}
