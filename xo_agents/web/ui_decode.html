@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>XO Decode Console</title>
+  <script>
+    // injected at serve-time
+    window.XO = __XO_CFG__;
+  </script>
+  <style>
+    body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; background:#0b0f14; color:#e6edf3; margin:0; }
+    .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+    .card { background:#111827; border:1px solid #1f2937; border-radius:12px; padding:16px; margin: 16px 0; }
+    input[type="text"], input[type="password"] { width:100%; padding:10px; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#e6edf3; }
+    button { background:#2563eb; color:#fff; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; }
+    table { width:100%; border-collapse: collapse; }
+    td, th { border:1px solid #374151; padding:8px; text-align:left; }
+    th { background:#1f2937; }
+    .muted { opacity: 0.7; }
+    .row { display:flex; gap:12px; align-items:center; }
+    .row > * { flex: 1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>XO Decode Console</h1>
+    <div class="card" style="display:flex; gap:8px; align-items:center; justify-content:space-between">
+      <div id="authStatus" class="muted">Signed out</div>
+      <div style="display:flex; gap:8px">
+        <button id="btnSignIn" type="button" onclick="startAuth()">Sign in</button>
+        <button id="btnSignOut" type="button" onclick="signOut()" style="background:#6b7280">Sign out</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row">
+        <div>
+          <label class="muted">X-Agent-Secret</label>
+          <input id="secret" type="password" placeholder="enter secret header" />
+        </div>
+        <div>
+          <label class="muted">Context</label>
+          <input id="context" type="text" value="manual" />
+        </div>
+      </div>
+      <div style="height:8px"></div>
+      <div class="row">
+        <div>
+          <label class="muted">Inline input (str://...)</label>
+          <input id="inline" type="text" placeholder="str://eyJvayI6dHJ1ZX0=" />
+        </div>
+        <div>
+          <label class="muted">File</label>
+          <input id="file" type="file" />
+        </div>
+      </div>
+      <div style="height:12px"></div>
+      <button onclick="doDecode()">Decode</button>
+      <div id="out" class="muted" style="white-space:pre-wrap; margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <h3>Recent Runs</h3>
+      <table>
+        <thead><tr><th>Run ID</th><th>Open</th></tr></thead>
+        <tbody id="runs"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function sha256(ab){const d=await crypto.subtle.digest('SHA-256',ab);return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_')}
+    function rand(n=64){const a=new Uint8Array(n);crypto.getRandomValues(a);return btoa(String.fromCharCode(...a)).replace(/[^a-zA-Z0-9]/g,'').slice(0,96)}
+    function token(){ return sessionStorage.getItem('access_token') || '' }
+    function setWho(){
+      const t = token();
+      let who = 'Signed out';
+      try { if (t){ const [,payload] = t.split('.'); const obj = JSON.parse(atob(payload.replace(/-/g,'+').replace(/_/g,'/'))); who = 'Signed in as ' + (obj.email || obj.preferred_username || obj.sub); } } catch(e) {}
+      document.getElementById('whoami').textContent = who;
+    }
+    const cfg = window.XO || {};
+    const DISCOVERY = (cfg.issuer || '').replace(/\/$/,'') + '/.well-known/openid-configuration';
+    const KEY_VERIFIER = 'xo.pkce.verifier';
+    const KEY_TOKEN = 'xo.token';
+
+    async function sha256(s) { const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+    function rand(n=64) { const a = new Uint8Array(n); crypto.getRandomValues(a); return btoa(String.fromCharCode(...a)).replace(/[^a-zA-Z0-9]/g,'').slice(0,128); }
+    function setAuthStatus(text){ document.getElementById('authStatus').innerText = text; }
+    function currentToken(){ return sessionStorage.getItem(KEY_TOKEN) || ''; }
+    function updateWho(){ const t = currentToken(); let who = 'Signed out'; try { if (t){ const [,payload] = t.split('.'); const obj = JSON.parse(atob(payload.replace(/-/g,'+').replace(/_/g,'/'))); who = 'Signed in as ' + (obj.email || obj.preferred_username || obj.sub); } } catch(e) {} setAuthStatus(who); }
+    async function startAuth() { if (!cfg.issuer || !cfg.clientId || !cfg.redirectUri) { alert('OIDC not configured on server'); return; } const d = await fetch(DISCOVERY).then(r=>r.json()); const verifier = rand(64); const challenge = await sha256(verifier); sessionStorage.setItem(KEY_VERIFIER, verifier); const url = new URL(d.authorization_endpoint); url.search = new URLSearchParams({ client_id: cfg.clientId, redirect_uri: cfg.redirectUri, response_type: 'code', scope: 'openid profile email', code_challenge: challenge, code_challenge_method: 'S256', audience: cfg.audience || '' }).toString(); window.location = url.toString(); }
+    async function handleCallback() { const qs = new URLSearchParams(window.location.search); const code = qs.get('code'); if (!code) { updateWho(); return; } const d = await fetch(DISCOVERY).then(r=>r.json()); const verifier = sessionStorage.getItem(KEY_VERIFIER); const body = new URLSearchParams({ grant_type: 'authorization_code', client_id: cfg.clientId, redirect_uri: cfg.redirectUri, code_verifier: verifier, code }); const tok = await fetch(d.token_endpoint, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body }).then(r=>r.json()); if (tok.access_token) { sessionStorage.setItem(KEY_TOKEN, tok.access_token); history.replaceState({}, '', cfg.redirectUri); setAuthStatus('Signed in'); } else { console.error(tok); alert('Sign-in failed'); } }
+    function signOut(){ sessionStorage.removeItem(KEY_TOKEN); setAuthStatus('Signed out'); }
+    async function apiFetch(url, init={}) { const t = currentToken(); init.headers = Object.assign({}, init.headers||{}); if (t) init.headers['Authorization'] = 'Bearer ' + t; const secret = document.getElementById('secret').value.trim(); if (!t && (cfg.allowLegacy) && secret) init.headers['X-Agent-Secret'] = secret; const r = await fetch(url, init); if (r.status===401) { alert('Please sign in'); } return r; }
+    async function doDecode() {
+      const secret = document.getElementById('secret').value.trim();
+      const context = document.getElementById('context').value.trim() || 'manual';
+      const inline = document.getElementById('inline').value.trim();
+      const fileEl = document.getElementById('file');
+      const fd = new FormData();
+      fd.append('context', context);
+      if (inline) fd.append('input', inline);
+      if (fileEl.files.length > 0) fd.append('file', fileEl.files[0]);
+      const headers = secret ? { 'X-Agent-Secret': secret } : {};
+      const res = await apiFetch('/agent/decode', { method:'POST', headers, body: fd });
+      const txt = await res.text();
+      document.getElementById('out').textContent = txt;
+      try {
+        const obj = JSON.parse(txt);
+        if (obj && obj.run_id) addRun(obj.run_id);
+      } catch {}
+    }
+    async function openReport(runId){
+      const url = '/vault/decoded/' + runId + '/index.html?handle=brie';
+      const res = await apiFetch(url);
+      const html = await res.text();
+      const w = window.open('', '_blank');
+      if (w) { w.document.open(); w.document.write(html); w.document.close(); }
+    }
+    function addRun(runId) {
+      const tr = document.createElement('tr');
+      const tdId = document.createElement('td');
+      const tdOpen = document.createElement('td');
+      tdId.textContent = runId;
+      const btn = document.createElement('button');
+      btn.textContent = 'Open report';
+      btn.onclick = () => openReport(runId);
+      tdOpen.appendChild(btn);
+      tr.appendChild(tdId);
+      tr.appendChild(tdOpen);
+      document.getElementById('runs').prepend(tr);
+    }
+    handleCallback();
+  </script>
+</body>
+</html>

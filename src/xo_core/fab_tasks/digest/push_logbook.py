@@ -7,12 +7,19 @@ import json
 from pathlib import Path
 from fabric import task
 
-from xo_core.vault.ipfs_utils import pin_to_ipfs
+
+def _pin_to_ipfs(path: str) -> str:
+    from xo_core.vault.ipfs_utils import pin_to_ipfs as _pin
+
+    return _pin(path)
+
+
 import logging
 
 logger = logging.getLogger(__name__)
 from xo_core.utils.arweave_upload import upload_to_arweave
 import shutil
+
 
 @task
 def push_logbook(c):
@@ -31,19 +38,22 @@ def push_logbook(c):
             content = f.read()
         print(f"📌 Pinning {log_file.name}...")
         try:
-            ipfs_hash = pin_to_ipfs(str(log_file))
+            ipfs_hash = _pin_to_ipfs(str(log_file))
             logger.info(f"Pushed {log_file.name} to IPFS: {ipfs_hash}")
         except Exception as e:
             logger.error(f"Failed to pin {log_file.name}: {e}")
 
         # Replacing upload_to_arweave with subprocess to arweave-deploy
         import subprocess
+
         if shutil.which("arweave-deploy"):
             arweave_result = subprocess.run(
-                ["arweave-deploy", str(log_file)],
-                capture_output=True,
-                text=True
+                ["arweave-deploy", str(log_file)], capture_output=True, text=True
             )
-            logger.info(f"📤 Arweave TX for {log_file.name}: {arweave_result.stdout.strip()}")
+            logger.info(
+                f"📤 Arweave TX for {log_file.name}: {arweave_result.stdout.strip()}"
+            )
         else:
-            logger.warning(f"⚠️ Arweave-deploy not found. Skipping Arweave push for {log_file.name}.")
+            logger.warning(
+                f"⚠️ Arweave-deploy not found. Skipping Arweave push for {log_file.name}."
+            )

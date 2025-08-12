@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
 SHELL := /bin/bash
+PORT ?= 8003
 
 .PHONY: help lint test doctor vault-status vault-unseal vault-check agent-health secure detox version
 
@@ -132,3 +133,131 @@ scan-history:
 
 prepush:
 	@pre-commit run --all-files
+
+CONTEXT ?= manual
+
+# --- Agent decode helpers ---
+.PHONY: decode decode-file
+
+
+decode:
+	@PYTHONPATH="$(PWD)/src" fab agent.decode --input="$(INPUT)" --context="$(CONTEXT)" 2>/dev/null | jq . || \
+	curl -s -H "X-Agent-Secret: $(XO_AGENT_SECRET)" -F "input=$(INPUT)" -F "context=$(CONTEXT)" "$(AGENT_URL)/agent/decode" | jq .
+
+decode-file:
+	@PYTHONPATH="$(PWD)/src" fab agent.decode --input="$(FILE)" --context=manual 2>/dev/null | jq . || \
+	curl -s -H "X-Agent-Secret: $(XO_AGENT_SECRET)" -F "file=@$(FILE)" -F "context=manual" "$(AGENT_URL)/agent/decode" | jq .
+
+.PHONY: open-decode
+open-decode:
+	@RUN_ID=$(RUN); if [ -z "$$RUN_ID" ]; then echo "Usage: make open-decode RUN=<run_id>"; exit 1; fi; \
+	DIR="$(HOME)/.config/xo-core/decoded/$$RUN_ID"; \
+	if [ -d "$$DIR" ]; then \
+	  echo "Opening $$DIR"; \
+	  open "$$DIR"; \
+	  if [ -f "$$DIR/index.html" ]; then open "$$DIR/index.html"; fi; \
+	else \
+	  echo "Run directory not found: $$DIR"; exit 2; \
+	fi
+
+# --- Handle claim helpers ---
+.PHONY: handle-claim handle-verify handle-activate handle-show
+
+AGENT_URL ?= http://localhost:8003
+XO_AGENT_SECRET ?=
+
+handle-claim:
+	@curl -s -X POST $(AGENT_URL)/agent/handles/claim \
+	 -H "Content-Type: application/json" \
+	 -H "X-Agent-Secret: $(XO_AGENT_SECRET)" \
+	 -d '{"handle":"brie","method":"wallet"}' | jq .
+
+handle-verify:
+	@echo 'POST /agent/handles/verify with {"handle":"brie","signature":"<sig>"} or {"handle":"brie","token":"<token>"}'
+
+handle-activate:
+	@curl -s -X POST $(AGENT_URL)/agent/handles/activate \
+	 -H "Content-Type: application/json" \
+	 -H "X-Agent-Secret: $(XO_AGENT_SECRET)" \
+	 -d '{"handle":"brie","display":"Brie"}' | jq .
+
+handle-show:
+	@PYTHONPATH="$(PWD)/src" fab handle.show --handle=brie | jq . 2>/dev/null || PYTHONPATH="$(PWD)/src" fab handle.show --handle=brie
+
+.PHONY: kill-api-port
+kill-api-port:
+	@echo "🛑 Killing any process on port $(PORT)…"
+	@PIDS=$$(lsof -ti :$(PORT) 2>/dev/null); \
+	if [ -n "$$PIDS" ]; then \
+	  echo "Found: $$PIDS"; \
+	  kill -9 $$PIDS || true; \
+	else \
+	  echo "No process found on port $(PORT)"; \
+	fi
+
+# --- Serve API helpers ---
+AGENT_URL ?= http://localhost:8003
+XO_AGENT_SECRET ?=
+.PHONY: serve-api open-api serve-api-prod
+
+serve-api:
+	@$(MAKE) kill-api-port
+	@PYTHONPATH="$(PWD)/src" \
+	XO_ALLOW_LEGACY_SECRET=1 \
+	XO_CORS=$${XO_CORS:-http://localhost:5173} \
+	XO_OIDC_ISSUER=$${XO_OIDC_ISSUER:-https://login.xo.center} \
+	XO_OIDC_AUDIENCE=$${XO_OIDC_AUDIENCE:-api://xo-agent} \
+	XO_OIDC_CLIENT_ID_SPA=$${XO_OIDC_CLIENT_ID_SPA:-xo-pulse-ui} \
+	XO_OIDC_REDIRECT_URI=$${XO_OIDC_REDIRECT_URI:-http://localhost:8003/vault/ui} \
+	XO_AGENT_SECRET=$${XO_AGENT_SECRET:-devsecret} \
+	uvicorn xo_agents.api:app --port $(PORT) --reload
+
+open-api:
+	@python -c 'import webbrowser; webbrowser.open("http://localhost:8003/vault/ui")'
+
+serve-api-prod:
+	@$(MAKE) kill-api-port
+	@PYTHONPATH="$(PWD)/src" \
+	XO_OIDC_ISSUER=$${XO_OIDC_ISSUER:?set XO_OIDC_ISSUER} \
+	XO_OIDC_AUDIENCE=$${XO_OIDC_AUDIENCE:?set XO_OIDC_AUDIENCE} \
+	XO_OIDC_CLIENT_ID_SPA=$${XO_OIDC_CLIENT_ID_SPA:?set XO_OIDC_CLIENT_ID_SPA} \
+	XO_OIDC_REDIRECT_URI=$${XO_OIDC_REDIRECT_URI:?set XO_OIDC_REDIRECT_URI} \
+	XO_CORS=$${XO_CORS:-https://xo-pulse.com} \
+	XO_AGENT_SECRET=$${XO_AGENT_SECRET:?set XO_AGENT_SECRET} \
+	XO_API_RATELIMIT=1 uvicorn xo_agents.api:app --host 0.0.0.0 --port $(PORT) --log-level warning
+
+# --- Sign helpers ---
+.PHONY: sign-status sign-msg
+
+sign-status:
+	@PYTHONPATH="$(PWD)/src" fab sign.status || curl -s -H "X-Agent-Secret: $(XO_AGENT_SECRET)" "$(AGENT_URL)/agent/sign/status" | jq .
+
+sign-msg:
+	@PYTHONPATH="$(PWD)/src" fab sign.msg:'$(MESSAGE)' || curl -s -X POST \
+	 -H "Content-Type: application/json" \
+	 -H "X-Agent-Secret: $(XO_AGENT_SECRET)" \
+	 -d '{"message":"$(MESSAGE)"}' \
+	 "$(AGENT_URL)/agent/sign" | jq .
+
+# --- Login proxy (Zitadel white-label) ---
+LOGIN_APP ?= $(FLY_APP_NAME)
+LOGIN_HOST ?= $(LOGIN_HOST)
+ZITADEL_ISSUER ?= $(ZITADEL_ISSUER)
+ALLOWED_ORIGINS ?= $(ALLOWED_ORIGINS)
+
+.PHONY: login-proxy-deploy login-proxy-secrets login-proxy-run
+
+login-proxy-deploy:
+	@cd services/login-proxy && \
+	sed -e 's|XO_APP_NAME_REPLACE|$(LOGIN_APP)|' \
+	    -e 's|ZITADEL_ISSUER_REPLACE|$(ZITADEL_ISSUER)|' \
+	    -e 's|LOGIN_HOST_REPLACE|$(LOGIN_HOST)|' \
+	    -e 's|ALLOWED_ORIGINS_REPLACE|$(ALLOWED_ORIGINS)|' \
+	    fly.toml > fly.generated.toml && \
+	fly launch --copy-config --config fly.generated.toml --name $(LOGIN_APP) --now --region ams --yes
+
+login-proxy-secrets:
+	@echo "No secrets needed (PKCE). Ensure DNS CNAME $(LOGIN_HOST) → <app>.fly.dev hostname."
+
+login-proxy-run:
+	@cd services/login-proxy && uvicorn main:app --port 8080 --reload

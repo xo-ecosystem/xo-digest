@@ -1,3 +1,30 @@
+from invoke import task
+
+
+@task
+def status(c):
+    c.run(
+        "curl -s -H 'Authorization: Bearer $XO_BEARER' http://localhost:8003/agent/sign/status | jq .",
+        pty=True,
+    )
+
+
+@task
+def msg(c, message):
+    c.run(
+        "curl -s -H 'Authorization: Bearer $XO_BEARER' -H 'Content-Type: application/json' "
+        f'-d \'{{"message": "{message}", "encoding": "utf-8"}}\' '
+        "http://localhost:8003/agent/sign | jq .",
+        pty=True,
+    )
+
+
+from invoke import Collection
+
+ns = Collection()
+ns.add_task(status, "status")
+ns.add_task(msg, "msg")
+
 from invoke import task, Collection
 from pathlib import Path
 import json
@@ -8,6 +35,7 @@ import shutil
 import os
 from datetime import datetime
 from typing import Dict, List, Any, Optional
+
 
 @task(help={"bundle": "Pulse bundle path", "key": "Signing key path"})
 def pulse_bundle(c, bundle, key="vault/private.key.b64"):
@@ -36,13 +64,17 @@ def pulse_bundle(c, bundle, key="vault/private.key.b64"):
     print(f"✅ Bundle signed: {signed_bundle}")
 
     # Log the signing
-    log_sign_event("pulse_bundle", {
-        "bundle": bundle,
-        "signed_bundle": signed_bundle,
-        "manifest_hash": manifest["hash"]
-    })
+    log_sign_event(
+        "pulse_bundle",
+        {
+            "bundle": bundle,
+            "signed_bundle": signed_bundle,
+            "manifest_hash": manifest["hash"],
+        },
+    )
 
     return signed_bundle
+
 
 @task(help={"inbox_dir": "Inbox directory path", "key": "Signing key path"})
 def inbox_all(c, inbox_dir="content/pulses", key="vault/private.key.b64"):
@@ -81,13 +113,17 @@ def inbox_all(c, inbox_dir="content/pulses", key="vault/private.key.b64"):
     print(f"✅ Signed {len(signed_files)} inbox files")
 
     # Log the signing
-    log_sign_event("inbox_all", {
-        "inbox_dir": inbox_dir,
-        "signed_count": len(signed_files),
-        "signed_files": [str(f) for f in signed_files]
-    })
+    log_sign_event(
+        "inbox_all",
+        {
+            "inbox_dir": inbox_dir,
+            "signed_count": len(signed_files),
+            "signed_files": [str(f) for f in signed_files],
+        },
+    )
 
     return signed_files
+
 
 @task(help={"file": "File path to verify", "signature": "Signature file path"})
 def verify_all(c, file=None, signature=None):
@@ -100,6 +136,7 @@ def verify_all(c, file=None, signature=None):
     else:
         # Verify all signed files
         return verify_all_signatures()
+
 
 def verify_file_signature(file_path: str, signature_path: str) -> bool:
     """Verify signature for a specific file"""
@@ -115,7 +152,7 @@ def verify_file_signature(file_path: str, signature_path: str) -> bool:
         return False
 
     # Load signature
-    with open(signature_path, 'r') as f:
+    with open(signature_path, "r") as f:
         signature_data = json.load(f)
 
     # Generate file hash
@@ -130,6 +167,7 @@ def verify_file_signature(file_path: str, signature_path: str) -> bool:
         print(f"❌ Signature invalid: {file_path}")
 
     return is_valid
+
 
 def verify_all_signatures() -> Dict[str, bool]:
     """Verify all signatures in the project"""
@@ -158,24 +196,27 @@ def verify_all_signatures() -> Dict[str, bool]:
 
     return results
 
+
 def generate_bundle_manifest(bundle_path: Path) -> Dict[str, Any]:
     """Generate manifest for a bundle"""
     manifest = {
         "bundle_name": bundle_path.name,
         "timestamp": datetime.utcnow().isoformat(),
         "files": [],
-        "hash": ""
+        "hash": "",
     }
 
     # Add all files in bundle
     for file_path in bundle_path.rglob("*"):
         if file_path.is_file():
             file_hash = generate_file_hash(file_path)
-            manifest["files"].append({
-                "path": str(file_path.relative_to(bundle_path)),
-                "hash": file_hash,
-                "size": file_path.stat().st_size
-            })
+            manifest["files"].append(
+                {
+                    "path": str(file_path.relative_to(bundle_path)),
+                    "hash": file_hash,
+                    "size": file_path.stat().st_size,
+                }
+            )
 
     # Generate bundle hash
     bundle_hash = hashlib.sha256()
@@ -186,10 +227,11 @@ def generate_bundle_manifest(bundle_path: Path) -> Dict[str, Any]:
 
     return manifest
 
+
 def sign_manifest(manifest: Dict[str, Any], key_path: str) -> Dict[str, Any]:
     """Sign a manifest with the Vault key"""
     # Load private key
-    with open(key_path, 'r') as f:
+    with open(key_path, "r") as f:
         private_key = f.read().strip()
 
     # Create signature data
@@ -197,7 +239,7 @@ def sign_manifest(manifest: Dict[str, Any], key_path: str) -> Dict[str, Any]:
         "manifest_hash": manifest["hash"],
         "timestamp": datetime.utcnow().isoformat(),
         "key_id": "vault_key",
-        "algorithm": "sha256"
+        "algorithm": "sha256",
     }
 
     # Generate signature (simplified - would use proper crypto)
@@ -209,7 +251,10 @@ def sign_manifest(manifest: Dict[str, Any], key_path: str) -> Dict[str, Any]:
 
     return signature_data
 
-def create_signed_bundle(bundle_path: Path, manifest: Dict[str, Any], signature: Dict[str, Any]) -> str:
+
+def create_signed_bundle(
+    bundle_path: Path, manifest: Dict[str, Any], signature: Dict[str, Any]
+) -> str:
     """Create a signed bundle archive"""
     # Create signed bundle directory
     signed_dir = bundle_path.parent / f"{bundle_path.name}.signed"
@@ -222,15 +267,15 @@ def create_signed_bundle(bundle_path: Path, manifest: Dict[str, Any], signature:
         shutil.copy2(bundle_path, signed_dir / bundle_path.name)
 
     # Save manifest and signature
-    with open(signed_dir / "manifest.json", 'w') as f:
+    with open(signed_dir / "manifest.json", "w") as f:
         json.dump(manifest, f, indent=2)
 
-    with open(signed_dir / "signature.json", 'w') as f:
+    with open(signed_dir / "signature.json", "w") as f:
         json.dump(signature, f, indent=2)
 
     # Create zip archive
     zip_path = f"{signed_dir}.zip"
-    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
         for root, dirs, files in os.walk(signed_dir):
             for file in files:
                 file_path = Path(root) / file
@@ -242,6 +287,7 @@ def create_signed_bundle(bundle_path: Path, manifest: Dict[str, Any], signature:
 
     return zip_path
 
+
 def generate_file_hash(file_path: Path) -> str:
     """Generate SHA256 hash of a file"""
     hash_sha256 = hashlib.sha256()
@@ -250,13 +296,14 @@ def generate_file_hash(file_path: Path) -> str:
             hash_sha256.update(chunk)
     return hash_sha256.hexdigest()
 
+
 def sign_file(file_path: Path, key_path: str) -> Dict[str, Any]:
     """Sign a file with the Vault key"""
     # Generate file hash
     file_hash = generate_file_hash(file_path)
 
     # Load private key
-    with open(key_path, 'r') as f:
+    with open(key_path, "r") as f:
         private_key = f.read().strip()
 
     # Create signature data
@@ -265,7 +312,7 @@ def sign_file(file_path: Path, key_path: str) -> Dict[str, Any]:
         "hash": file_hash,
         "timestamp": datetime.utcnow().isoformat(),
         "key_id": "vault_key",
-        "algorithm": "sha256"
+        "algorithm": "sha256",
     }
 
     # Generate signature (simplified - would use proper crypto)
@@ -277,15 +324,17 @@ def sign_file(file_path: Path, key_path: str) -> Dict[str, Any]:
 
     return signature_data
 
+
 def create_signed_file(file_path: Path, signature: Dict[str, Any]) -> Path:
     """Create a signed version of a file"""
     # Create signature file
     signature_file = file_path.parent / f"{file_path.stem}.signed.json"
 
-    with open(signature_file, 'w') as f:
+    with open(signature_file, "w") as f:
         json.dump(signature, f, indent=2)
 
     return signature_file
+
 
 def verify_signature(file_hash: str, signature_data: Dict[str, Any]) -> bool:
     """Verify a signature"""
@@ -299,6 +348,7 @@ def verify_signature(file_hash: str, signature_data: Dict[str, Any]) -> bool:
 
     return expected_signature == actual_signature
 
+
 def log_sign_event(event_type: str, data: Dict[str, Any]) -> None:
     """Log signing events to vault logbook"""
     log_path = Path("vault/logbook/storj.log")
@@ -307,11 +357,12 @@ def log_sign_event(event_type: str, data: Dict[str, Any]) -> None:
     log_entry = {
         "timestamp": datetime.utcnow().isoformat(),
         "event": f"sign_{event_type}",
-        "data": data
+        "data": data,
     }
 
     with open(log_path, "a") as f:
         f.write(json.dumps(log_entry) + "\n")
+
 
 # Create sign namespace
 sign_ns = Collection("sign")

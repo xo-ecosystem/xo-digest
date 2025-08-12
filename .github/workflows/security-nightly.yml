@@ -34,13 +34,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: fetch-depth: 0
+        with:
+          fetch-depth: 0
+      - name: OIDC deps smoke check
+        run: |
+          set -e
+          test -f requirements.txt
+          python - <<'PY'
+reqs = open('requirements.txt').read()
+assert 'python-jose' in reqs and 'httpx' in reqs, 'Missing OIDC deps'
+print('✅ OIDC deps present')
+PY
       - name: Install tools
         run: |
           pipx install detect-secrets
           curl -sSL https://raw.githubusercontent.com/gitleaks/gitleaks/master/install.sh | bash -s -- -b /usr/local/bin
       - name: detect-secrets (repo)
-        run: detect-secrets scan --exclude-files '(\.png|\.jpg|\.webp|\.lock|\.md|\.yml|\.yaml)$' \
+        run: detect-secrets scan --exclude-files '(^\.env|^env/\.env(\.local)?|\.png|\.jpg|\.webp|\.pdf|\.zip|\.lock|\.md|\.yml|\.yaml)$' \
                                  --exclude-lines 'secrets: inherit' \
                                  --all-files | detect-secrets audit --json || true
       - name: gitleaks (repo)

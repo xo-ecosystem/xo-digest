@@ -11,12 +11,14 @@ import logging
 # Create the namespace
 ns = Collection("vault")
 
-# Import IPFS upload utility
-try:
-    from xo_core.vault.utils import upload_to_ipfs
-except ImportError:
-    # Mock upload function for testing
-    def upload_to_ipfs(file_path):
+
+def upload_to_ipfs(file_path):
+    try:
+        from xo_core.vault.utils import upload_to_ipfs as _upload
+
+        return _upload(file_path)
+    except Exception:
+        # Mock upload function for testing
         print(f"Mock upload: {file_path}")
         return {"cid": "mock_cid_12345"}
 
@@ -28,7 +30,12 @@ def drop_audit(c, bundle):
     Usage: xo-fab vault.audit:"message_bottle"
     """
     drop_path = Path("drops") / bundle
-    required_files = ["drop_main.webp", "drop.preview.yml", "drop.status.json", ".traits.yml"]
+    required_files = [
+        "drop_main.webp",
+        "drop.preview.yml",
+        "drop.status.json",
+        ".traits.yml",
+    ]
 
     print(f"🔍 Auditing drop: {bundle}")
     print(f"📁 Path: {drop_path}")
@@ -58,7 +65,7 @@ def drop_audit(c, bundle):
     status_path = drop_path / "drop.status.json"
     if status_path.exists():
         try:
-            with open(status_path, 'r') as f:
+            with open(status_path, "r") as f:
                 status = json.load(f)
             print(f"✅ drop.status.json is valid JSON")
 
@@ -77,7 +84,7 @@ def drop_audit(c, bundle):
     traits_path = drop_path / ".traits.yml"
     if traits_path.exists():
         try:
-            with open(traits_path, 'r') as f:
+            with open(traits_path, "r") as f:
                 traits = yaml.safe_load(f)
             print(f"✅ .traits.yml is valid YAML")
 
@@ -85,8 +92,8 @@ def drop_audit(c, bundle):
                 print(f"📊 Found {len(traits)} traits")
                 for trait in traits:
                     if isinstance(trait, dict):
-                        trait_id = trait.get('id', 'unknown')
-                        trait_name = trait.get('name', 'unnamed')
+                        trait_id = trait.get("id", "unknown")
+                        trait_name = trait.get("name", "unnamed")
                         print(f"  - {trait_id}: {trait_name}")
             else:
                 print(f"⚠️ .traits.yml should contain a list of traits")
@@ -96,7 +103,7 @@ def drop_audit(c, bundle):
 
     # Check for IPFS placeholders
     if traits_path.exists():
-        with open(traits_path, 'r') as f:
+        with open(traits_path, "r") as f:
             content = f.read()
             if "ipfs://<insert>" in content:
                 print(f"⚠️ Found IPFS placeholders in .traits.yml - needs CID patching")
@@ -138,16 +145,16 @@ def vault_publish(c, bundle):
     # Upload and patch traits
     if traits_path.exists():
         try:
-            with open(traits_path, 'r') as f:
+            with open(traits_path, "r") as f:
                 traits = yaml.safe_load(f) or []
 
             print(f"📊 Processing {len(traits)} traits...")
 
             for trait in traits:
                 if isinstance(trait, dict):
-                    trait_id = trait.get('id', 'unknown')
-                    trait_name = trait.get('name', 'unnamed')
-                    file_name = trait.get('file')
+                    trait_id = trait.get("id", "unknown")
+                    trait_name = trait.get("name", "unnamed")
+                    file_name = trait.get("file")
 
                     if file_name:
                         file_path = drop_path / file_name
@@ -155,22 +162,29 @@ def vault_publish(c, bundle):
                             print(f"⬆️ Uploading trait file: {file_name}")
                             result = upload_to_ipfs(file_path)
                             if isinstance(result, dict) and "cid" in result:
-                                cid = result['cid']
+                                cid = result["cid"]
                                 print(f"✅ {trait_name} uploaded: ipfs://{cid}")
 
                                 # Patch the trait with CID
-                                if 'media' in trait:
-                                    if 'image' in trait['media'] and 'ipfs://<insert>' in trait['media']['image']:
-                                        trait['media']['image'] = f"ipfs://{cid}"
-                                    if 'animation' in trait['media'] and 'ipfs://<insert>' in trait['media']['animation']:
-                                        trait['media']['animation'] = f"ipfs://{cid}"
+                                if "media" in trait:
+                                    if (
+                                        "image" in trait["media"]
+                                        and "ipfs://<insert>" in trait["media"]["image"]
+                                    ):
+                                        trait["media"]["image"] = f"ipfs://{cid}"
+                                    if (
+                                        "animation" in trait["media"]
+                                        and "ipfs://<insert>"
+                                        in trait["media"]["animation"]
+                                    ):
+                                        trait["media"]["animation"] = f"ipfs://{cid}"
                             else:
                                 print(f"❌ Failed to upload {file_name}")
                         else:
                             print(f"⚠️ Trait file not found: {file_path}")
 
             # Save patched traits
-            with open(traits_path, 'w') as f:
+            with open(traits_path, "w") as f:
                 yaml.dump(traits, f, sort_keys=False, default_flow_style=False)
             print(f"🧩 Patched .traits.yml with IPFS CIDs")
 
@@ -185,10 +199,11 @@ def vault_publish(c, bundle):
     log_path.mkdir(parents=True, exist_ok=True)
 
     from datetime import datetime
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file = log_path / f"deploy_{bundle}_{timestamp}.md"
 
-    with open(log_file, 'w') as f:
+    with open(log_file, "w") as f:
         f.write(f"# Drop Deployment Log: {bundle}\n\n")
         f.write(f"**Deployed:** {datetime.now().isoformat()}\n\n")
         f.write(f"**Drop Path:** {drop_path}\n\n")

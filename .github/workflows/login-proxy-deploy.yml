@@ -1,0 +1,36 @@
+name: Deploy Login Proxy (Fly)
+
+on:
+  push:
+    tags:
+      - "login-proxy-v*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Fly CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Build and deploy
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          LOGIN_APP: ${{ secrets.LOGIN_PROXY_APP }}
+          LOGIN_HOST: ${{ secrets.LOGIN_PROXY_HOST }}
+          ZITADEL_ISSUER: ${{ secrets.LOGIN_PROXY_ZITADEL_ISSUER }}
+          ALLOWED_ORIGINS: ${{ secrets.LOGIN_PROXY_ALLOWED_ORIGINS }}
+        run: |
+          cd services/login-proxy
+          sed -e "s|XO_APP_NAME_REPLACE|$LOGIN_APP|" \
+              -e "s|ZITADEL_ISSUER_REPLACE|$ZITADEL_ISSUER|" \
+              -e "s|LOGIN_HOST_REPLACE|$LOGIN_HOST|" \
+              -e "s|ALLOWED_ORIGINS_REPLACE|$ALLOWED_ORIGINS|" \
+              fly.toml > fly.generated.toml
+          flyctl deploy --config fly.generated.toml --remote-only --now

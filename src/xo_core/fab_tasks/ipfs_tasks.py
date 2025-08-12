@@ -4,16 +4,13 @@ IPFS Fabric Tasks for XO Core
 Provides tasks for testing IPFS connectivity, pinning files, and managing IPFS operations.
 """
 
-from invoke import task, Collection
+from invoke import task, Collection  # type: ignore
 from pathlib import Path
 import os
+from typing import Any, Dict
 
-from xo_core.vault.ipfs_utils import (
-    pin_to_ipfs,
-    test_ipfs_connection,
-    get_ipfs_gateway_url,
-    IPFSBackendError
-)
+# Avoid eager imports to prevent vault package init cycles; import inside tasks
+
 
 @task
 def test_connection(c, provider=None):
@@ -24,17 +21,20 @@ def test_connection(c, provider=None):
         provider: Override IPFS_PROVIDER environment variable
     """
     print("🔍 Testing IPFS connection...")
-    result = test_ipfs_connection(provider)
+    from xo_core.vault.ipfs_utils import test_ipfs_connection
+
+    result: Dict[str, Any] = test_ipfs_connection(provider)
 
     print(f"Provider: {result['provider']}")
     print(f"Status: {result['status']}")
     print(f"Message: {result['message']}")
     print(f"Config: {result['config']}")
 
-    if result['status'] == 'ready':
+    if result["status"] == "ready":
         print("✅ IPFS backend is ready!")
     else:
         print("❌ IPFS backend has issues")
+
 
 @task
 def pin_file(c, file_path, provider=None):
@@ -46,12 +46,24 @@ def pin_file(c, file_path, provider=None):
         provider: Override IPFS_PROVIDER environment variable
     """
     try:
+        from xo_core.vault.ipfs_utils import (
+            pin_to_ipfs,
+            get_ipfs_gateway_url,
+        )
+
+        try:
+            from xo_core.vault.ipfs_utils import IPFSBackendError  # type: ignore
+        except Exception:
+
+            class IPFSBackendError(Exception):
+                pass
+
         print(f"📦 Pinning {file_path} to IPFS...")
         cid = pin_to_ipfs(file_path, provider)
         print(f"✅ Successfully pinned: {cid}")
 
         # Show gateway URLs
-        cid_only = cid.replace("ipfs://", "")
+        cid_only = str(cid).replace("ipfs://", "")
         print(f"🌐 Gateway URLs:")
         print(f"  nft.storage: {get_ipfs_gateway_url(cid_only, 'nftstorage')}")
         print(f"  ipfs.io: {get_ipfs_gateway_url(cid_only, 'ipfs.io')}")
@@ -59,10 +71,11 @@ def pin_file(c, file_path, provider=None):
 
     except FileNotFoundError:
         print(f"❌ File not found: {file_path}")
-    except IPFSBackendError as e:
+    except IPFSBackendError as e:  # type: ignore[misc]
         print(f"❌ IPFS error: {e}")
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
+
 
 @task
 def test_all(c):
@@ -71,8 +84,10 @@ def test_all(c):
 
     # Test connection
     print("\n1. Testing IPFS connection...")
-    result = test_ipfs_connection()
-    if result['status'] != 'ready':
+    from xo_core.vault.ipfs_utils import test_ipfs_connection
+
+    result: Dict[str, Any] = test_ipfs_connection()
+    if result["status"] != "ready":
         print("❌ IPFS connection test failed")
         return
 
@@ -82,6 +97,8 @@ def test_all(c):
     try:
         with open(test_file, "w") as f:
             f.write("Hello from XO Core IPFS test!")
+
+        from xo_core.vault.ipfs_utils import pin_to_ipfs
 
         cid = pin_to_ipfs(test_file)
         print(f"✅ Test file pinned: {cid}")
@@ -96,6 +113,7 @@ def test_all(c):
 
     print("\n✅ All IPFS tests completed!")
 
+
 @task
 def list_providers(c):
     """List available IPFS providers and their configuration status."""
@@ -106,16 +124,20 @@ def list_providers(c):
 
     for provider in providers:
         print(f"\n🔧 {provider.upper()}:")
-        result = test_ipfs_connection(provider)
+        from xo_core.vault.ipfs_utils import test_ipfs_connection
 
-        if result['status'] == 'ready':
+        result: Dict[str, Any] = test_ipfs_connection(provider)
+
+        if result["status"] == "ready":
             print(f"  ✅ Status: Ready")
-            if result['config']:
-                for key, value in result['config'].items():
+            config = result.get("config")
+            if isinstance(config, dict):
+                for key, value in config.items():
                     print(f"  📝 {key}: {value}")
         else:
             print(f"  ❌ Status: {result['status']}")
             print(f"  💬 Message: {result['message']}")
+
 
 @task
 def setup_env(c):
@@ -130,11 +152,7 @@ def setup_env(c):
 
     choice = input("\nEnter your choice (1-3): ").strip()
 
-    provider_map = {
-        "1": "nftstorage",
-        "2": "pinata",
-        "3": "local"
-    }
+    provider_map = {"1": "nftstorage", "2": "pinata", "3": "local"}
 
     provider = provider_map.get(choice, "nftstorage")
 
@@ -159,6 +177,7 @@ def setup_env(c):
         print("brew install ipfs")
         print("\nAdd to your .env file:")
         print(f"IPFS_PROVIDER=local")
+
 
 # Create namespace
 ns = Collection("ipfs")

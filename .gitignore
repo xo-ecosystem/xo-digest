@@ -158,6 +158,12 @@ xo-drops-local-backup/
 .direnv/
 .envrc
 
+# envs
+*.env
+.env
+.env.local
+env/.env*
+~/.config/xo-core/*.env
 ######################################
 # 16. Future tool integration patterns
 ######################################
@@ -383,3 +389,4 @@ vault/*.json
 .env.local
 env/.env
 env/.env.local
+*.DS_Store

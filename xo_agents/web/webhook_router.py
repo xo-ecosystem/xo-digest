@@ -5,6 +5,8 @@ FastAPI router for agent webhook endpoints with task dispatching.
 """
 
 import logging
+import json
+from dataclasses import asdict
 from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -17,12 +19,17 @@ from .tasks import (
     TaskRequest,
     TaskResponse,
 )
-from .middleware import verify_agent_secret
+from .oidc import verify_request
+
+try:
+    from xo_core.agent.decoders.runner import decode_entrypoint as _decode_entrypoint
+except Exception:
+    _decode_entrypoint = None
 
 logger = logging.getLogger(__name__)
 
 # Create router with /agent prefix
-router = APIRouter(prefix="/agent")
+router = APIRouter(prefix="/agent", dependencies=[Depends(verify_request)])
 
 
 class WebhookPayload(BaseModel):
@@ -135,6 +142,30 @@ async def health_check():
     Health check endpoint for monitoring.
     """
     return {"status": "healthy", "service": "xo-agents-webhook", "version": "1.0.0"}
+
+
+@router.post("/decode")
+async def decode_endpoint(request: Request):
+    if _decode_entrypoint is None:
+        raise HTTPException(status_code=503, detail="decode module unavailable")
+    form = await request.form()
+    context = form.get("context", "manual")
+    run_id = form.get("run_id")
+    input_str = form.get("input")
+    upload = form.get("file")
+    if not upload and not input_str:
+        raise HTTPException(status_code=400, detail="Provide file or input")
+    if upload:
+        file_bytes = await upload.read()
+        payload = {
+            "filename": getattr(upload, "filename", "upload.bin"),
+            "bytes": file_bytes,
+        }
+        res = _decode_entrypoint(input=payload, context=context, run_id=run_id)
+        return json.loads(res.to_json())
+    else:
+        res = _decode_entrypoint(input=input_str, context=context, run_id=run_id)
+        return json.loads(res.to_json())
 
 
 # Note: Exception handlers should be added to the main FastAPI app, not the router

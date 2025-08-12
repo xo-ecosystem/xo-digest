@@ -1,6 +1,10 @@
 # [o3-fix 2025-08-03] Boot order fix and docs namespace wiring
 from invoke import Collection, task
 import os
+import sys
+
+# Ensure local dev src takes precedence over any globally installed xo_core
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 import subprocess
 
 # Import task modules with proper namespace structure

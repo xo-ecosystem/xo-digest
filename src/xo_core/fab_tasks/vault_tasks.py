@@ -168,7 +168,7 @@ def status_log(c):
 @task
 def sign_advanced(c, content_type="pulse", algorithm="ed25519"):
     """Sign all content of a specific type with advanced cryptographic signing."""
-    from src.xo_core.vault.signing import XOVaultSigner
+    from xo_core.vault.signing import XOVaultSigner
     from datetime import datetime
 
     print(f"🔐 Signing all {content_type} content with {algorithm}...")
@@ -198,7 +198,7 @@ def sign_advanced(c, content_type="pulse", algorithm="ed25519"):
 @task
 def verify_all(c, signed_file=None):
     """Verify all signed content."""
-    from src.xo_core.vault.signing import verify_signed_content
+    from xo_core.vault.signing import verify_signed_content
     from pathlib import Path
     import json
 
@@ -249,7 +249,7 @@ def verify_all(c, signed_file=None):
 @task
 def rotate_keys(c, key_pattern=None):
     """Rotate signing keys."""
-    from src.xo_core.vault.signing import XOVaultSigner
+    from xo_core.vault.signing import XOVaultSigner
 
     print("🔄 Rotating signing keys...")
 
