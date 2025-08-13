@@ -1,6 +1,19 @@
 [submodule "public/xo-exchange"]
 	path = public/xo-exchange
 	url = https://github.com/xo-ecosystem/xo-exchange.git
+
 [submodule "xo-core-docs"]
 	path = xo-core-docs
-	url = https://github.com/xo-verses/xo-core-docs.git
+	url = https://github.com/xo-ecosystem/xo-core-docs.git
+
+[submodule "xo-digest"]
+	path = xo-digest
+	url = https://github.com/xo-ecosystem/xo-digest.git
+
+[submodule "xo-agent"]
+	path = xo-agent
+	url = https://github.com/xo-ecosystem/xo-agent.git
+
+[submodule "xo-digest-proxy"]
+	path = xo-digest-proxy
+	url = https://github.com/xo-ecosystem/xo-digest-proxy.git
