@@ -1,5 +1,0 @@
-# Common for wrangler / Cloudflare workers
-node_modules/
-dist/
-.wrangler/
-*.log
