@@ -1,3 +1,11 @@
+# Inbox persistence
+data/inbox/
+# Local Vault artifacts
+.env.vault
+.envrc
+config/keys/*.priv
+*.local.*
+/tmp/xo-env.sh
 <file name=1 path=/Users/xo/xo-core/.gitignore># -----------------------------------------------------------
 # XO‑Core canonical .gitignore
 # One tidy list, alphabetised within sections.
