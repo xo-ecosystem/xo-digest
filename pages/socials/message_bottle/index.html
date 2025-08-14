@@ -1,0 +1,66 @@
+<!doctype html><meta charset="utf-8">
+<title>XO — Message Bottle</title>
+<h1>Message Bottle</h1>
+
+<form id="f">
+  <label>Drop ID <input name="drop_id" value="message_bottle"></label><br>
+  <label>Name <input name="author" placeholder="anon"></label><br>
+  <label>Message<br><textarea name="text" rows="3" cols="60"></textarea></label><br>
+  <button type="submit">Send</button>
+  <button type="button" id="goLive">Open Live View</button>
+  <a href="/message-bottle/stream" target="_blank">Live Page</a>
+  <a href="/message-bottle/latest" target="_blank">Latest JSON</a>
+  <a href="/docs" target="_blank">Docs</a>
+  <a href="/healthz" target="_blank">Health</a>
+  <a href="/metrics" target="_blank">Metrics</a>
+  <a href="/debug/echo" target="_blank">Echo</a>
+</form>
+
+<p id="postStatus"></p>
+
+<h2>Live</h2>
+<ul id="feed"></ul>
+
+<script>
+ const ul = document.getElementById('feed');
+ const es = new EventSource('/message-bottle/stream/sse');
+ es.onmessage = (ev) => {
+   try {
+     const d = JSON.parse(ev.data);
+     const li = document.createElement('li');
+     li.textContent = `[${d.drop_id}] ${d.author}: ${d.text}`;
+     ul.prepend(li);
+   } catch(e){}
+ };
+
+ const f = document.getElementById('f');
+ const postStatus = document.getElementById('postStatus');
+ document.getElementById('goLive').onclick = () => window.open('/message-bottle/stream', '_blank');
+ f.addEventListener('submit', async (e) => {
+   e.preventDefault();
+   const fd = new FormData(f);
+   const body = {
+     drop_id: fd.get('drop_id'),
+     author: fd.get('author'),
+     text: fd.get('text')
+   };
+   try {
+     const r = await fetch('/message-bottle/publish', {
+       method: 'POST',
+       headers: {'Content-Type':'application/json'},
+       body: JSON.stringify(body)
+     });
+     const j = await r.json();
+     if (r.status === 429) {
+       postStatus.textContent = `Rate limited. Retry-After: ${r.headers.get('Retry-After')||'?'}s`;
+     } else if (!r.ok) {
+       postStatus.textContent = `Error: ${j.error||r.status}`;
+     } else {
+       postStatus.textContent = 'Sent!';
+       f.reset();
+     }
+   } catch (err) {
+     postStatus.textContent = 'Network error.';
+   }
+ });
+</script>

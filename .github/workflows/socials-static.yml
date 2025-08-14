@@ -1,0 +1,35 @@
+name: Build & Commit Socials Static
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-socials:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt || true
+
+      - name: Build static socials page
+        run: python scripts/render_socials_static.py
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "XO Social Bot"
+          git config user.email "social-bot@users.noreply.github.com"
+          git add public/socials/message_bottle.html
+          git diff --cached --quiet || git commit -m "chore: update socials static page"
+          git push

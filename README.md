@@ -43,6 +43,25 @@ _Start the API in development mode:_
 uvicorn xo_agents.api:app --port 8003 --reload
 ```
 
+## CI / Dev
+
+- Run locally
+
+  ```bash
+  make setup
+  make dev      # http://localhost:8000
+  ```
+
+- Quality
+  ```bash
+  make lint     # ruff
+  make format   # ruff format
+  make test     # pytest
+  pre-commit install && make precommit
+  ```
+
+CI runs on every push/PR: ruff (lint/format) + pytest.
+
 ---
 
 ## 🔒 Secrets & Security Quickstart

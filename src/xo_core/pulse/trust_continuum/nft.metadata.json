@@ -1,0 +1,10 @@
+{
+  "name": "Join the Trust Continuum",
+  "description": "Obsolete the stolen asset economy. XO Ledger + Aether Relayer.",
+  "image": "ipfs://__CID__",
+  "attributes": [
+    { "trait_type": "Theme", "value": "Security" },
+    { "trait_type": "Edition", "value": "Genesis" }
+  ],
+  "external_url": "https://xo-pulse.com/p/join-trust-continuum"
+}

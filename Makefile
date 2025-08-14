@@ -2,6 +2,7 @@
 
 SHELL := /bin/bash
 PORT ?= 8003
+APP ?= xo-vault
 
 .PHONY: help lint test doctor vault-status vault-unseal vault-check agent-health secure detox version
 
@@ -109,6 +110,40 @@ version:
 	@echo "🐍 Python: $$(python --version 2>/dev/null || echo 'n/a')"
 	@echo "📦 Fabric: $$(fab --version 2>/dev/null || echo 'n/a')"
 
+# --- SSE helpers ---
+.PHONY: health redis-up sse-tail sse-broadcast
+
+health:
+	@curl -s localhost:8000/health | jq .
+	@curl -s localhost:8000/health/redis | jq .
+
+redis-up:
+	@docker run --name xo-redis -p 6379:6379 -d redis:7 || true
+
+sse-tail:
+	@curl -N localhost:8000/message-bottle/stream
+
+sse-broadcast:
+	@REDIS_URL?=
+	@if [ -z "$$MSG" ]; then echo 'Usage: make sse-broadcast MSG="hello" NAME="XO"'; exit 2; fi
+	@NAME=$${NAME:-CLI} REDIS_URL=$$REDIS_URL python scripts/mb_broadcast.py -n "$$NAME" -m "$$MSG"
+
+.PHONY: ops-post ops-get
+
+ops-post:
+	@if [ -z "$$OPS_BROADCAST_TOKEN" ]; then echo "Set OPS_BROADCAST_TOKEN"; exit 2; fi
+	curl -s -X POST http://localhost:8000/ops/broadcast \
+	  -H "Authorization: Bearer $$OPS_BROADCAST_TOKEN" \
+	  -H "Content-Type: application/json" \
+	  -d '{"type":"message_bottle.new","payload":{"name":"OPS","message":"hello from Makefile"}}' | jq .
+
+ops-get:
+	@if [ -z "$$OPS_BROADCAST_TOKEN" ]; then echo "Set OPS_BROADCAST_TOKEN"; exit 2; fi
+	curl -s -G http://localhost:8000/ops/broadcast \
+	  -H "X-OPS-Token: $$OPS_BROADCAST_TOKEN" \
+	  --data-urlencode "name=OPS" \
+	  --data-urlencode "message=hi via GET" | jq .
+
 # --- Security hardening tasks ---
 .PHONY: bootstrap scan scan-history prepush
 
@@ -133,6 +168,11 @@ scan-history:
 
 prepush:
 	@pre-commit run --all-files
+
+# --- Socials static build ---
+.PHONY: socials-static
+socials-static:
+	@python3 scripts/render_socials_static.py
 
 CONTEXT ?= manual
 
@@ -184,6 +224,23 @@ handle-activate:
 handle-show:
 	@PYTHONPATH="$(PWD)/src" fab handle.show --handle=brie | jq . 2>/dev/null || PYTHONPATH="$(PWD)/src" fab handle.show --handle=brie
 
+.PHONY: serve-api open-ui sign-url share-decode
+serve-api:
+	@XO_AGENT_SECRET=$${XO_AGENT_SECRET:-devsecret} XO_CORS=$${XO_CORS:-http://localhost:5173} PYTHONPATH=src uvicorn xo_agents.api:app --port 8003 --log-level info
+
+open-ui:
+	@open "$(AGENT_URL)/vault/ui" || true; open "$(AGENT_URL)/vault/ui/brie" || true
+
+sign-url:
+	@curl -s -H "X-Agent-Secret: $${XO_AGENT_SECRET:-devsecret}" \
+		-H "Content-Type: application/json" \
+		-d '{"run_id":"$(RUN)","ttl_s":$(or $(TTL),600)}' \
+		"$(AGENT_URL)/agent/decode/sign-url" | jq .
+
+share-decode:
+	@URL=$$(make -s sign-url RUN=$(RUN) TTL=$(or $(TTL),600) | jq -r .url); \
+	[ -n "$$URL" ] && open "$(AGENT_URL)$$URL"
+
 .PHONY: kill-api-port
 kill-api-port:
 	@echo "🛑 Killing any process on port $(PORT)…"
@@ -195,36 +252,32 @@ kill-api-port:
 	  echo "No process found on port $(PORT)"; \
 	fi
 
-# --- Serve API helpers ---
-AGENT_URL ?= http://localhost:8003
-XO_AGENT_SECRET ?=
-.PHONY: serve-api open-api serve-api-prod
+# --- Simple dev helpers ---
+.PHONY: setup lint format test precommit run dev
 
-serve-api:
-	@$(MAKE) kill-api-port
-	@PYTHONPATH="$(PWD)/src" \
-	XO_ALLOW_LEGACY_SECRET=1 \
-	XO_CORS=$${XO_CORS:-http://localhost:5173} \
-	XO_OIDC_ISSUER=$${XO_OIDC_ISSUER:-https://login.xo.center} \
-	XO_OIDC_AUDIENCE=$${XO_OIDC_AUDIENCE:-api://xo-agent} \
-	XO_OIDC_CLIENT_ID_SPA=$${XO_OIDC_CLIENT_ID_SPA:-xo-pulse-ui} \
-	XO_OIDC_REDIRECT_URI=$${XO_OIDC_REDIRECT_URI:-http://localhost:8003/vault/ui} \
-	XO_AGENT_SECRET=$${XO_AGENT_SECRET:-devsecret} \
-	uvicorn xo_agents.api:app --port $(PORT) --reload
+setup:
+	python -m pip install --upgrade pip
+	pip install -r requirements-dev.txt
+	if [ -f pyproject.toml ]; then pip install -e .; fi
+	pre-commit install
 
-open-api:
-	@python -c 'import webbrowser; webbrowser.open("http://localhost:8003/vault/ui")'
+lint:
+	ruff check .
 
-serve-api-prod:
-	@$(MAKE) kill-api-port
-	@PYTHONPATH="$(PWD)/src" \
-	XO_OIDC_ISSUER=$${XO_OIDC_ISSUER:?set XO_OIDC_ISSUER} \
-	XO_OIDC_AUDIENCE=$${XO_OIDC_AUDIENCE:?set XO_OIDC_AUDIENCE} \
-	XO_OIDC_CLIENT_ID_SPA=$${XO_OIDC_CLIENT_ID_SPA:?set XO_OIDC_CLIENT_ID_SPA} \
-	XO_OIDC_REDIRECT_URI=$${XO_OIDC_REDIRECT_URI:?set XO_OIDC_REDIRECT_URI} \
-	XO_CORS=$${XO_CORS:-https://xo-pulse.com} \
-	XO_AGENT_SECRET=$${XO_AGENT_SECRET:?set XO_AGENT_SECRET} \
-	XO_API_RATELIMIT=1 uvicorn xo_agents.api:app --host 0.0.0.0 --port $(PORT) --log-level warning
+format:
+	ruff format .
+
+test:
+	pytest -q
+
+precommit:
+	pre-commit run --all-files
+
+run:
+	uvicorn xo_core.main:app --host 0.0.0.0 --port 8000
+
+dev:
+	uvicorn xo_core.main:app --reload --host 0.0.0.0 --port 8000
 
 # --- Sign helpers ---
 .PHONY: sign-status sign-msg
@@ -261,3 +314,54 @@ login-proxy-secrets:
 
 login-proxy-run:
 	@cd services/login-proxy && uvicorn main:app --port 8080 --reload
+
+# --- Storj S3 secrets helper ---------------------------------------------------
+# Usage:
+#   make storj-secrets APP=xo-vault [FILE=/path/to/Storj-S3-Credentials-*.txt]
+#   make storj-secrets-show APP=xo-vault [FILE=/path/to/Storj-S3-Credentials-*.txt]
+#
+# Notes:
+# - Provide FILE explicitly or the rule will pick the newest matching file in ~/Downloads/.
+# - APP defaults to $(APP) (set globally above).
+
+.PHONY: storj-secrets storj-secrets-show
+
+storj-secrets:
+	@APP_VAL="$(APP)"; \
+	FILE_VAL="$(FILE)"; \
+	if [ -z "$$FILE_VAL" ]; then \
+	  FILE_VAL=$$(ls -t $$HOME/Downloads/Storj-S3-Credentials-*.txt 2>/dev/null | head -1); \
+	fi; \
+	if [ -z "$$FILE_VAL" ] || [ ! -f "$$FILE_VAL" ]; then \
+	  echo "❌ No Storj credentials file found. Pass FILE=~/Downloads/Storj-S3-Credentials-*.txt"; \
+	  exit 1; \
+	fi; \
+	echo "📄 Using $$FILE_VAL"; \
+	ENDPOINT=$$(awk -F': ' '/^Endpoint/{print $$2}' "$$FILE_VAL"); \
+	AKID=$$(awk -F': ' '/^Access Key ID/{print $$2}' "$$FILE_VAL"); \
+	SAK=$$(awk -F': ' '/^Secret Access Key/{sub(/\r/,"");print $$2}' "$$FILE_VAL"); \
+	BUCKET=$$(awk -F': ' '/^Bucket/{print $$2}' "$$FILE_VAL"); \
+	if [ -n "$$ENDPOINT" ] && [ -n "$$AKID" ] && [ -n "$$SAK" ] && [ -n "$$BUCKET" ]; then \
+	  fly secrets set \
+	    XO_STORJ_S3_ENDPOINT="$$ENDPOINT" \
+	    XO_STORJ_S3_BUCKET="$$BUCKET" \
+	    XO_STORJ_S3_ACCESS_KEY_ID="$$AKID" \
+	    XO_STORJ_S3_SECRET_ACCESS_KEY="$$SAK" \
+	    -a "$$APP_VAL"; \
+	else \
+	  echo "❌ Failed to parse Storj credentials: $$FILE_VAL"; \
+	  echo "   Expected lines: Endpoint, Access Key ID, Secret Access Key, Bucket"; \
+	  exit 1; \
+	fi
+
+storj-secrets-show:
+	@FILE_VAL="$(FILE)"; \
+	if [ -z "$$FILE_VAL" ]; then \
+	  FILE_VAL=$$(ls -t $$HOME/Downloads/Storj-S3-Credentials-*.txt 2>/dev/null | head -1); \
+	fi; \
+	if [ -z "$$FILE_VAL" ] || [ ! -f "$$FILE_VAL" ]; then \
+	  echo "❌ No Storj credentials file found. Pass FILE=~/Downloads/Storj-S3-Credentials-*.txt"; \
+	  exit 1; \
+	fi; \
+	echo "📄 Using $$FILE_VAL"; \
+	awk 'BEGIN{print "---- Parsed Preview ----"} /^Endpoint|^Access Key ID|^Secret Access Key|^Bucket/{gsub(/\r/,"");print} END{print "------------------------"}' "$$FILE_VAL"

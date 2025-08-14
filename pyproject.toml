@@ -1,37 +1,15 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "xo-core"
-version = "0.1.0"
-description = "XO Core Package - A modular foundation for XO projects"
-authors = [
-    {name = "XO Team", email = "team@xo.example.com"}
-]
-requires-python = ">=3.9"
+version = "0.0.0"
+requires-python = ">=3.10"
 dependencies = [
-    "invoke>=2.2.0",
-    "requests>=2.31.0",
-    "pytest>=8.2.2",
-    "typer>=0.9.0",
-    "rich>=13.7.0",
-    "fabric==2.2.0",
-]
-readme = "README.md"
-license = {text = "MIT"}
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.2.2",
-    "pytest-cov>=4.1.0",
-    "pytest-html>=4.1.1",
-    "mypy>=1.10.0",
-    "pre-commit>=3.7.0",
-    "commitizen>=3.17.0",
-    "black>=24.1.0",
-    "isort>=5.13.0",
-    "flake8>=7.0.0",
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.27",
+  "pydantic>=2.6",
 ]
 
 [tool.setuptools]
@@ -40,51 +18,27 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.tox]
-legacy_tox_ini = """
-[testenv]
-package = editable
-deps =
-    pytest
-    coverage
-    invoke==2.2.0
-    mypy==1.10.0
-    pre-commit==3.7.0
-    commitizen==3.17.0
-    requests>=2.31.0
-commands =
-    pytest {posargs}
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = [
+  "node_modules",
+  "public",
+  "xo-core-docs",
+  "xo-digest",
+  "xo-digest-proxy",
+  "public/xo-exchange"
+]
 
-[tool.poetry.dev-dependencies]
-pytest-html = "^4.1.1"
+[tool.ruff.format]
+quote-style = "double"
 
-[testenv:lint]
-package = editable
-deps =
-    flake8
-    pre-commit==3.7.0
-commands =
-    pre-commit run --all-files --show-diff-on-failure
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = "-q"
 
-[testenv:cz-lint]
-package = editable
-deps =
-    coverage
-    pytest-cov
-    invoke==2.2.0
-commands =
-    invoke cz-lint
-"""
-[tool.poetry.group.dev.dependencies]
-pytest-asyncio = "^1.0.0"
-httpx = "^0.28.1"
-asgi-lifespan = "^2.1.0"
-
-
-[tool.poetry.group.test.dependencies]
-asgi-lifespan = "^2.1.0"
-httpx = "^0.28.1"
-pytest-asyncio = "^1.0.0"
-
-[tool.poetry.dependencies]
-python = "^3.10"
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+warn_return_any = false
+ignore_missing_imports = true

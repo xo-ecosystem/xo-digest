@@ -12,6 +12,7 @@ from starlette.responses import FileResponse
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 import os
+import hmac, hashlib, time, base64
 
 # Import the routers
 from .web.webhook_router import router as webhook_router
@@ -84,14 +85,74 @@ DECODE_BASE = Path(os.path.expanduser("~/.config/xo-core/decoded")).resolve()
 ALLOWED_FROM_WEB = set(os.getenv("XO_WEB_ALLOWLIST", "brie").split(","))
 
 
+def _sign_payload(secret: str, payload: str) -> str:
+    mac = hmac.new(secret.encode(), payload.encode(), hashlib.sha256).digest()
+    return base64.urlsafe_b64encode(mac).decode().rstrip("=")
+
+
+def _verify_sig(secret: str, payload: str, sig: str) -> bool:
+    try:
+        expected = _sign_payload(secret, payload)
+        return hmac.compare_digest(expected, sig)
+    except Exception:
+        return False
+
+
+def _b64url_decode(data: str) -> bytes:
+    # add padding
+    pad = "=" * (-len(data) % 4)
+    return base64.urlsafe_b64decode(data + pad)
+
+
+@app.post("/agent/decode/sign-url")
+async def sign_decode_url(request: Request, _auth=Depends(verify_request)):
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="invalid json")
+    run_id = (body.get("run_id") or "").strip()
+    ttl_s = int(body.get("ttl_s") or 600)
+    if not run_id:
+        raise HTTPException(status_code=400, detail="missing run_id")
+    secret = os.getenv("XO_AGENT_SECRET")
+    if not secret:
+        raise HTTPException(status_code=503, detail="signing unavailable")
+    exp = int(time.time()) + max(60, min(ttl_s, 24 * 3600))
+    payload = f"{run_id}:{exp}"
+    sig = _sign_payload(secret, payload)
+    return {
+        "url": f"/vault/decoded/{run_id}/index.html?sig={sig}&exp={exp}",
+        "expires_at": exp,
+    }
+
+
 @app.get("/vault/decoded/{run_id}/index.html")
-async def get_decode_report(
-    run_id: str, request: Request, handle: str = "brie", _auth=Depends(verify_request)
-):
-    # Enforce handle allowlist and role-based access (hard brie-only gate)
+async def get_decode_report(run_id: str, request: Request, handle: str = "brie"):
+    # Signed URL mode
+    sig = request.query_params.get("sig")
+    exp = request.query_params.get("exp")
+    if sig and exp:
+        secret = os.getenv("XO_AGENT_SECRET")
+        if not secret:
+            raise HTTPException(status_code=503, detail="signing unavailable")
+        payload = f"{run_id}:{exp}"
+        if not _verify_sig(secret, payload, sig):
+            raise HTTPException(status_code=401, detail="bad signature")
+        try:
+            if int(exp) < int(time.time()):
+                raise HTTPException(status_code=401, detail="expired")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="bad exp")
+        report = (DECODE_BASE / run_id / "index.html").resolve()
+        if not report.is_file() or DECODE_BASE not in report.parents:
+            raise HTTPException(status_code=404, detail="report not found")
+        return FileResponse(str(report), media_type="text/html")
+
+    # Protected mode via OIDC/legacy secret
+    auth = await verify_request(request)
     if handle not in ALLOWED_FROM_WEB:
         raise HTTPException(status_code=403, detail="handle not allowed")
-    roles = (_auth or {}).get("roles", [])
+    roles = (auth or {}).get("roles", [])
     if "brie" not in roles:
         raise HTTPException(status_code=403, detail="forbidden: brie role required")
     report = (DECODE_BASE / run_id / "index.html").resolve()
@@ -100,8 +161,43 @@ async def get_decode_report(
     return FileResponse(str(report), media_type="text/html")
 
 
+@app.get("/vault/decoded/{run_id}/{subpath:path}")
+async def get_decode_asset(
+    run_id: str, subpath: str, request: Request, handle: str = "brie"
+):
+    # Signed URL mode for assets: require same sig/exp
+    sig = request.query_params.get("sig")
+    exp = request.query_params.get("exp")
+    if sig and exp:
+        secret = os.getenv("XO_AGENT_SECRET")
+        if not secret:
+            raise HTTPException(status_code=503, detail="signing unavailable")
+        payload = f"{run_id}:{exp}"
+        if not _verify_sig(secret, payload, sig):
+            raise HTTPException(status_code=401, detail="bad signature")
+        try:
+            if int(exp) < int(time.time()):
+                raise HTTPException(status_code=401, detail="expired")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="bad exp")
+        target = (DECODE_BASE / run_id / subpath).resolve()
+        if not target.is_file() or (DECODE_BASE / run_id) not in target.parents:
+            raise HTTPException(status_code=404, detail="not found")
+        return FileResponse(str(target))
+
+    # Protected mode via OIDC/legacy secret
+    await verify_request(request)
+    if handle not in ALLOWED_FROM_WEB:
+        raise HTTPException(status_code=403, detail="handle not allowed")
+    target = (DECODE_BASE / run_id / subpath).resolve()
+    if not target.is_file() or (DECODE_BASE / run_id) not in target.parents:
+        raise HTTPException(status_code=404, detail="not found")
+    return FileResponse(str(target))
+
+
 # --- Decode UI: simple single-file HTML ---
 _UI_PATH = Path(__file__).parent / "web" / "ui_decode.html"
+_UI_BRIE = Path(__file__).parent / "web" / "ui_brie.html"
 
 
 @app.get("/vault/ui")
@@ -150,3 +246,10 @@ async def list_decode_runs(
         return {"runs": runs}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"failed to enumerate runs: {e}")
+
+
+@app.get("/vault/ui/brie")
+async def brie_ui():
+    if _UI_BRIE.is_file():
+        return FileResponse(str(_UI_BRIE), media_type="text/html")
+    raise HTTPException(status_code=404, detail="ui not found")

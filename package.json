@@ -1,7 +1,9 @@
 {
-  "name": "xo-core",
+  "name": "xo-core-dev",
   "version": "1.0.0",
+  "private": true,
   "description": "XO Core - Living Universe Infrastructure",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "hardhat test",
@@ -23,16 +25,34 @@
     "verify:polygon": "hardhat verify --network polygon",
     "verify:arbitrum": "hardhat verify --network arbitrum",
     "verify:optimism": "hardhat verify --network optimism",
-    "verify:base": "hardhat verify --network base"
+    "verify:base": "hardhat verify --network base",
+    "sweep": "node scripts/wallet_sweep_hot_to_cold.js",
+    "sign": "./scripts/wallet_sign.sh",
+    "verify": "./scripts/wallet_verify.sh",
+    "ens:sim": "node scripts/ens_register_batch.js --simulate",
+    "ens:commit": "node scripts/ens_register_batch.js --commit-only",
+    "ens:reveal": "node scripts/ens_register_batch.js --reveal",
+    "ens:daily": "./scripts/ens_daily_publish.sh",
+    "ens:set-contenthash": "node scripts/ens_set_contenthash.js",
+    "ens:set-subdomain": "node scripts/ens_set_subdomain.js",
+    "mb:dev": "next dev -p 3010",
+    "digest:build": "node scripts/digest_build_static.js",
+    "digest:publish": "./scripts/digest_publish_static.sh"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.0",
-    "dotenv": "^16.0.3"
+    "content-hash": "^2.5.2",
+    "dotenv": "^16.0.3",
+    "ethers": "^6.15.0",
+    "punycode": "^2.3.1"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@nomicfoundation/hardhat-verify": "^1.1.0",
-    "hardhat": "^2.17.0"
+    "autoprefixer": "^10.4.21",
+    "hardhat": "^2.17.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11"
   },
   "keywords": [
     "xo",
@@ -52,7 +72,6 @@
     "type": "git",
     "url": "git+https://github.com/xo-ecosystem/xo-core.git"
   },
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/xo-ecosystem/xo-core/issues"
   },

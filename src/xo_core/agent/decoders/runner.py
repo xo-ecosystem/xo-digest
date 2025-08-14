@@ -50,6 +50,7 @@ class DecodeResult:
     trust: dict[str, Any]
     html_report: str | None = None
     base_dir: str | None = None
+    index_route: str | None = None
 
     def to_json(self) -> str:
         return json.dumps(asdict(self), indent=2)
@@ -170,12 +171,29 @@ def _write_html_report(result: DecodeResult) -> str:
     def esc(s: object) -> str:
         return html.escape(str(s))
 
-    def rel(p: str) -> str:
-        return esc(Path(p).name)
+    def rel_path(p: str) -> str:
+        try:
+            return str(Path(p).resolve().relative_to(run_dir.resolve()))
+        except Exception:
+            return Path(p).name
+
+    # Build preview map for redacted previews
+    preview_set = set()
+    for a in result.artifacts:
+        if a.path.endswith(".preview.txt"):
+            try:
+                preview_set.add(
+                    str(Path(a.path).resolve().relative_to(run_dir.resolve()))
+                )
+            except Exception:
+                pass
 
     rows: list[str] = []
     for art in result.artifacts:
-        fname = rel(art.path)
+        if art.path.endswith(".preview.txt"):
+            continue
+        relp = rel_path(art.path)
+        fname = esc(relp)
         mime = esc(art.mime or "")
         size = esc(f"{(art.size or 0)/1024:.1f} KB")
         sha = esc(art.sha256 or "")
@@ -185,6 +203,9 @@ def _write_html_report(result: DecodeResult) -> str:
         preview_link = ""
         if Path(art.path).suffix.lower() in (".txt", ".json", ".yaml", ".yml"):
             preview_link = f'<a href="{fname}">View</a>'
+        pr = str(Path(relp).with_suffix(".preview.txt"))
+        if pr in preview_set:
+            preview_link = f'<a href="{esc(pr)}">Preview</a>'
         rows.append(
             f"<tr><td>{fname}</td><td>{mime}</td><td>{size}</td><td>{sha}</td><td>{risk_badge}</td><td>{preview_link}</td></tr>"
         )
@@ -290,4 +311,5 @@ def decode_entrypoint(
         base_dir=str(run_dir),
     )
     result.html_report = _write_html_report(result)
+    result.index_route = f"/vault/decoded/{run_id}/index.html"
     return result

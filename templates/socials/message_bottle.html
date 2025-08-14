@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{{ title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-neutral-950 text-neutral-100">
+    <div id="activity-sidebar">
+      <h3>Activity</h3>
+      <div id="activity-filters">
+        <button data-filter="all" class="active">
+          All <span class="shortcut-hint">(A)</span>
+        </button>
+        <button data-filter="system">
+          System <span class="shortcut-hint">(S)</span>
+        </button>
+        <button data-filter="message">
+          Messages <span class="shortcut-hint">(M)</span>
+        </button>
+      </div>
+      <ul id="activity-list"></ul>
+    </div>
+    <header class="max-w-3xl mx-auto px-4 py-8">
+      <h1 class="text-2xl font-semibold">Message Bottle</h1>
+      <p class="text-neutral-400 mt-1">
+        Live drops & replies from the XO sea 🌊
+      </p>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 pb-20">
+      <div class="mb-6">
+        <form
+          action="/message-bottle/publish"
+          method="post"
+          class="bg-neutral-900 p-4 rounded-2xl border border-neutral-800"
+        >
+          <div class="flex flex-col gap-3">
+            <input
+              type="text"
+              name="user"
+              placeholder="Your name or handle"
+              class="px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring focus:ring-neutral-600"
+            />
+            <textarea
+              name="msg"
+              placeholder="Write your message..."
+              rows="3"
+              class="px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring focus:ring-neutral-600"
+            ></textarea>
+            <button
+              type="submit"
+              class="inline-flex justify-center items-center px-4 py-2 rounded-lg bg-neutral-50 text-neutral-900 font-medium hover:bg-white"
+            >
+              Send Bottle →
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="flex items-center justify-between mb-4">
+        <div class="text-sm text-neutral-400">
+          Drop: <span class="text-neutral-200 font-medium">{{ drop }}</span>
+        </div>
+        <a
+          href="{{ view_all_url }}"
+          class="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-neutral-700 hover:border-neutral-500"
+        >
+          View all in Vault →
+        </a>
+      </div>
+
+      <ul class="space-y-3">
+        {% if messages and messages|length > 0 %} {% for m in messages %}
+        <li
+          class="rounded-2xl border border-neutral-800 hover:border-neutral-700 transition p-4"
+        >
+          <div class="flex items-center justify-between">
+            <div class="text-sm text-neutral-400">
+              <span class="text-neutral-200 font-medium"
+                >@{{ m.user or 'anon' }}</span
+              >
+              <span> · </span>
+              <time class="text-neutral-500">{{ m.ts or '' }}</time>
+            </div>
+            {% if m.permalink %}
+            <a
+              href="{{ m.permalink }}"
+              class="text-xs text-neutral-400 hover:text-neutral-200"
+              >Permalink</a
+            >
+            {% endif %}
+          </div>
+          <p class="mt-2 leading-relaxed">{{ m.msg }}</p>
+        </li>
+        {% endfor %} {% else %}
+        <li
+          class="rounded-2xl border border-neutral-800 p-8 text-center text-neutral-400"
+        >
+          No messages yet — be the first to send a bottle.
+        </li>
+        {% endif %}
+      </ul>
+
+      <div class="mt-8">
+        <a
+          href="{{ view_all_url }}"
+          class="w-full inline-flex justify-center items-center px-4 py-3 rounded-xl bg-neutral-50 text-neutral-900 font-medium hover:bg-white"
+        >
+          Open full inbox in Vault
+        </a>
+      </div>
+    </main>
+
+    <footer
+      class="max-w-3xl mx-auto px-4 pb-8 text-center text-xs text-neutral-500"
+    >
+      © XO
+    </footer>
+  </body>
+</html>
