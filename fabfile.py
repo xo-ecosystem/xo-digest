@@ -21,6 +21,8 @@ from xo_core.fab_tasks.verify_tasks import ns as verify_ns  # [o3-fix 2025-08-04
 from xo_core.fab_tasks.chain_tasks import ns as chain_ns  # [o3-fix 2025-08-04]
 from xo_core.fab_tasks.agent_tasks import ns as agent_cosmic_ns  # [o3-fix 2025-08-04]
 from xo_core.fab_tasks.drop_tasks import ns as drop_ns  # [o3-fix 2025-08-04]
+from fab_tasks import socials
+from fab_tasks import api_keys as api_keys_tasks
 from xo_core.fab_tasks.agent_tasks import explore_drop
 
 # Load namespaced tasks dynamically with logging
@@ -275,6 +277,10 @@ ns.add_collection(verify_ns)  # [o3-fix 2025-08-04] expose verify namespace
 ns.add_collection(chain_ns)  # [o3-fix 2025-08-04] expose chain namespace
 ns.add_collection(agent_cosmic_ns)  # [o3-fix 2025-08-04] expose cosmic agent namespace
 ns.add_collection(drop_ns)  # [o3-fix 2025-08-04] expose drop management namespace
+# Expose socials namespace
+ns.add_collection(Collection.from_module(socials), name="socials")
+# Expose api key management tasks
+ns.add_collection(Collection.from_module(api_keys_tasks), name="api")
 # ns.add_collection(loader_ns, name="loader")
 
 # Add vault namespace if available

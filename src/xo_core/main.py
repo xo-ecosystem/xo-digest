@@ -110,6 +110,16 @@ app.include_router(ops_colors_router)
 app.include_router(colors_stream_router)
 app.include_router(color_wave_router)
 
+try:
+    # Mount GitHub webhook router
+    from xo_core.webhooks.github import router as github_webhook_router
+except Exception:
+    github_webhook_router = None
+
+# Include router if available (keeps dev flexible)
+if github_webhook_router:
+    app.include_router(github_webhook_router, prefix="")
+
 
 @app.get("/")
 def read_root():

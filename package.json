@@ -40,19 +40,22 @@
     "digest:publish": "./scripts/digest_publish_static.sh"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.9.0",
     "content-hash": "^2.5.2",
-    "dotenv": "^16.0.3",
-    "ethers": "^6.15.0",
     "punycode": "^2.3.1"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.1.0",
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@nomicfoundation/hardhat-verify": "^1.1.0",
+    "@openzeppelin/contracts": "^5.4.0",
     "autoprefixer": "^10.4.21",
-    "hardhat": "^2.17.0",
+    "dotenv": "^17.2.1",
+    "ethers": "^6.15.0",
+    "hardhat": "^2.26.3",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   },
   "keywords": [
     "xo",

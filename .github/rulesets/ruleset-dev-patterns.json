@@ -1,0 +1,34 @@
+{
+  "name": "Development Branch Policies",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": ["feature/*", "release/*", "hotfix/*"],
+      "exclude": []
+    }
+  },
+  "rules": [
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "required_check": [
+          { "context": "ci" },
+          { "context": "test" },
+          { "context": "dev-doctor" },
+          { "context": "secrets" }
+        ]
+      }
+    },
+    {
+      "type": "pull_request_reviews",
+      "parameters": {
+        "required_approving_review_count": 1
+      }
+    },
+    {
+      "type": "required_signatures",
+      "parameters": {}
+    }
+  ]
+}

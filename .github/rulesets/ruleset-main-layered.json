@@ -1,0 +1,40 @@
+{
+  "name": "Main Protected with Queue",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": ["main"],
+      "exclude": []
+    }
+  },
+  "rules": [
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "required_check": [
+          { "context": "ci" },
+          { "context": "test" },
+          { "context": "dev-doctor" },
+          { "context": "secrets" }
+        ]
+      }
+    },
+    {
+      "type": "required_deployments",
+      "parameters": {
+        "environments": ["production"]
+      }
+    },
+    {
+      "type": "pull_request_reviews",
+      "parameters": {
+        "required_approving_review_count": 1
+      }
+    },
+    {
+      "type": "required_signatures",
+      "parameters": {}
+    }
+  ]
+}

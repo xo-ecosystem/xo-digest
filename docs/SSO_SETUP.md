@@ -183,3 +183,16 @@ make login-proxy-deploy \
 
 - Push tag `login-proxy-v1.0.0` and ensure repo secrets are set:
   - `FLY_API_TOKEN`, `LOGIN_PROXY_APP`, `LOGIN_PROXY_HOST`, `LOGIN_PROXY_ZITADEL_ISSUER`, `LOGIN_PROXY_ALLOWED_ORIGINS`
+
+---
+
+Vault sealed backup (Storj) quick note
+
+We include a tiny backup container at `services/vault-backup/`:
+
+- `backup.sh` archives the source dir (default `/data`), computes sha256, and uploads to Storj S3.
+- Cron runs hourly by default (see Dockerfile). Configure via env:
+  - `VAULT_BACKUP_SOURCE=/data`
+  - `XO_STORJ_S3_ENDPOINT`, `XO_STORJ_S3_BUCKET`, `XO_STORJ_S3_ACCESS_KEY_ID`, `XO_STORJ_S3_SECRET_ACCESS_KEY`
+
+Deploy as a separate Fly app and set secrets as shown in the runbook.
