@@ -1,34 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-
-/// @title SeasonalMemecoin
-/// @notice Simple ERC20 that mints full initial supply in constructor to a treasury (owner or specified).
-contract SeasonalMemecoin is ERC20, Ownable {
-    uint8 private immutable _decimals;
-
-    constructor(
-        string memory name_,
-        string memory symbol_,
-        uint8 decimals_,
-        uint256 initialSupply, // in tokens with decimals applied (e.g., 1_000_000e18)
-        address mintTo,
-        address initialOwner
-    ) ERC20(name_, symbol_) Ownable(initialOwner) {
-        _decimals = decimals_;
-        _mint(mintTo == address(0) ? initialOwner : mintTo, initialSupply);
-    }
-
-    function decimals() public view override returns (uint8) {
-        return _decimals;
-    }
-}
-
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
-
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 

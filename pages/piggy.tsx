@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { BrowserProvider, Contract, JsonRpcSigner } from "ethers";
 
 const ADDR = {
@@ -17,7 +17,7 @@ export default function PiggyPage() {
   const [signer, setSigner] = useState<JsonRpcSigner>();
   const [addr, setAddr] = useState<string>();
   const [owned, setOwned] = useState<number[]>([]);
-  const [images, setImages] = useState<Record<number,string>>({});
+  const [uris, setUris] = useState<Record<number,string>>({});
 
   const piggy = useMemo(()=> provider && new Contract(ADDR.PIGGY, ABI, signer || provider), [provider, signer]);
 
@@ -45,21 +45,8 @@ export default function PiggyPage() {
     }
     setOwned(mine);
     const out: Record<number,string> = {};
-    await Promise.all(mine.map(async (id) => {
-      try {
-        const uri: string = await piggy.tokenURI(id);
-        if (uri.startsWith("data:")) {
-          const payload = uri.split(",")[1] || "";
-          const json = JSON.parse(atob(payload));
-          out[id] = json.image || "";
-        } else {
-          const r = await fetch(uri);
-          const json = await r.json();
-          out[id] = json.image || "";
-        }
-      } catch {}
-    }));
-    setImages(out);
+    await Promise.all(mine.map(async (id) => { out[id] = await piggy.tokenURI(id); }));
+    setUris(out);
   }
 
   return (
@@ -74,8 +61,8 @@ export default function PiggyPage() {
         {owned.map(id => (
           <div key={id} style={{border:"1px solid #223", borderRadius:12, overflow:"hidden"}}>
             <div style={{padding:12}}><b>Token #{id}</b></div>
-            {images[id] && (
-              <img src={images[id]} alt={`Piggy #${id}`} />
+            {uris[id] && (
+              <img src={JSON.parse(atob(uris[id].split(",")[1])).image} alt={`Piggy #${id}`} />
             )}
           </div>
         ))}

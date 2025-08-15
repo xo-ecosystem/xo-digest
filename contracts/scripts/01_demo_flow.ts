@@ -1,4 +1,5 @@
-import { ethers } from "hardhat";
+import pkg from 'hardhat';
+const { ethers } = pkg;
 
 const ADDR = {
   VAULT: "PUT_VAULT",
